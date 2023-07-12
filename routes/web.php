@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LecturerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +14,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('layouts.app');
-});
+// Lecturer
+Route::get('/lecturer', [LecturerController::class,'index'])->name('index');
+Route::get('lecturer/add', [LecturerController::class,'create'])->name('add');
+Route::get('/lecturer/delete/{id}', [LecturerController::class,'destroy'])->name('delete');
+Route::post('lecturer/edit/{id}', [LecturerController::class,'edit'])->name('edit');
+Route::post('/lecturer/store', [LecturerController::class,'store'])->name('store');
+Route::get('/lecturer/editScreen/{id}',[LecturerController::class,'editScreenLecturer'])->name("editScreenLecturer");
+Route::get('/lecturer/search', [LecturerController::class,'search'])->name('search');
+Route::delete("/lecturer/selected-lecturer", [LecturerController::class, 'deleteAll'])->name("deleteAll");
