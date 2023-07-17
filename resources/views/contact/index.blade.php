@@ -1,189 +1,195 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layout')
+<title>Contacts</title>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Contacts</title>
-  <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-</head>
-
-<body class="hold-transition sidebar-mini layout-fixed">
-  @include('auth.layout')
-
-
-  <div class="container">
-    <div id="add-popup" class="card">
-      <div class="card-header pt-3 d-flex">
-        <h2 class="mx-auto">ADD CONTACT</h2>
-        <button id="btn-close-add-popup" class="btn border-0 p-0 mr-3"><i class="fas fa-times fa-lg"></i></button>
-      </div>
-      <div class="card-body">
-        <form action="{{ route('contacts.store') }}" method="post" class="py-4" onsubmit="return checkFormInput()">
-          @csrf
-          <div class="mx-auto w-50">
-            <div>
-              <label for="name">Name:</label>
-              <input type="text" class="form-control" id="name" name="name" placeholder="Enter name">
-              <div class="valid-feedback">Valid</div>
-              <div class="invalid-feedback">Invalid</div>
-            </div>
-
-            <div class="mt-3">
-              <label for="address">Address:</label>
-              <input type="text" class="form-control" id="address" name="address" placeholder="Enter address">
-              <div class="valid-feedback">Valid</div>
-              <div class="invalid-feedback">Invalid</div>
-            </div>
-
-            <div class="mt-3">
-              <label for="phone">Phone:</label>
-              <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter phone">
-              <div class="valid-feedback">Valid</div>
-              <div class="invalid-feedback">Invalid</div>
-            </div>
-
-            <div class="mt-3">
-              <label for="birthday">Birthday:</label>
-              <input type="date" class="form-control" id="birthday" name="birthday" placeholder="Enter birthday">
-              <div class="valid-feedback">Valid</div>
-              <div class="invalid-feedback">Invalid</div>
-            </div>
-          </div>
-          <button id="btn-submit" class="btn btn-success px-4 mx-auto mt-3 d-block">ADD</button>
-        </form>
-      </div>
+@section('content')
+{{-- Lecturers --}}
+<div class="dashboard-children active">
+    {{-- Heading --}}
+    <div class="mb-5 d-flex justify-content-between align-items-center">
+        <div class="">
+            <h1 class="dashboard-heading">
+                Contacts
+            </h1>
+            <p class="dashboard-short-desc">Manage your contacts</p>
+        </div>
+        <a href="{{ route('contacts.create') }}" class="inline-block">
+            <button class="btn-style menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="icon">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                Create contact</button>
+        </a>
     </div>
-  </div>
 
-  <!-- Content Wrapper. Contains page content -->
-  <div class="wrapper">
-    <!-- Navbar -->
-    <nav class="main-header navbar navbar-expand navbar-white navbar-light">
-      <div class="container-fluid px-3">
-        <!-- Left navbar links -->
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
-          </li>
-        </ul>
+    {{-- Search --}}
+    <form action="{{ url('contacts') }}" method="GET" class="mb-5 d-flex justify-content-end" autocomplete="off">
+        <input type="text" placeholder="Search..." id="search" name="search" class="input-search">
+        <button class="btn btn-primary menu-item" style="margin-left: 10px;">Search</button>
+    </form>
 
-        <!-- Right navbar links -->
-        <ul class="navbar-nav ml-auto">
-          <!-- Navbar Search -->
-          <li class="nav-item">
-            <form action="{{ url('contacts') }}" class="form-inline" method="GET" onsubmit="return checkInputSearch()">
-              <input class="form-control" name="keywords" id="keywords" type="search" placeholder="Search..."
-                aria-label="Search">
-              <button class="btn btn-navbar" type="submit">
-                <i class="fas fa-search"></i>
-              </button>
-            </form>
-          </li>
-        </ul>
-      </div>
-    </nav>
-    <!-- /.navbar -->
+    {{-- Table --}}
+    <div class="table-main">
+        {{-- Thông báo alert --}}
+        @if (Session::has('thongbao'))
+        <div class="alert alert-success alert-dismissible fade show d-flex" role="alert">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="icon-alert">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            {{Session::get('thongbao')}}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        @endif
 
-    <div class="content-wrapper pt-3">
-      <!-- Main content -->
-      <section class="content">
-        <div class="container-fluid">
-          @if (Session::has('message'))
-          <div class="alert alert-success" role="alert">
-            {{ Session::get('message') }}
-          </div>
-          @endif
 
-          <div class="card">
-            <div class="card-header">
-              <div class="row mt-2">
-                <div class="col-md-3">
-                  <h3>LIST OF CONTACTS</h3>
-                </div>
-                <div class="col-md-6">
-                  <button id="btn_delete_items_selected" class="btn btn-danger" data-bs-toggle="modal"
-                    data-bs-target="#myModal">
-                    <i class="fas fa-trash"></i>
-                    Delete items selected
-                  </button>
-                </div>
-                <div class="col-md-3 ms-auto">
-                  <a href="{{ route('contacts.create') }}" class="btn btn-success">
-                    <i class="fas fa-plus"></i>
-                    Add
-                  </a>
-                  <button class="btn btn-success" id="btn-add-popup">
-                    <i class="fas fa-plus"></i>
-                    Add (pop up)
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div class="card-body">
-              <table class="table table-bordered table-hover">
-                <thead>
-                  <tr>
-                    <th><input type="checkbox" name="" id="checkbox_all"></th>
+
+        {{-- Data is empty --}}
+        @if ($allContacts->isEmpty())
+        <div class="alert alert-info d-flex">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="icon-alert">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+            </svg>
+            Data is empty
+        </div>
+        @else
+        {{-- Delete all selected --}}
+        <a id="deleteAllSelectedRecord" href="">
+            <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal2"
+                class="btn-style icon-delete menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                    </path>
+                </svg>
+                Delete all selected</button>
+        </a>
+        @endif
+
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        <input type="checkbox" id="select_all_ids">
+                    </th>
                     <th>ID</th>
-                    <th width="15%">Name</th>
-                    <th width="30%">Address</th>
+                    <th>Name</th>
+                    <th>Address</th>
                     <th>Phone</th>
                     <th>Birthday</th>
                     <th>Created at</th>
-                    <th width="17%">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @foreach ($allContacts as $item)
-                  <tr id="contacts_ids{{$item->id}}" class="contacts">
-                    <td><input type="checkbox" name="ids" id="{{ $item->id }}" class="checkbox" value="{{ $item->id }}">
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($allContacts as $item)
+                <tr id="contacts_ids{{ $item->id }}">
+                    <td>
+                        <input type="checkbox" name="ids" class="checkbox_ids" value="{{$item->id}}">
                     </td>
-                    <td>{{ $item->id }}</td>
-                    <td>{{ $item->name }}</td>
-                    <td>{{ $item->address }}</td>
-                    <td>{{ $item->phone }}</td>
-                    <td>{{ $item->birthday }}</td>
-                    <td>{{ $item->created_at }}</td>
-                    <td class="">
-                      <div class="d-flex">
-                        <a href="{{ route('contacts.edit', $item->id) }}" class="btn btn-warning text-light">
-                          <i class="fas fa-edit"></i>
-                          Edit
-                        </a>
-                        <div class="mx-1"></div>
-                        <form action="{{ route('contacts.destroy', $item->id) }}" method="post">
-                          @csrf
-                          @method('DELETE')
-                          <button type="submit" class="btn btn-danger">
-                            <i class="fas fa-trash"></i>
-                            Delete
-                          </button>
-                        </form>
-                      </div>
-                    </td>
-                  </tr>
-                  @endforeach
-                </tbody>
-              </table>
-            </div>
+                    <td>{{$item->id}}</td>
+                    <td>{{$item->name}}</td>
+                    <td>{{$item->address}}</td>
+                    <td>{{$item->phone}}</td>
+                    <td>{{$item->birthday}}</td>
+                    <td>{{$item->created_at}}</td>
+                    <td>
 
-            <div class="card-footer">
-              {{ $allContacts->links() }}
-            </div>
-          </div>
-        </div><!-- /.container-fluid -->
-      </section>
-      <!-- /.content -->
+                        <div class="actions-style">
+                            {{-- Edit --}}
+                            <a href="{{ route('contacts.edit', $item->id) }}" class="menu-item" data-bs-toggle="tooltip" title="Edit">
+                                <span
+                                    class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon-action" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                                        </path>
+                                    </svg>
+                                </span>
+                            </a>
+                            {{-- Delete --}}
+                            <form action="{{ route('contacts.destroy', $item->id) }}" method="post">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" data-bs-toggle="tooltip" title="Delete">
+                                    <span
+                                        class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon-action" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                            </path>
+                                        </svg>
+                                    </span>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-confirm modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <div class="icon-box">
+                                    <div class="material-icons">!</div>
+                                </div>
+                                <h2 class="modal-title">Are you sure?</h2>
+                            </div>
+                            <div class="modal-body">
+                                <p>You won't be able to revert this!</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-info" data-bs-dismiss="modal">Cancel</button>
+                                <form action="{{ route('contacts.destroy', $item->id) }}">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger" data-bs-dismiss="modal">Yes, delete
+                                        it!</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </tbody>
+        </table>
     </div>
-  </div>
-  <!-- /.content-wrapper -->
+</div>
 
-  <script src="{{ asset('js/index.js') }}"></script>
+<div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+    <div class="modal-dialog modal-confirm modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="icon-box">
+                    <div class="material-icons">!</div>
+                </div>
+                <h2 class="modal-title">Are you sure?</h2>
+            </div>
+            <div class="modal-body">
+                <p>You won't be able to revert this!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="btnDelete" data-bs-dismiss="modal">Yes, delete
+                    it!</button>
+            </div>
+        </div>
+    </div>
+</div>
 
+{{ $allContacts->links() }}
 
+<script>
+    document.querySelector('#menuItem_contacts').classList.add('active');
+    document.querySelector('#menuItem_lecturers').classList.remove('active');
+</script>
 
-</body>
-
-</html>
+@endsection

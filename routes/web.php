@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LecturerController;
+use App\Http\Controllers\ContactController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,3 +24,8 @@ Route::post('/lecturer/store', [LecturerController::class,'store'])->name('store
 Route::get('/lecturer/editScreen/{id}',[LecturerController::class,'editScreenLecturer'])->name("editScreenLecturer");
 Route::get('/lecturer/search', [LecturerController::class,'search'])->name('search');
 Route::delete("/lecturer/selected-lecturer", [LecturerController::class, 'deleteAll'])->name("deleteAll");
+
+// Contact
+Route::resource('contacts', ContactController::class);
+Route::post('contacts/store', [ContactController::class, 'store'])->name('contacts.store');
+Route::delete('contacts-destroyItemsSelected', [ContactController::class, 'destroyItemsSelected'])->name('destroyItemsSelected');
