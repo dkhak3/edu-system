@@ -9,6 +9,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    {{-- Font Awesome --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 </head>
 <body>
@@ -41,11 +43,19 @@
             <div class="col-lg-2 col-md-12 col-12">
                 <div class="dashboard-left">
                     {{-- Lecturer --}}
-                    <a href="{{ route('index') }}" class="menu-item active" aria-current="page">
+                    <a href="{{ route('index') }}" id="menuItem_lecturers" class="menu-item active" aria-current="page">
                         <span class="menu-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                         </span>
                         <span class="menu-text">Lecturer</span>
+                    </a>
+
+                    {{-- Contact --}}
+                    <a href="{{ url('contacts') }}" id="menuItem_contacts" class="menu-item" aria-current="page">
+                        <span class="menu-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        </span>
+                        <span class="menu-text">Contact</span>
                     </a>
 
                     {{-- Logout --}}
