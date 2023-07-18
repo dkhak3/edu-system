@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LecturerController;
 use App\Http\Controllers\ContactController;
+use App\Models\Course;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,3 +30,11 @@ Route::delete("/lecturer/selected-lecturer", [LecturerController::class, 'delete
 Route::resource('contacts', ContactController::class);
 Route::post('contacts/store', [ContactController::class, 'store'])->name('contacts.store');
 Route::delete('contacts-destroyItemsSelected', [ContactController::class, 'destroyItemsSelected'])->name('destroyItemsSelected');
+//Courses
+Route::get('/courses', function () {
+    return view('courses.tablecourses')->with('courses',Course::all());
+})->name('courses');
+//
+Route::get('/subjects', function () {
+    return view('subject.subjects');
+})->name('subject');
