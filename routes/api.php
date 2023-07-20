@@ -2,8 +2,12 @@
 
 use App\Http\Controllers\API\CoursesAPIController as APICoursesAPIController;
 use App\Http\Controllers\API\CoursesAPIController;
+
 use App\Http\Controllers\CoursesController;
 use App\Http\Controllers\SubjectsController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\LecturerController;
+
 use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -19,12 +23,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 //Courses
-Route::get('/courses/add', [CoursesController::class,'add']);
+Route::get('/courses/add/form', [CoursesController::class,'create']);
 Route::get('/courses/all', [CoursesController::class,'all']);
 Route::get('/courses', [CoursesController::class,'index']);
-Route::get('/courses', function () {
-    return view('courses.tablecourses')->with('courses',Course::all());
-});
+Route::get('/courses/index', function () {
+    
+    return view('courses.tablecourses');
+})->name('courses');
+
 Route::get('/courses/search',[CoursesController::class,'search']);
 Route::get('/courses/getall',[CoursesController::class,'getAll']);
 Route::post('/courses/add-course',[CoursesController::class,'store']);
@@ -38,6 +44,7 @@ Route::get('/getAllSubject',[SubjectsController::class,'getAll']);
 Route::get('/getAllSubjectZA',[SubjectsController::class,'getAllZa']);
 Route::get('/getSearchSubject',[SubjectsController::class,'search']);
 Route::get('/cancelSubject', [SubjectsController::class,'index']);
+
 Route::get('/addSubject', [SubjectsController::class,'add']);
 Route::post('/add-subjects',[SubjectsController::class,'store']);
 Route::get('/editSubject/{id}', [SubjectsController::class,'editSubject']);
@@ -47,3 +54,19 @@ Route::delete('/deleteSubject/{id}',[SubjectsController::class,'destroy']);
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+//Lecturers
+Route::get('/lecturers/addLecturer', [LecturerController::class,'add']);
+Route::get('/lecturers/editLecturer/{id}', [LecturerController::class,'editLecturer']);
+Route::get('/lecturers/edit/showLecturer/{id}', [LecturerController::class,'show']);
+Route::put('/lecturers/edit-lecturer/{id}',[LecturerController::class,'update']);
+Route::get('/lecturers/cancelLecturer', [LecturerController::class,'index']);
+Route::middleware('auth:api')->get('/user', function (Request $request) {
+    return $request->user();
+});
+
+// Contact
+Route::get('/contacts/create', [ContactController::class,'create']);
+Route::post('/contacts/store', [ContactController::class,'store']);
+Route::get('/contacts/edit/{id}', [ContactController::class,'edit']);
+Route::post('/contacts/update/{id}', [ContactController::class,'update']);

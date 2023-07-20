@@ -23,6 +23,12 @@ class ContactController extends Controller
         return view('contact.index')->with('allContacts', $allContacts);
     }
 
+    public function loadDataTable()
+    {
+        $allContacts = Contact::orderBy('created_at', 'desc')->paginate(3);
+        return response()->json(['allContacts' => $allContacts]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -38,7 +44,9 @@ class ContactController extends Controller
     {
         $data = $request->all();
         Contact::create($data);
-        return redirect('contacts')->with('message', 'Add successfully!');
+        //return redirect('contacts')->with('message', 'Add successfully!');
+        return response()->json(['message' => 'You have successfully added contact.']);
+        //return view('contact.index');
     }
 
     /**
@@ -55,7 +63,14 @@ class ContactController extends Controller
     public function edit(string $id)
     {
         $item = Contact::find($id);
-        return view('contact.edit')->with('item', $item);
+        if ($item) {
+            //return response()->json(['item' => $item]);
+            return view('contact.edit')->with('item', $item);
+        }
+        else {
+            return response()->json(['message' => 'Contact Not Found!']);
+        }
+        
     }
 
     /**
@@ -64,8 +79,13 @@ class ContactController extends Controller
     public function update(Request $request, string $id)
     {
         $item = Contact::find($id);
-        $item->update($request->all());
-        return redirect('contacts')->with('message', 'Edit successfully!');
+        if ($item) {
+            $item->update($request->all());
+            return response()->json(['message' => 'Update successfully!']);
+        }
+        else {
+            return response()->json(['message' => 'Contact Not Found!']);
+        } 
     }
 
     /**
@@ -74,7 +94,8 @@ class ContactController extends Controller
     public function destroy(string $id)
     {
         Contact::destroy($id);
-        return redirect('contacts')->with('message', 'Delete successfully!');
+        //return redirect('contacts')->with('message', 'Delete successfully!');
+        return response()->json(['message' => 'You have successfully deleted contact.']);
     }
 
     public function destroyItemsSelected (Request $request)

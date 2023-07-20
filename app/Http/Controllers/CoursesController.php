@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
+use Illuminate\Contracts\Session\Session;
 
 class CoursesController extends Controller
 {
@@ -18,26 +20,42 @@ class CoursesController extends Controller
      */
     public function search(Request $request) {
         $courses = new Course();
-
+        session()->put('pageCourses',$request->page);
+        session()->put('sortCourses',$request->sort);
+        session()->put('keyCourses',$request->key);
+       
         $search = Course::where('name','LIKE','%'.$request->key.'%');
         if ($request->sort == 'increaseName') {
             $search= $search->orderBy('name','asc');
         }else if ($request->sort == 'reduceName') {
             $search= $search->orderBy('name','desc');
 
+        }else if ($request->sort == 'reduceTime') {
+            $search= $search->orderBy('created_at','desc');
+
+        }else if ($request->sort == 'increaseTime') {
+            $search= $search->orderBy('created_at','asc');
+
         }
-        $search= $search->paginate(4, ['*'], 'page', $request->page);
+        $perPage = 4;
+    $searchResult = $search->paginate($perPage, ['*'], 'page', $request->page);
+    $search = $search->paginate($perPage, ['*'], 'page', $request->page);
+    
+    // Trích xuất thông tin cần thiết từ đối tượng phân trang
+    
+    $paginationLinks = $searchResult->links()->toHtml();
+        
+        
         $view =  View::make('componentChirld.tablelist')->with('courses', $search)->render();
             return  response()->json([
                 'blade'=> $view,
                 'courses'=> $courses->getAllUserIds(),
-                'search'=>$search
+                'search'=>$search,
+                'link'=>$paginationLinks
             ]);
 
     }
-    public function add()  {
-        return view('courses.addcourses');
-    }
+    
     public function index()
     {
         
@@ -54,6 +72,13 @@ class CoursesController extends Controller
         return view('courses.tablecourses')->with('courses',Course::all());
 
     }
+    public function getPage()
+    {
+        session()->forget('courses');
+
+        $html = view()->file(resource_path('views/courses/tablecourses.blade.php'))->render();
+        return $html;
+    }
     public function all() {
         $courses = new Course();
         return  response()->json([
@@ -67,7 +92,9 @@ class CoursesController extends Controller
      */
     public function create()
     {
-        //
+        $view =  View::make('courses.add')->render();
+       
+       return $view;
          
     }
 
@@ -89,15 +116,17 @@ class CoursesController extends Controller
             $viewsc =  View::make('courses.error')->render();
             return  response()->json([
                 'validate'=>$validate->errors()->messages(),
-                'success'=>$viewsc
+                'viewsuccess'=>$viewsc,
+                'success'=> false
             ]);
         }else{
             $course = new Course($request->all());
         $course->save();
         $viewsc =  View::make('courses.success')->render();
             return  response()->json([
+                'viewsuccess'=>$viewsc,
                 
-                'success'=>$viewsc,
+                'success'=>true,
             ]);
         }
         
@@ -112,10 +141,10 @@ class CoursesController extends Controller
      */
     public function show($id)
     {
-        $course = Course::find($id);
-        return response()->json([
-            'course'=> $course
-        ]);
+        
+        $view =  View::make('courses.edit')->with('course', Course::find($id))->render();
+       
+       return $view;
     }
 
     /**
@@ -145,11 +174,11 @@ class CoursesController extends Controller
             'description'=>'required',
         ]);
         if ($validate->fails()) {
-        $viewsc =  View::make('courses.error')->render();
+        
 
             return response()->json([
                 'validate'=>$validate->errors()->messages(),
-                'success'=>$viewsc,
+                'success'=>false,
 
 
 
@@ -161,10 +190,10 @@ class CoursesController extends Controller
         $course->startdate = $request->startdate;
         $course->enddate = $request->enddate;
         $course->save();
-        $viewsc =  View::make('courses.success')->render();
+        
             return  response()->json([
                 
-                'success'=>$viewsc,
+                'success'=>true,
             ]);
         
     }
