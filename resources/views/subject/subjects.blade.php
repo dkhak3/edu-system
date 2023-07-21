@@ -1,50 +1,67 @@
 @extends("layout")
+<title>Subjects</title>
 @section('content')
-    <div class="Title" id="tableSubject">
-        <div class="col">
-            <div class="col-md-4 mx-auto">
-                <h2>Subjects</h2> 
-            </div>
-            
-            <div class="col-md-4 ms-auto">
-                <form class="d-flex" role="search">
-                    <input class="form-control me-2 input-search" type="search" placeholder="Search" aria-label="Search">
-                    {{-- <button class="btn btn-outline-success" type="submit">Search</button> --}}
-                  </form>
-            </div>
-            <div class="col-md-4">
-                <button class="link-to-add btn btn-success">Add Subject</button>
-                <button class="link-to-delete btn btn-danger">Delete Selected</button>
-            </div>
+
+<div class="dashboard-children active">
+    {{-- Heading --}}
+    <div class="mb-5 d-flex justify-content-between align-items-center">
+        <div class="">
+            <h1 class="dashboard-heading">
+                Subjects
+            </h1>
+            <p class="dashboard-short-desc">Manage your subject</p>
         </div>
-    <table class="table table-striped">
-        <thead>
-          <tr>
-            <th scope="col">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="checkAll">
-                    <label class="form-check-label" for="checkAll">
-                        Check&nbsp;All
-                    </label>
-            </div>
-            </th>
-            <th scope="col">Name <button class="btn-a-z" id="a-z"><i class="fa-solid fa-arrow-down-a-z"></i></button>
-                <button class="btn-z-a" id="z-a"><i class="fa-solid fa-arrow-down-z-a"></i></button>
-            </th>
-            <th scope="col">Description</th>
-            <th scope="col">Action</th>
-          </tr>
-        </thead>
-        <tbody id="tbSubject"></tbody>
-        </tbody>
-      </table>
+        {{-- <a href="{{ route('add') }}" class="inline-block"> --}}
+        {{-- <a href="" class="inline-block link-to-add" data-bs-toggle="modal" data-bs-target="#modalAdd"> --}}
+        <div class="inline-block" id="link-to-add">
+            <button class="btn-style menu-item link-to-add">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+            Create subject</button>
+        </div>
     </div>
 
+    <form class="mb-5 d-flex justify-content-end" autocomplete="off">
+        <input type="text" placeholder="Search..." id="keywords" name="keywords" class="input-search">
+        <button class="btn btn-primary menu-item" style="margin-left: 10px;">Search</button>
+    </form>
 
+    <div class="table-main">
+        <table>
+            <thead>
+              <tr>
+                <th>
+                    <input type="checkbox" id="select_all_ids checkAll">
+                </th>
+                <th>Name
+                    <button class="btn-a-z" id="a-z"><i class="fa-solid fa-arrow-down-a-z"></i></button>
+                    <button class="btn-z-a" id="z-a"><i class="fa-solid fa-arrow-down-z-a"></i></button>
+                </th>
+                <th>Description</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="tbSubject"></tbody>
+            </tbody>
+          </table>
+    </div>
+    <ul class="pagination">     
+        <li class="page-item disabled" aria-disabled="true" aria-label="« Previous">
+        <span class="page-link" aria-hidden="true">‹</span>
+        </li>
+        <li class="page-item active" aria-current="page"><span class="page-link">1</span></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item">
+        <a class="page-link" href="#" rel="next" aria-label="Next »">›</a>
+        </li>
+    </ul>
+</div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
     integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
+        document.getElementById("dashboard-content").classList.add("d-none");
         //Khởi tạo sự kiện trước khi load
         $(document).ready(function() {
             //Bắt sự kiện cho btn-add
@@ -111,12 +128,34 @@
                                 <td>${e.name}</td>
                                 <td>${e.description}</td>
                                 <td>
-                                <button data-item="${e.id}" class="btn btn-delete btn-danger">
-                                    Delete
-                                </button>
-                                <button data-item="${e.id}" class="btn btn-edit btn-info">
-                                    Update
-                                </button>
+                                    <div class="actions-style">
+                                    {{-- Edit --}}
+                                    <a class="btn-edit" data-item="${e.id}" class="menu-item" data-bs-toggle="tooltip"
+                                        title="Edit">
+                                        <span
+                                            class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon-action" fill="none" viewBox="0 0 24 24"
+                                                stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                                                </path>
+                                            </svg>
+                                        </span>
+                                    </a>
+                                    {{-- Delete --}}
+
+                                    <button class="btn-delete" data-item="${e.id}" data-bs-toggle="tooltip" title="Delete">
+                                        <span
+                                            class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon-action" fill="none" viewBox="0 0 24 24"
+                                                stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                                </path>
+                                            </svg>
+                                        </span>
+                                    </button>
+                                </div>
                                 </td>
                             </tr>`;
                             }).join('')

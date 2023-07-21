@@ -1,63 +1,65 @@
 
-    <h2>Add Subject</h2>
-    <form >
+<title>Add new subject</title>
+
+{{-- New Lecturers --}}
+<div class="dashboard-children active subjectRender">
+    {{-- Heading --}}
+    <div class="mb-5 d-flex justify-content-between align-items-center">
+        <div class="">
+            <h1 class="dashboard-heading">
+                Add New subject
+            </h1>
+            <p class="dashboard-short-desc">Add your new subject</p>
+        </div>
+    </div>
+
+    {{-- Form --}}
+    <form id="form" method="POST" enctype="multipart/form-data" class="form-main">
         @csrf
-        <div class="mb-3">
-        <label for="nameInput" class="form-label">Name</label>
-        <input type="text" class="form-control info" name="Name" id="nameInput" placeholder="Input Name">
-        <span class="validate"></span>
-        </div>
-
-        <div class="mb-3">
-        <label for="descriptionInput" class="form-label">Description</label>
-        <textarea class="form-control info" id="descriptionInput" name="Des" rows="5" placeholder="Input Description"></textarea>
-        <span class="validate"></span>
-        </div>
-
-        <button class="btn btn-success btn-add" id="btn-add">Add</button>
-        <button class="btn btn-danger btn-cancel" id="btn-cancel">Cancel</button>   
-    </form>  
-    {{-- <div class="div">
-        <div class="modal" tabindex="-1">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title">Modal title</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                  <p>Modal body text goes here.</p>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
-              </div>
-            </div>
-          </div>
-    </div> --}}
-{{-- 
-    <div class="success-form">
-        <div class="message">
-            <div class="title mt-5">
-                <i class="fa-solid fa-check"></i>
-
-            </div>
-            <div class="content-succsess">
-                <div class="title">
-                    Success
-                </div>
-                <div class="decription-sc mb-3">
-                    Add course successfully!
+        {{-- Name, Address --}}
+        <div class="row">
+            <div class="col-md">
+                <div class="form-input form-group">
+                    <label for="name">Name</label>
+                    <div>
+                        <input type="text" placeholder="Enter your name..." name="name" id="nameInput" class="form-control"
+                            autofocus>
+                    </div>
+                    {{-- @if ($errors->has('lecturer_name'))
+                    <span class="text-danger">{{ $errors->first('lecturer_name') }}</span>
+                    @endif --}}
+                    <span class="form-message"></span>
                 </div>
             </div>
-            <div class="mb-5">
-                <button class="btn s-okay btn-primary">OKAY</button>
-                <button class="btn s-ctn btn-primary mr-3">Tiếp Tục</button>
+            <div class="col-md">
+                <div class="form-input form-group">
+                    <label for="descriptionInput">Description</label>
+                    <div>
+                        <input type="text" placeholder="Enter your description..." name="descriptionInput" id="descriptionInput"
+                            class="form-control">
+                    </div>
+                    {{-- @if ($errors->has('lecturer_address'))
+                    <span class="text-danger">{{ $errors->first('lecturer_address') }}</span>
+                    @endif --}}
+                    <span class="form-message"></span>
+                </div>
             </div>
         </div>
-    </div> --}}
+        
 
+        
+
+        <button type="button" id="btn-add" class="btn-primary-style btn-submit form-submit btn-add">
+            <span class="spinner-border-xl spinner" role="status" aria-hidden="true"></span>
+            Add new subject
+        </button>
+    </form>
+    {{-- <button type="button" id="btn-cancel" class="btn btn-danger btn-cancel">
+        <span class="spinner-border-xl spinner" role="status" aria-hidden="true"></span>
+        Cancel
+    </button> --}}
+</div>
+   
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
     integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
