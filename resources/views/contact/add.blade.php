@@ -13,7 +13,7 @@
     </div>
 
     {{-- Form --}}
-    <form id="form" method="POST" enctype="multipart/form-data" class="form-main">
+    <form id="form" class="form-main" method="POST" enctype="multipart/form-data" accept-charset="UTF-8">
         @csrf
         {{-- Name, Address --}}
         <div class="row">
@@ -23,6 +23,8 @@
                     <div>
                         <input type="text" placeholder="Enter your name..." name="name" id="name" class="form-control"
                             autofocus>
+                        <div class="valid-feedback">Valid data.</div>
+                        <div class="invalid-feedback">Invalid data.</div>
                     </div>
                     {{-- @if ($errors->has('lecturer_name'))
                     <span class="text-danger">{{ $errors->first('lecturer_name') }}</span>
@@ -36,6 +38,8 @@
                     <div>
                         <input type="text" placeholder="Enter your address..." name="address" id="address"
                             class="form-control">
+                        <div class="valid-feedback">Valid data.</div>
+                        <div class="invalid-feedback">Invalid data.</div>
                     </div>
                     {{-- @if ($errors->has('lecturer_address'))
                     <span class="text-danger">{{ $errors->first('lecturer_address') }}</span>
@@ -52,6 +56,8 @@
                     <div>
                         <input type="text" placeholder="Enter your phone..." name="phone" id="phone"
                             class="form-control">
+                        <div class="valid-feedback">Valid data.</div>
+                        <div class="invalid-feedback">Invalid data.</div>
                     </div>
                     {{-- @if ($errors->has('lecturer_phone'))
                     <span class="text-danger">{{ $errors->first('lecturer_phone') }}</span>
@@ -65,6 +71,8 @@
                     <div>
                         <input type="date" placeholder="Enter your birthday..." name="birthday" id="birthday"
                             class="form-control">
+                        <div class="valid-feedback">Valid data.</div>
+                        <div class="invalid-feedback">Invalid data.</div>
                     </div>
                     {{-- @if ($errors->has('lecturer_birthday'))
                     <span class="text-danger">{{ $errors->first('lecturer_birthday') }}</span>
@@ -73,113 +81,59 @@
                 </div>
             </div>
         </div>
-
-        <button type="button" id="btn_submit_add_contact" class="btn-primary-style btn-submit form-submit">
+        <button type="submit" id="btn_submit_add_contact" class="btn-primary-style btn-submit form-submit">
             <span class="spinner-border-xl spinner" role="status" aria-hidden="true"></span>
             Add new contact
         </button>
     </form>
 </div>
 
-{{-- <script src="{{ asset ('/js/formadd_edit.js') }}"></script> --}}
+<script src="{{ asset ('/js/validate_form.js') }}"></script>
+<script src="{{ asset ('/js/toast.js') }}"></script>
 
 <script>
-    // Change menu item active
-    document.getElementById("menuItem_contact").classList.add("active");
-    document.getElementById("dashboard").classList.remove("active");
-
-    $(document).on('click', '#btn_submit_add_contact', function (e) {
+    $('form').submit(function (e) {
         e.preventDefault();
-
-        var data = {
-            'name' : $('#name').val(),
-            'address' : $('#address').val(),
-            'phone' : $('#phone').val(),
-            'birthday' : $('#birthday').val(),
+        if (checkFormInput()) {
+            displayLoader();
             
-        }
-
-        $.ajax({
-            url: 'http://127.0.0.1:8000/api/contacts/store',
-            type: 'POST',
-            data: data,
-            dataType: 'json',
-            success: function(response) {
-                showSuccessToast(response.message);
-                // Delete values of form
-                $('#name').val('');
-                $('#address').val('');
-                $('#phone').val('');
-                $('#birthday').val('');
+            var data = {
+                _token: "{{ csrf_token() }}",
+                'name' : $('#name').val(),
+                'address' : $('#address').val(),
+                'phone' : $('#phone').val(),
+                'birthday' : $('#birthday').val(),
             }
-        });
+            
+            $.ajax({
+                url: 'contacts/store',
+                type: 'POST',
+                data: data,
+                dataType: 'json',
+                success: function(response) {
+                    removeLoader();
+                    showSuccessToast(response.message);
+                    refreshForm();
+                }
+            });
+        }
+        else {
+            console.log('Sai input');
+        }
+        
     });
 
-    // Toast
-    function toast({ 
-        title = "", 
-        message = "", 
-        type = "info", 
-        duration = 3000 
-    }) {  
-        const main = document.getElementById("toast");
-        if (main) {
-        const toast = document.createElement("div");
-        
-        // Auto remove toast
-        const autoRemoveId = setTimeout(function () {
-        main.removeChild(toast);
-        }, duration + 1000);
+    function displayLoader() {
+        $('#btn_submit_add_contact').addClass('d-none');
+        $('form').append('<div class="load d-block text-center mx-auto"></div>');
+        for (let i = 0; i < 3; i++) {
+            $('.load').append('<div class="spinner-grow text-info ms-1"></div>');
+        }
+    }
+
+    function removeLoader() {
+        $('.load').remove();
+        $('#btn_submit_add_contact').removeClass('d-none');
+    }
     
-        // Remove toast when clicked
-        toast.onclick = function (e) {
-            if (e.target.closest(".toast__close")) {
-            main.removeChild(toast);
-            clearTimeout(autoRemoveId);
-            }
-        };
-        
-        //icon
-        const icons = {
-            success: "fas fa-check-circle",
-            error: "fas fa-exclamation-circle"
-        };
-        const icon = icons[type];
-        const delay = (duration / 1000).toFixed(2);
-    
-        toast.classList.add("toast", `toast--${type}`);
-        toast.style.animation = `slideInLeft ease .3s, fadeOut linear 1s ${delay}s forwards`;
-    
-        toast.innerHTML = `
-                        <div class="toast__icon">
-                            <i class="${icon}"></i>
-                        </div>
-                        <div class="toast__body">
-                            <h3 class="toast__title">${title}</h3>
-                            <p class="toast__msg">${message}</p>
-                        </div>
-                        <div class="toast__close">
-                            <i class="fas fa-times"></i>
-                        </div>
-                    `;
-        main.appendChild(toast);
-        }
-        }
-        // Hiển thị
-        function showSuccessToast(message) {
-            toast({
-                title: "Successfully!",
-                message: message,
-                type: "success",
-                duration: 5000
-            });
-        }
-        function showErrorToast(message) {
-            toast({
-                title: "Error!",
-                message: message,
-                type: "error",
-                duration: 5000
-            });
-        }
 </script>

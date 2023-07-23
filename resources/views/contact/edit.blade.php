@@ -12,7 +12,7 @@
     </div>
 
     {{-- Form --}}
-    <form method="POST" autocomplete="off" class="form-main">
+    <form class="form-main">
         @csrf
         @method('PUT')
         {{-- Name, Address --}}
@@ -21,8 +21,10 @@
                 <div class="form-input form-group">
                     <label for="name">Name</label>
                     <div>
-                        <input type="text" name="name" id="name" class="form-control"
-                            value="{{ $item->name }}" placeholder="Enter your name...">
+                        <input type="text" name="name" id="name" class="form-control" value="{{ $item->name }}"
+                            placeholder="Enter your name...">
+                        <div class="valid-feedback">Valid data.</div>
+                        <div class="invalid-feedback">Invalid data.</div>
                     </div>
                     {{-- @if ($errors->has('lecturer_name'))
                     <span class="text-danger">{{ $errors->first('lecturer_name') }}</span>
@@ -34,8 +36,10 @@
                 <div class="form-input form-group">
                     <label for="address">Address</label>
                     <div>
-                        <input type="text" name="address" id="address" class="form-control"
-                            value="{{ $item->address }}" placeholder="Enter your address...">
+                        <input type="text" name="address" id="address" class="form-control" value="{{ $item->address }}"
+                            placeholder="Enter your address...">
+                        <div class="valid-feedback">Valid data.</div>
+                        <div class="invalid-feedback">Invalid data.</div>
                     </div>
                     {{-- @if ($errors->has('lecturer_address'))
                     <span class="text-danger">{{ $errors->first('lecturer_address') }}</span>
@@ -50,8 +54,10 @@
                 <div class="form-input form-group">
                     <label for="phone">Phone</label>
                     <div>
-                        <input type="text" name="phone" id="phone" class="form-control"
-                            value="{{ $item->phone }}" placeholder="Enter your phone...">
+                        <input type="text" name="phone" id="phone" class="form-control" value="{{ $item->phone }}"
+                            placeholder="Enter your phone...">
+                        <div class="valid-feedback">Valid data.</div>
+                        <div class="invalid-feedback">Invalid data.</div>
                     </div>
                     {{-- @if ($errors->has('lecturer_phone'))
                     <span class="text-danger">{{ $errors->first('lecturer_phone') }}</span>
@@ -65,6 +71,8 @@
                     <div>
                         <input type="date" name="birthday" id="birthday" class="form-control"
                             value="{{ $item->birthday }}" placeholder="Enter your birthday...">
+                        <div class="valid-feedback">Valid data.</div>
+                        <div class="invalid-feedback">Invalid data.</div>
                     </div>
                     {{-- @if ($errors->has('lecturer_birthday'))
                     <span class="text-danger">{{ $errors->first('lecturer_birthday') }}</span>
@@ -81,33 +89,46 @@
     </form>
 </div>
 
-{{-- <script src="{{ asset ('/js/formadd_edit.js') }}"></script> --}}
+<script src="{{ asset ('/js/validate_form.js') }}"></script>
+<script src="{{ asset ('/js/toast.js') }}"></script>
 
 <script>
-    document.getElementById("menuItem_contact").classList.add("active");
-    document.getElementById("dashboard").classList.remove("active");
-
-    $(document).on('click', '#btn_submit_edit_contact', function (e){
+    $('form').submit(function (e){
         e.preventDefault();
-
-        var data = {
-            'name' : $('#name').val(),
-            'address' : $('#address').val(),
-            'phone' : $('#phone').val(),
-            'birthday' : $('#birthday').val(),
-            
-        }
-
-        $.ajax({
-            url: 'http://127.0.0.1:8000/api/contacts/update/'+ {{ $item->id }},
-            type: 'POST',
-            data: data,
-            dataType: 'json',
-            success: function(response) {
-                showSuccessToast(response.message);
-                window.location.href = '/contacts';
-                
+        if (checkFormInput()) {
+            addLoaderSpinner();
+            var data = {
+                'name' : $('#name').val(),
+                'address' : $('#address').val(),
+                'phone' : $('#phone').val(),
+                'birthday' : $('#birthday').val(),
             }
-        });
+
+            $.ajax({
+                url: 'contacts/update/'+ {{ $item->id }},
+                type: 'PUT',
+                data: data,
+                dataType: 'json',
+                success: function(response) {
+                    removeLoaderSpinner();
+                    showSuccessToast(response.message);
+                    window.location.href = '/contacts';
+                }
+            });
+        }
     });
+
+    function addLoaderSpinner() {
+        $('#btn_submit_edit_contact').addClass('d-none');
+        $('form').append('<div class="load d-block text-center mx-auto"></div>');
+        for (let i = 0; i < 3; i++) {
+            $('.load').append('<div class="spinner-grow text-info ms-1"></div>');
+        }
+    }
+
+    function removeLoaderSpinner() {
+        $('.load').remove();
+        $('#btn_submit_edit_contact').removeClass('d-none');
+    }
+
 </script>

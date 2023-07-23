@@ -33,20 +33,18 @@ Route::delete("/lecturer/selected-lecturer", [LecturerController::class, 'delete
 
 
 // Contact ---------------------------------------------------------------------------------------
-// Route load data table by Ajax
-Route::get('loadDataTable', [ContactController::class, 'loadDataTable']);
-// Route get index
+Route::get('contacts/load-data-table', [ContactController::class, 'loadDataTable']);
 Route::resource('contacts', ContactController::class);
-// Route change into add page
 Route::get('contacts/create', [ContactController::class, 'create']);
-// Route add by Ajax
-Route::post('contacts', [ContactController::class, 'store']);
-// Route delete by Ajax
-Route::delete('delete-contact/{id}', [ContactController::class, 'destroy']);
-//Route update by Ajax
-Route::get('edit-contact/{id}', [ContactController::class, 'edit']);
-Route::put('update-contact/{id}', [ContactController::class, 'update']);
-Route::delete('contacts-destroyItemsSelected', [ContactController::class, 'destroyItemsSelected'])->name('destroyItemsSelected');
+Route::post('contacts/store', [ContactController::class, 'store']);
+Route::delete('contacts/destroy/{id}', [ContactController::class, 'destroy']);
+Route::get('contacts/edit/{id}', [ContactController::class, 'edit']);
+Route::put('contacts/update/{id}', [ContactController::class, 'update']);
+Route::get('search', [ContactController::class, 'search']);
+Route::delete('contacts-destroyAllSelectedRecord', [ContactController::class, 'destroyAllSelectedRecord'])->name('contacts.destroyAllSelectedRecord');
+// Sort
+Route::get('sort-name', [ContactController::class, 'sortName']);
+Route::get('sort-created_at', [ContactController::class, 'sortCreatedAt']);
 
 // ------------------------------------------------------------------------------------------------
 

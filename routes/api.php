@@ -65,8 +65,3 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Contact
-Route::get('/contacts/create', [ContactController::class,'create']);
-Route::post('/contacts/store', [ContactController::class,'store']);
-Route::get('/contacts/edit/{id}', [ContactController::class,'edit']);
-Route::post('/contacts/update/{id}', [ContactController::class,'update']);

@@ -285,6 +285,9 @@ table {
     margin-left: auto;
     margin-right: auto;
 }
+.btn-primary-style:hover {
+    background-color: #0c4b9d;
+}
 
 /* loader */
 .loader {
@@ -673,4 +676,8 @@ table {
 .toast__close:hover {
     opacity: 0.8 !important;
     cursor: pointer !important;
+}
+
+.icon-sort:hover{
+    color: #0d6efd;
 }

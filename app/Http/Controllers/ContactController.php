@@ -11,15 +11,9 @@ class ContactController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
-        $allContacts=[];
-        if ($request->keywords != null) {
-            $allContacts = Contact::where('name', 'LIKE', '%' . $request->keywords . '%')->orderBy('created_at', 'desc')->paginate(3);
-        }
-        else {
-            $allContacts = Contact::orderBy('created_at', 'desc')->paginate(3);
-        }
+        $allContacts = Contact::orderBy('created_at', 'desc')->paginate(3);
         return view('contact.index')->with('allContacts', $allContacts);
     }
 
@@ -42,11 +36,8 @@ class ContactController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->all();
-        Contact::create($data);
-        //return redirect('contacts')->with('message', 'Add successfully!');
+        Contact::create($request->all());
         return response()->json(['message' => 'You have successfully added contact.']);
-        //return view('contact.index');
     }
 
     /**
@@ -81,7 +72,7 @@ class ContactController extends Controller
         $item = Contact::find($id);
         if ($item) {
             $item->update($request->all());
-            return response()->json(['message' => 'Update successfully!']);
+            return response()->json(['message' => 'You have successfully updated contact.']);
         }
         else {
             return response()->json(['message' => 'Contact Not Found!']);
@@ -93,16 +84,65 @@ class ContactController extends Controller
      */
     public function destroy(string $id)
     {
-        Contact::destroy($id);
-        //return redirect('contacts')->with('message', 'Delete successfully!');
-        return response()->json(['message' => 'You have successfully deleted contact.']);
+        if (Contact::find($id)){
+            Contact::destroy($id);
+            $allContacts = Contact::orderBy('created_at', 'desc')->paginate(3);
+            return response()->json([
+                'allContacts' => $allContacts,
+                'message' => 'You have successfully deleted contact.'
+            ]);
+        }
     }
 
-    public function destroyItemsSelected (Request $request)
+    public function destroyAllSelectedRecord(Request $request)
     {
         $ids = $request->ids;
         Contact::whereIn('id', $ids)->delete();
-        return response()->json(['message' => 'Delete items selected successfully']);
+        $allContacts = Contact::orderBy('created_at', 'desc')->paginate(3);
+        return response()->json([
+            'message' => 'Delete all selected successfully!',
+            'allContacts' => $allContacts
+        ]);
+    }
+
+    public function search(Request $request)
+    {
+        $result = [];
+        if ($request->keywords != null) {
+            $result = Contact::where('name', 'LIKE', '%' . $request->keywords . '%')->orderBy('created_at', 'desc')->paginate(3);
+        }
+        
+        return response()->json(['result' => $result]);
+    }
+
+    // Sort Name
+    public function sortName(Request $request)
+    {
+        $allContacts = [];
+        if ($request->status == 0){
+            $allContacts = Contact::orderBy('name', 'asc')->paginate(3);
+        }
+        else {
+            $allContacts = Contact::orderBy('name', 'desc')->paginate(3);
+        }
+        return response()->json([
+            'allContacts' => $allContacts
+        ]);
+    }
+
+    // Sort Created_at
+    public function sortCreatedAt(Request $request)
+    {
+        $allContacts = [];
+        if ($request->status == 0){
+            $allContacts = Contact::orderBy('created_at', 'asc')->paginate(3);
+        }
+        else {
+            $allContacts = Contact::orderBy('created_at', 'desc')->paginate(3);
+        }
+        return response()->json([
+            'allContacts' => $allContacts
+        ]);
     }
 
 }
