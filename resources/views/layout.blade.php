@@ -193,77 +193,7 @@
         });
     }
 </script>
-    <script>
-        
-        var temp = 0;
-        $(function(e) {
-            $("#select_all_ids").click(function() {
-                $(".checkbox_ids").prop("checked", $(this).prop("checked"));
 
-                if ($(this).prop('checked')) {
-                    $('#deleteAllSelectedRecord').css({
-                        display: 'block'
-                    });
-                } else {
-                    $('#deleteAllSelectedRecord').css({
-                        display: 'none'
-                    });
-                    temp = 0;
-                }
-            });
-
-            var arr_checkbox = $('.checkbox_ids');
-            $(arr_checkbox).each(function() {
-                $(this).on('click',function (e) {
-                if ($(this).prop('checked')) {
-                    temp++;
-                    if (temp == arr_checkbox.length) {
-                        $('#select_all_ids').prop('checked', true);
-                        $('#deleteAllSelectedRecord').css({display:'block'});
-                    }
-                }
-                else{
-                    temp--;
-                    $('#select_all_ids').prop('checked', false);
-                    $('#deleteAllSelectedRecord').css({display:'none'});
-                }  
-                
-                if (temp >= 1){
-                    $('#deleteAllSelectedRecord').css({display:'block'});
-                }
-                else{
-                    $('#select_all_ids').prop('checked', false);
-                    $('#deleteAllSelectedRecord').css({display:'none'});
-                }
-                });
-            });
-
-            $('#deleteAllSelectedRecord').click(function(e) {
-                e.preventDefault();
-                var all_ids = [];
-                $('input:checkbox[name=ids]:checked').each(function() {
-                    all_ids.push($(this).val())
-                });
-
-
-                $('#btnDelete').click(function(e) {
-                    $.ajax({
-                        url: "{{ route('deleteAll') }}",
-                        type: "DELETE",
-                        data: {
-                            ids: all_ids,
-                            _token: '{{ csrf_token() }}'
-                        },
-                        success: function(response) {
-                            $.each(all_ids, function(key, val) {
-                                $('#lecturer_ids' + val).remove();
-                            })
-                        }
-                    })
-                })
-            })
-        });
-    </script>
 </body>
 
 </html>

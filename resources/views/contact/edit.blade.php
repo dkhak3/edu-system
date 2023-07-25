@@ -112,7 +112,7 @@
                 success: function(response) {
                     removeLoaderSpinner();
                     showSuccessToast(response.message);
-                    window.location.href = '/contacts';
+                    //window.location.href = '/contacts';
                 }
             });
         }

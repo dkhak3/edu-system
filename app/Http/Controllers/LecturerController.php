@@ -8,59 +8,22 @@ use Illuminate\Support\Facades\DB;
 
 class LecturerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
-        $allLecturers=[];
-        if ($request->search != null) {
-            $allLecturers = Lecturer::where('name', 'LIKE', '%' . $request->search . '%')
-            ->orWHERE('phone',$request->search)
-            ->orWHERE('address',$request->search)
-            ->orWHERE('birthday',$request->search)
-            ->orderBy('created_at', 'desc')
-            ->paginate(5);
-        }
-        else {
-            // $allLecturers = Lecturer::orderBy('created_at', 'desc')->paginate(5);
-            $allLecturers = Lecturer::sortable()->paginate(5);
-        }
-        // return view('lecturer.index')->with('allLecturers', $allLecturers);
+        $allLecturers = Lecturer::sortable()->paginate(5);
         return view('lecturer.index', compact('allLecturers'));
     }
     
-
-    public function search(Request $request){
-        $lecturer = Lecturer::WHERE('name','like','%'. $request->search.'%')
-        ->orWHERE('phone',$request->search)->get();
-        return view('lecturer.search', compact('lecturer'));
-    }
-
     public function loadDataTableLecturer()
     {
-        $allLecturers = Lecturer::orderBy('created_at', 'desc')->paginate(3);
+        $allLecturers = Lecturer::orderBy('created_at', 'desc')->paginate(5);
         return response()->json(['allLecturers' => $allLecturers]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('lecturer.add');
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    // public function store(Request $request)
-    // {
-    //     $data = $request->all();
-    //     Lecturer::create($data);
-    //     //return redirect('contacts')->with('message', 'Add successfully!');
-    //     return response()->json(['message' => 'Add successfully!']);
-    // }
 
     public function store(Request $request)
     {
@@ -72,27 +35,9 @@ class LecturerController extends Controller
         ]);
 
         Lecturer::create($validatedData);
-        return response()->json(['message' => 'Add successfully!']);
+        return response()->json(['message' => 'Add new lecturer successfully!']);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-        $lecturer = Lecturer::find($id);
-        return response()->json([
-            'lecturer'=> $lecturer
-        ]);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         $item = Lecturer::find($id);
@@ -106,70 +51,33 @@ class LecturerController extends Controller
 
         if ($item) {
             $item->update($validatedData);
-            return response()->json(['message' => 'Update successfully!']);
+            return response()->json(['message' => 'Update lecturer successfully!']);
         }
         else {
-            return response()->json(['message' => 'Contact Not Found!']);
+            return response()->json(['message' => 'Lecturer Not Found!']);
         }
     }
 
-
-    // /**
-    //  * Update the specified resource in storage.
-    //  *
-    //  * @param  \Illuminate\Http\Request  $request
-    //  * @param  int  $id
-    //  * @return \Illuminate\Http\Response
-    //  */
-    // public function update(Request $request, $id)
-    // {
-    //     //
-    //     $validate = Validator::make($request->all(),[
-    //         'name' => 'required',
-    //         'address' => 'required',
-    //         'phone' => 'required',
-    //         'birthday' => 'required',
-    //     ]);
-    //     if ($validate->failed()) {
-    //         return response()->json([
-    //         'validate'=>$validate->errors()->messages(),
-    //         'success'=>false
-
-    //         ]);
-    //     }
-    //     $Lecturer = Lecturer::find($id);
-    //     $Lecturer->name = $request->name;
-    //     $Lecturer->address = $request->address;
-    //     $Lecturer->phone = $request->phone;
-    //     $Lecturer->birthday = $request->birthday;
-    //     $Lecturer->save();
-
-    //     $Lecturers = Lecturer::all();
-    //     return response()->json([
-    //         'Lecturers'=> $Lecturers,
-    //         'success'=>true
-    //     ]);
-    // }
-
-    public function editLecturer($id)  {
-        return view('Lecturer.edit')->with('id',$id);
-    }
-
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        Lecturer::destroy($id);
-        //return redirect('contacts')->with('message', 'Delete successfully!');
-        return response()->json(['message' => 'Delete successfully!']);
+        if (Lecturer::find($id)){
+            Lecturer::destroy($id);
+            $allLecturers = Lecturer::orderBy('created_at', 'desc')->paginate(5);
+            return response()->json([
+                'allLecturers' => $allLecturers,
+                'message' => 'You have successfully deleted Lecturer.'
+            ]);
+        }
     }
 
     public function deleteAll(Request $request) {
         $ids = $request->ids;
         Lecturer::whereIn('id', $ids)->delete();
-        return response()->json(["success" => "Lecturer have been deleted!"]);
+        $allLecturers = Lecturer::orderBy('created_at', 'desc')->paginate(5);
+        return response()->json([
+            'message' => 'Delete all selected successfully!',
+            'allLecturers' => $allLecturers
+        ]);
     }
 
     public function destroyItemsSelected (Request $request)
@@ -179,14 +87,56 @@ class LecturerController extends Controller
         return response()->json(['message' => 'Delete items selected successfully']);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function add()  {
-        return view('lecturer.add');
+    public function edit(string $id)
+    {
+        $item = Lecturer::find($id);
+        if ($item) {
+            return view('lecturer.edit')->with('item', $item);
+        }
+        else {
+            return response()->json(['message' => 'Contact Not Found!']);
+        }
     }
 
+    public function search(Request $request)
+    {
+        $result = [];
+        if ($request->keywords != null) {
+            $result = Lecturer::where('name', 'LIKE', '%' . $request->keywords . '%')->orderBy('created_at', 'desc')->paginate(5);
+        } else if ($request->keywords == null) {
+            $result = Lecturer::orderBy('created_at', 'desc')->paginate(5);
+        } else {
+            return response()->json(['message' => 'Not Found!']);
+        }
+        
+        return response()->json(['result' => $result]);
+    }
+
+    public function sortName(Request $request)
+    {
+        $allLecturers = [];
+        if ($request->status == 0){
+            $allLecturers = Lecturer::orderBy('name', 'asc')->paginate(5);
+        }
+        else {
+            $allLecturers = Lecturer::orderBy('name', 'desc')->paginate(5);
+        }
+        return response()->json([
+            'allLecturers' => $allLecturers
+        ]);
+    }
+
+    public function sortCreatedAt(Request $request)
+    {
+        $allLecturers = [];
+        if ($request->status == 0){
+            $allLecturers = Lecturer::orderBy('created_at', 'asc')->paginate(5);
+        }
+        else {
+            $allLecturers = Lecturer::orderBy('created_at', 'desc')->paginate(5);
+        }
+        return response()->json([
+            'allLecturers' => $allLecturers
+        ]);
+    }
 }

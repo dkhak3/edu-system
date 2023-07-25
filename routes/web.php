@@ -22,15 +22,16 @@ Route::get('/', function () {
 
 // Lecturer
 Route::resource('lecturers', LecturerController::class);
-// Route load data table by Ajax
 Route::get('loadDataTableLecturer', [LecturerController::class, 'loadDataTableLecturer']);
-// Route add by Ajax
-Route::post('lecturers', [LecturerController::class, 'store']);
-// Route delete by Ajax
+Route::get('lecturers/create', [LecturerController::class, 'create']);
+Route::post('lecturers/store', [LecturerController::class, 'store']);
+Route::get('lecturers/edit/{id}', [LecturerController::class, 'edit']);
+Route::put('lecturers/update/{id}', [LecturerController::class, 'update']);
 Route::delete('delete-lecturer/{id}', [LecturerController::class, 'destroy']);
-Route::delete('contacts-destroyItemsSelected', [ContactController::class, 'destroyItemsSelected'])->name('destroyItemsSelected');
 Route::delete("/lecturer/selected-lecturer", [LecturerController::class, 'deleteAll'])->name("deleteAll");
-
+Route::get('searchLecturers', [LecturerController::class, 'search']);
+// Route::get('sortLecturersName', [LecturerController::class, 'sortName']);
+// Route::get('sortLecturersCreatedAt', [LecturerController::class, 'sortCreatedAt']);
 
 // Contact ---------------------------------------------------------------------------------------
 Route::get('contacts/load-data-table', [ContactController::class, 'loadDataTable']);
