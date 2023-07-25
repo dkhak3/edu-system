@@ -11,7 +11,7 @@
     </div>
 
     {{-- Form --}}
-    <form id="form-1">  
+    <form id="form-1">
 
         {{-- Name, Address --}}
         <div class="row">
@@ -19,8 +19,7 @@
                 <div class="form-input form-group">
                     <label for="lecturer_name">Name</label>
                     <div>
-                        <input type="text" id="course-name" placeholder="Enter your name..." name="course_name"
-                            >
+                        <input type="text" id="course-name" placeholder="Enter your name..." name="course_name">
                         <span class="validate"></span>
                     </div>
 
@@ -31,7 +30,7 @@
                     <label for="lecturer_address">Start Date</label>
                     <div>
                         <input type="datetime-local" id="start-date" placeholder="Enter your address" name="startdate"
-                            class="form-control" >
+                            class="form-control">
                         <span class="validate"></span>
                     </div>
 
@@ -43,8 +42,7 @@
                 <div class="form-input form-group">
                     <label for="lecturer_phone">End Date</label>
                     <div>
-                        <input type="datetime-local" id="end-date" name="enddate" class="form-control"
-                            >
+                        <input type="datetime-local" id="end-date" name="enddate" class="form-control">
                         <span class="validate"></span>
                     </div>
 
@@ -61,7 +59,7 @@
                 </div>
             </div>
         </div>
-        <button id="btnEditCourse" class="btn-primary-style " >
+        <button id="btnEditCourse" class="btn-primary-style ">
             <span class="spinner-border-xl spinner" role="status" aria-hidden="true"></span>
             Create course
         </button>
@@ -72,32 +70,51 @@
     integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
-    
     $(document).ready(function() {
-        $(window).on('popstate', function () {
-            console.log(window.location.href);
+        $(window).on('popstate', function() {
+        $('.loader').attr('class', 'loader');
+           
             if (window.location.href == 'http://127.0.0.1:8000/courses') {
-            $.ajax({
-                type: "GET",
+                $.ajax({
+                    type: "GET",
+
+                    url: "http://127.0.0.1:8000/api/courses/index",
+
+                    dataType: "html",
+                    success: function(response) {
+                        var history = window.history || window.location.history;
+                        history.pushState(null, null, `/courses`);
+                        $(".coursesRender").html(response);
+                    },
+                    complete: function () {
+        $('.loader').attr('class', 'loader loader--hidden');
                 
-                url: "http://127.0.0.1:8000/api/courses/index",
-              
-                dataType: "html",
-                success: function (response) {
-                    var history = window.history || window.location.history;
-                     history.pushState(null, null, `/courses`);
-                    $(".coursesRender").html(response);
-                }
-            });
-        }
-        
-    })
-    
 
 
+              }
+                });
+            }
+
+        })
+        $('#course-name').keyup(function (e) { 
+            $(".validate:eq(0)").text("");
+            console.log(1);
+        });
+        $('#start-date').change(function (e) { 
+            $(".validate:eq(1)").text("");
+            
+        });
+        $('#end-date').change(function (e) { 
+            $(".validate:eq(2)").text("");
+            
+        });
+        $('#decription-text').keyup(function (e) { 
+            $(".validate:eq(3)").text("");
+            
+        });
         $("#btnEditCourse").click(function(e) {
             e.preventDefault();
-            
+
             $(".validate:eq(0)").text("");
             $(".validate:eq(1)").text("");
             $(".validate:eq(2)").text("");
@@ -147,11 +164,11 @@
         $.ajax({
             url: `http://127.0.0.1:8000/api/courses/index`,
             type: "GET",
-            success: function (response) {
+            success: function(response) {
                 var history = window.history || window.location.history;
-              history.pushState(null, null, `/courses`);
+                history.pushState(null, null, `/courses`);
                 $(".coursesRender").html(response);
-                
+
             },
         })
     }
