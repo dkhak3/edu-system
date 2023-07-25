@@ -22,7 +22,7 @@
                 autocomplete="off">
                 <input type="text" id="search" placeholder="Search..." id="search" name="search"
                     class="input-search">
-                <button class="btn btn-primary menu-item" style="margin-left: 10px;">Search</button>
+                <button id="searchCourses" class="btn btn-primary menu-item" style="margin-left: 10px;">Search</button>
             </form>
 
             {{-- Table --}}
@@ -43,8 +43,8 @@
 
 
                 {{-- Data is empty --}}
-                {{-- @if ($courses->isEmpty())
-            <div class="alert alert-info d-flex">
+                
+            <div class="alert alert-info" style="display: none ">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="icon-alert">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -52,7 +52,7 @@
                 </svg>
                 Data is empty
             </div>
-        @else --}}
+    
                 {{-- Delete all selected --}}
                 <a id="deleteAllSelectedRecord" href="">
                     <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal2"
@@ -73,9 +73,11 @@
                             <th>
                                 <input type="checkbox" id="select_all_ids">
                             </th>
-                            <th>Name <i style="margin-left: 3px; padding: 5px; cursor: pointer;" id="sort" class="fa-solid fa-arrow-down-a-z"></i></th>
+                            <th style="white-space: nowrap;">Name <i style="margin-left: 3px; padding: 5px; cursor: pointer;" id="sort"
+                                    class="fa-solid fa-arrow-down-a-z"></i></th>
                             <th>Description</th>
-                            <th>Create At <i style="margin-left: 3px; padding: 5px; cursor: pointer;" id="sortTime" class="fa-solid fa-arrow-down-a-z"></i></th>
+                            <th style="white-space: nowrap;">Create At <i style="margin-left: 3px; padding: 5px; cursor: pointer;" id="sortTime"
+                                    class="fa-solid fa-arrow-down-a-z"></i></th>
                             <th>Start Date</th>
                             <th>End Date</th>
                             <th>Actions</th>
@@ -113,7 +115,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="page-courses"></div>
+            <div class="page-courses col-md-12"></div>
         </div>
 
         <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel2"
@@ -159,7 +161,7 @@
 
                 // course.list.checklist(arrCourses);
             });
-            
+
 
             $("#select_all_ids").click(function(e) {
                 if (e.target.checked) {
@@ -186,19 +188,30 @@
                     course.list.checklist(arrCourses, cheked);
                 }
             });
+            $('#deleteAllSelectedRecord').click(function (e) { 
+                e.preventDefault();
+                
+            });
 
             $("#search").keydown(function(e) {
 
 
+                dataCourses.keySearch = e.target.value;
                 if (e.keyCode === 13) {
                     e.preventDefault()
-                    dataCourses.keySearch = e.target.value;
                     course.list.load(dataCourses.page, dataCourses.keySearch, dataCourses.sort);
                     course.list.checklist(arrCourses);
                 }
 
             });
+            $("#searchCourses").click(function(e) {
 
+                e.preventDefault()
+                    course.list.load(dataCourses.page, dataCourses.keySearch, dataCourses.sort);
+                    course.list.checklist(arrCourses);
+                
+
+            });
             var tempSort = 0
             var tempSortTime = 0
             $('#sort').click(function(e) {
@@ -215,7 +228,7 @@
                     tempSort = 0
                 }
             })
-            
+
             $('#sortTime').click(function(e) {
                 if (tempSortTime == 0) {
                     dataCourses.sort = 'increaseTime'
@@ -230,9 +243,10 @@
                     tempSortTime = 0
                 }
             })
-            
+
             $("#createCourses").click(function(e) {
                 e.preventDefault();
+                $('.loader').attr('class', 'loader');
 
 
                 $.ajax({
@@ -245,11 +259,17 @@
                         var history = window.history || window.location.history;
                         history.pushState(null, null, `/courses/add/form`);
                         $(".coursesRender").html(response);
+                    },
+                    complete: function() {
+                        $('.loader').attr('class', 'loader loader--hidden');
+
+
+
                     }
                 });
 
             });
-            class DataList {
+            var DataList = class DataList {
                 constructor() {
                     this.url = "http://127.0.0.1:8000/api/courses/search";
                     this.container = "#renderTB";
@@ -274,9 +294,16 @@
                             $("#renderTB").html("");
                             $("#renderTB").html(JSON.parse(response).blade);
                             self.arrTemp = JSON.parse(response).courses
+                            if (JSON.parse(response).blade.split('\n')[0][1] != 't') {
+                                $('.alert-info').css('display','flex')
+                            }else{
+                                $('.alert-info').css('display','none')
+
+                            }
                             // self.bindEvent();
                             $('.page-courses').html(JSON.parse(response).link)
                             self.loadPage()
+                            self.checklist(arrCourses,cheked)
                         },
                         complete: function() {
                             $("#loading").hide();
@@ -285,13 +312,29 @@
                 }
                 loadPage() {
                     var self = this
-
+                    var pageElement = 1
+                    $('.page-item').each(function(i, e) {
+                        if ($(e).attr('class') == 'page-item active') {
+                            pageElement = parseInt($(e).text())
+                        }
+                    })
                     $('.page-link').each(function(i, element) {
+
                         $(element).click(function(e) {
 
                             e.preventDefault();
-                            console.log($(element).text());
-                            self.load($(element).text(), dataCourses.keySearch, dataCourses.sort)
+                            if ($(element).attr('rel') == 'next') {
+                                pageElement += 1
+                                self.load(pageElement, dataCourses.keySearch, dataCourses.sort)
+                            } else if ($(element).attr('rel') == 'prev') {
+                                pageElement -= 1
+
+                                self.load(pageElement, dataCourses.keySearch, dataCourses.sort)
+
+                            } else {
+
+                                self.load($(element).text(), dataCourses.keySearch, dataCourses.sort)
+                            }
                         });
                     });
                 }

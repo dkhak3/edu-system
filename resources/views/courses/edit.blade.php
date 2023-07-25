@@ -91,6 +91,22 @@
         }
         
     });
+    $('#course-name').keydown(function (e) { 
+            $(".validate:eq(0)").text("");
+            
+        });
+        $('#start-date').change(function (e) { 
+            $(".validate:eq(1)").text("");
+            
+        });
+        $('#end-date').change(function (e) { 
+            $(".validate:eq(2)").text("");
+            
+        });
+        $('#decription-text').change(function (e) { 
+            $(".validate:eq(3)").text("");
+            
+        });
         $("#course-name").val('{{ $course->name }}')
         $("#start-date").val('{{ $course->startdate }}')
         $("#end-date").val('{{ $course->enddate }}')
