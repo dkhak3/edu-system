@@ -13,8 +13,8 @@
             </h1>
             <p class="dashboard-short-desc">Manage your lecturer</p>
         </div>
-        {{-- <a href="{{ route('add') }}" class="inline-block"> --}}
-        {{-- <a href="" class="inline-block link-to-add" data-bs-toggle="modal" data-bs-target="#modalAdd"> --}}
+
+        {{-- New lecturer --}}
         <div class="inline-block" id="link-to-add">
             <button class="btn-style menu-item">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon">
@@ -70,7 +70,7 @@
                     <th>
                         <input type="checkbox" id="select_all_ids">
                     </th>
-                    <th>Id</th>
+                    <th style="width: 80px;">@sortablelink('id')</th>
                     <th>
                         {{-- Name
                         <button id="btn_sort_name" value="0"><i id="icon_sort_name"

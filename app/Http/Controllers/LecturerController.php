@@ -16,7 +16,7 @@ class LecturerController extends Controller
     
     public function loadDataTableLecturer()
     {
-        $allLecturers = Lecturer::orderBy('created_at', 'desc')->paginate(5);
+        $allLecturers = Lecturer::orderBy('created_at', 'asc')->paginate(5);
         return response()->json(['allLecturers' => $allLecturers]);
     }
 
@@ -62,7 +62,7 @@ class LecturerController extends Controller
     {
         if (Lecturer::find($id)){
             Lecturer::destroy($id);
-            $allLecturers = Lecturer::orderBy('created_at', 'desc')->paginate(5);
+            $allLecturers = Lecturer::orderBy('created_at', 'asc')->paginate(5);
             return response()->json([
                 'allLecturers' => $allLecturers,
                 'message' => 'You have successfully deleted Lecturer.'
@@ -73,7 +73,7 @@ class LecturerController extends Controller
     public function deleteAll(Request $request) {
         $ids = $request->ids;
         Lecturer::whereIn('id', $ids)->delete();
-        $allLecturers = Lecturer::orderBy('created_at', 'desc')->paginate(5);
+        $allLecturers = Lecturer::orderBy('created_at', 'asc')->paginate(5);
         return response()->json([
             'message' => 'Delete all selected successfully!',
             'allLecturers' => $allLecturers
@@ -102,9 +102,11 @@ class LecturerController extends Controller
     {
         $result = [];
         if ($request->keywords != null) {
-            $result = Lecturer::where('name', 'LIKE', '%' . $request->keywords . '%')->orderBy('created_at', 'desc')->paginate(5);
+            $result = Lecturer::where('name', 'LIKE', '%' . $request->keywords . '%')
+            ->orderBy('created_at', 'asc')
+            ->paginate(5);
         } else if ($request->keywords == null) {
-            $result = Lecturer::orderBy('created_at', 'desc')->paginate(5);
+            $result = Lecturer::orderBy('created_at', 'asc')->paginate(5);
         } else {
             return response()->json(['message' => 'Not Found!']);
         }
