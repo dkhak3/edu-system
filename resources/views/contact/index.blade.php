@@ -29,7 +29,6 @@
             style="margin-left: 10px;">Search</button>
     </form>
 
-
     {{-- Table --}}
     <div class="table-main">
         {{-- Thông báo alert --}}
@@ -55,8 +54,9 @@
             </svg>
             Data is empty
         </div>
-        @else
-        {{-- Delete all selected --}}
+        @endif
+
+        {{-- Button delete all selected record --}}
         <a id="deleteAllSelectedRecord" href="">
             <button type="button" data-bs-toggle="modal" data-bs-target="#modalDeleteAllSelectedRecord"
                 class="btn-style icon-delete menu-item">
@@ -68,7 +68,6 @@
                 </svg>
                 Delete all selected</button>
         </a>
-        @endif
 
         <table>
             <thead>
@@ -95,7 +94,8 @@
             </thead>
 
             <tbody>
-
+                {{-- <div type="text" id="arrLength" value="{{ count($allContacts) }}"> --}}
+                <div id="arrLength" class="d-none">{{ count($allContacts) }}</div>
                 @foreach ($allContacts as $item)
                 <tr id="{{ $item->id }}">
                     <td>
@@ -275,6 +275,9 @@
         //loadDataTable()
 
         function loadDataTable(data) {
+            //console.log(Object.keys(data).length);
+            $('#arrLength').html(Object.keys(data).length);
+            
             $('tbody').html('');
             $.each(data, function(key, item) {
                 $('tbody').append('<tr id="'+ item.id +'">\
@@ -371,22 +374,20 @@
             });
         });
 
-        // Submit Delete all selected contacts
         $(document).on('click', '#select_all', function (e) {
-            var display;
             if ($(this).prop('checked')) {
-                display = 'block';
+                $('#deleteAllSelectedRecord').css('display', 'block');
             }
             else {
-                display = 'none';
+                $('#deleteAllSelectedRecord').css('display', 'none');
             }
-            $('#deleteAllSelectedRecord').css('display', display);
             $('.checkbox_ids').prop('checked', $(this).prop('checked'));
         });
 
+        // Submit Delete all selected contacts
         $(document).on('click','#btnDeleteAllSelectedRecord', function (e) {
             e.preventDefault();
-
+            
             var all_ids = [];
             $('input:checkbox[name=ids]:checked').each(function () {
                 all_ids.push($(this).val());
@@ -394,7 +395,7 @@
             
             // Display loader
             displayLoader($('tbody'));
-            console.log(all_ids);
+            
             $.ajax({
                 url: "{{ route('contacts.destroyAllSelectedRecord') }}",
                 type: "DELETE",
@@ -435,6 +436,7 @@
                     $('.subjectRender').html(response);
                 }
             });
+            
         });
 
         // Search
@@ -442,7 +444,7 @@
             e.preventDefault();
             displayLoader($('tbody'));
             $.ajax({
-                url: '/search',
+                url: 'searchContacts',
                 data: {keywords: $('#keywords').val()},
                 dataType: "json",
                 success: function (response) {
@@ -450,76 +452,90 @@
                     loadDataTable(response.result.data);
                 },
                 error: function () {
-                    console.log('Error');
+                    showErrorToast('Can not search !');
+
                 }
             });
         });
 
         // Sort Name field
         $('#btn_sort_name').on('click', function () {
-            // Display loader
-            displayLoader($('tbody'));
-            var btn = $(this);
-            $.ajax({
-                url: '/sort-name',
-                data: {
-                    status: btn.val()
-                },
-                dataType: "json",
-                success: function (response) {
-                    // Load data 
-                    loadDataTable(response.allContacts.data);
-                    // Remove loader
-                    removeLoader();
-                    // Change icon
-                    changIconSortName();
-                    // Change status
-                    if (btn.val() == 0) {
-                        btn.val('1');
+            console.log($('#arrLength').html());
+            if (+$('#arrLength').html() > 1) {
+                // Display loader
+                displayLoader($('tbody'));
+                var btn = $(this);
+                $.ajax({
+                    url: '/sort-name',
+                    data: {
+                        status: btn.val()
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        // Load data 
+                        loadDataTable(response.allContacts.data);
+                        // Remove loader
+                        removeLoader();
+                        // Change icon
+                        changIconSortName();
+                        // Change status
+                        if (btn.val() == 0) {
+                            btn.val('1');
+                        }
+                        else {
+                            btn.val('0');
+                        }
+                    },
+                    error: function () {
+                        showErrorToast('Can not sort Name field !');
                     }
-                    else {
-                        btn.val('0');
-                    }
-                },
-                error: function () {
-                    console.log('Error');
-                }
-            });
+                });
+            }
+            else {
+                //showErrorToast('No need to sort !');
+                showWarningToast('No need to sort !');
+            }
+
         });
 
         // Sort Created_at field
         $('#btn_sort_created_at').on('click', function () {
-            // Display loader
-            displayLoader($('tbody'));
-            var btn = $(this);
-            $.ajax({
-                url: '/sort-created_at',
-                data: {
-                    status: btn.val()
-                },
-                dataType: "json",
-                success: function (response) {
-                    // Load data 
-                    loadDataTable(response.allContacts.data);
-                    // Remove loader
-                    removeLoader();
-                    // Change icon
-                    changIconSortCreatedAt();
-                    // Change status
-                    if (btn.val() == 0) {
-                        btn.val('1');
+            if ($('#arrLength').val() > 1) {
+                // Display loader
+                displayLoader($('tbody'));
+                var btn = $(this);
+                $.ajax({
+                    url: '/sort-created_at',
+                    data: {
+                        status: btn.val()
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        // Load data 
+                        loadDataTable(response.allContacts.data);
+                        // Remove loader
+                        removeLoader();
+                        // Change icon
+                        changIconSortCreatedAt();
+                        // Change status
+                        if (btn.val() == 0) {
+                            btn.val('1');
+                        }
+                        else {
+                            btn.val('0');
+                        }
+                    },
+                    error: function () {
+                        showErrorToast('Can not sort Created at field !');
                     }
-                    else {
-                        btn.val('0');
-                    }
-                },
-                error: function () {
-                    console.log('Error');
-                }
-            });
+                });
+            }
+            else{
+                showWarningToast('No need to sort !');
+            }
         });
 
-        // Update Pagination using Ajax
+        //Update Pagination using Ajax
         // $('.page-link').click(function (e) {
         //     e.preventDefault();
         //     //console.log($(this).html());
@@ -529,6 +545,7 @@
         //         type: 'GET',
         //         success: function (response) {
         //             console.log(response);
+        //             console.log(typeof(response));
         //         }
         //     });
         // });

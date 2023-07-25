@@ -42,20 +42,33 @@ function toast({ title = "", message = "", type = "info", duration = 3000 }) {
         main.appendChild(toast);
     }
 }
-// Hiển thị
-function showSuccessToast(message) {
-    toast({
-        title: "Successfully!",
-        message: message,
-        type: "success",
-        duration: 5000,
-    });
-}
-function showErrorToast(message) {
-    toast({
-        title: "Error!",
-        message: message,
-        type: "error",
-        duration: 5000,
-    });
-}
+
+    // Hiển thị
+    function showSuccessToast(message) {
+        toast({
+            title: "Successfully!",
+            message: message,
+            type: "success",
+            duration: 5000
+        });
+    }
+
+    function showErrorToast(message) {
+        toast({
+            title: "Error!",
+            message: message,
+            type: "error",
+            duration: 5000
+        });
+    }
+
+    function showWarningToast(message) {
+        toast({
+            title: "Warning!",
+            message: message,
+            type: "warning",
+            duration: 5000
+        });
+    }
+
+

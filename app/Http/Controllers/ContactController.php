@@ -111,7 +111,9 @@ class ContactController extends Controller
         if ($request->keywords != null) {
             $result = Contact::where('name', 'LIKE', '%' . $request->keywords . '%')->orderBy('created_at', 'desc')->paginate(3);
         }
-        
+        else {
+            $result = Contact::orderBy('created_at', 'desc')->paginate(3);
+        }
         return response()->json(['result' => $result]);
     }
 

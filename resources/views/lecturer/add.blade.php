@@ -118,7 +118,7 @@
             });
 
             $.ajax({
-                url: '/lecturers',
+                url: 'lecturers',
                 type: 'POST',
                 data: data,
                 dataType: 'json',

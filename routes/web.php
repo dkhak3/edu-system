@@ -41,7 +41,7 @@ Route::post('contacts/store', [ContactController::class, 'store']);
 Route::delete('contacts/destroy/{id}', [ContactController::class, 'destroy']);
 Route::get('contacts/edit/{id}', [ContactController::class, 'edit']);
 Route::put('contacts/update/{id}', [ContactController::class, 'update']);
-Route::get('search', [ContactController::class, 'search']);
+Route::get('searchContacts', [ContactController::class, 'search']);
 Route::delete('contacts-destroyAllSelectedRecord', [ContactController::class, 'destroyAllSelectedRecord'])->name('contacts.destroyAllSelectedRecord');
 // Sort
 Route::get('sort-name', [ContactController::class, 'sortName']);

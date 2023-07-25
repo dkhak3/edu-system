@@ -21,7 +21,8 @@ function checkFormInput() {
 }
 
 function checkName() {
-    const regex = /^[A-Za-z\s]{3,50}$/;
+    const regex =
+        /^[A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*(?:[ ][A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*)*$/gm;
     if (regex.test(namee.value)) {
         namee.classList.add("is-valid");
         namee.classList.remove("is-invalid");
@@ -33,8 +34,8 @@ function checkName() {
 }
 
 function checkAddress() {
-    const regex = /^[0-9A-Za-z]+[0-9A-Za-z\s]{5,150}$/;
-    if (regex.test(address.value)) {
+    //const regex = /^[0-9A-Za-z]+[0-9A-Za-z\s]{5,150}$/;
+    if (address.value.length > 1 && address.value.length <= 150) {
         address.classList.add("is-valid");
         address.classList.remove("is-invalid");
         return true;
@@ -91,18 +92,18 @@ function checkBirthday() {
 
 function refreshForm() {
     // Delete values of fields
-    $('#name').val('');
-    $('#address').val('');
-    $('#phone').val('');
-    $('#birthday').val('');
+    $("#name").val("");
+    $("#address").val("");
+    $("#phone").val("");
+    $("#birthday").val("");
 
     // Remove classes valid, invalid
-    $('#name').removeClass('is-invalid');
-    $('#name').removeClass('is-valid');
-    $('#address').removeClass('is-invalid');
-    $('#address').removeClass('is-valid');
-    $('#phone').removeClass('is-invalid');
-    $('#phone').removeClass('is-valid');
-    $('#birthday').removeClass('is-invalid');
-    $('#birthday').removeClass('is-valid');
+    $("#name").removeClass("is-invalid");
+    $("#name").removeClass("is-valid");
+    $("#address").removeClass("is-invalid");
+    $("#address").removeClass("is-valid");
+    $("#phone").removeClass("is-invalid");
+    $("#phone").removeClass("is-valid");
+    $("#birthday").removeClass("is-invalid");
+    $("#birthday").removeClass("is-valid");
 }
