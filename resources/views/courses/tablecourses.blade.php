@@ -193,6 +193,7 @@
                     });
                 } else {
                     $('#deleteAllSelectedRecord').css('display', 'none');
+                    
                     arrCourses = [];
                     dataCourses.checked = false;
                     course.list.checklist(arrCourses, dataCourses.checked);
@@ -374,7 +375,11 @@
                             }
                             if (self.arrTemp.length == arrCourses.length) {
                                 $("#checkall").prop("checked", true);
+                    $('#select_all_ids').prop("checked", false);
+
                             } else {
+                    $('#select_all_ids').prop("checked", false);
+
                                 $("#checkall").prop("checked", false);
                                 $('#deleteAllSelectedRecord').css('display', 'none');
 
