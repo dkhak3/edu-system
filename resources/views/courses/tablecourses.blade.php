@@ -151,15 +151,18 @@
             var dataCourses = {
                 keySearch: "",
                 page: 1,
-                sort: ''
+                sort: '',
+                tempSortTime: 0,
+                tempSort: 0,
+                checked: false
+
             };
             var arrCourses = [];
-            var cheked = false;
             $(function() {
                 course.list = new DataList();
                 course.list.load(dataCourses.page, dataCourses.keySearch, dataCourses.sort);
 
-                // course.list.checklist(arrCourses);
+               
             });
             $('#btnDelete').click(function (e) {
                 e.preventDefault()
@@ -178,21 +181,21 @@
             $("#select_all_ids").click(function(e) {
                 if (e.target.checked) {
                     $('#deleteAllSelectedRecord').css('display', 'block');
-                    cheked = true;
+                    dataCourses.checked = true;
                     $.ajax({
                         url: "http://127.0.0.1:8000/api/courses/all",
                         type: "GET",
                         dataType: "html",
                         success: function(response) {
                             arrCourses = JSON.parse(response).courses;
-                            course.list.checklist(arrCourses, cheked);
+                            course.list.checklist(arrCourses, dataCourses.checked);
                         },
                     });
                 } else {
                     $('#deleteAllSelectedRecord').css('display', 'none');
                     arrCourses = [];
-                    cheked = false;
-                    course.list.checklist(arrCourses, cheked);
+                    dataCourses.checked = false;
+                    course.list.checklist(arrCourses, dataCourses.checked);
                 }
             });
             $('#deleteAllSelectedRecord').click(function (e) { 
@@ -216,35 +219,34 @@
                 
 
             });
-            var tempSort = 0
-            var tempSortTime = 0
+            
             $('#sort').click(function(e) {
-                if (tempSort == 0) {
+                if (dataCourses.tempSort == 0) {
                     dataCourses.sort = 'increaseName'
                     course.list.load(dataCourses.page, dataCourses.keySearch, dataCourses.sort)
 
                     $('#sort').attr('class', 'fa-solid fa-arrow-up-a-z');
-                    tempSort++
+                    dataCourses.tempSort++
                 } else {
                     dataCourses.sort = 'reduceName'
                     $('#sort').attr('class', 'fa-solid fa-arrow-down-a-z');
                     course.list.load(dataCourses.page, dataCourses.keySearch, dataCourses.sort)
-                    tempSort = 0
+                    dataCourses.tempSort = 0
                 }
             })
 
             $('#sortTime').click(function(e) {
-                if (tempSortTime == 0) {
+                if (dataCourses.tempSortTime == 0) {
                     dataCourses.sort = 'increaseTime'
                     course.list.load(dataCourses.page, dataCourses.keySearch, dataCourses.sort)
 
                     $('#sortTime').attr('class', 'fa-solid fa-arrow-up-a-z');
-                    tempSortTime++
+                    dataCourses.tempSortTime++
                 } else {
                     dataCourses.sort = 'reduceTime'
                     $('#sortTime').attr('class', 'fa-solid fa-arrow-down-a-z');
                     course.list.load(dataCourses.page, dataCourses.keySearch, dataCourses.sort)
-                    tempSortTime = 0
+                    dataCourses.tempSortTime = 0
                 }
             })
 
@@ -307,7 +309,7 @@
                             // self.bindEvent();
                             $('.page-courses').html(JSON.parse(response).link)
                             self.loadPage()
-                            self.checklist(arrCourses,cheked)
+                            self.checklist(arrCourses,dataCourses.checked)
                         },
                         complete: function() {
                             $("#loading").hide();

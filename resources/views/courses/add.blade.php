@@ -71,9 +71,10 @@
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
     $(document).ready(function() {
+        pressEventKey()
         $(window).on('popstate', function() {
-        $('.loader').attr('class', 'loader');
-           
+            $('.loader').attr('class', 'loader');
+
             if (window.location.href == 'http://127.0.0.1:8000/courses') {
                 $.ajax({
                     type: "GET",
@@ -86,32 +87,31 @@
                         history.pushState(null, null, `/courses`);
                         $(".coursesRender").html(response);
                     },
-                    complete: function () {
-        $('.loader').attr('class', 'loader loader--hidden');
-                
-
-
-              }
+                    complete: function() {
+                        $('.loader').attr('class', 'loader loader--hidden');
+                    }
                 });
             }
 
         })
-        $('#course-name').keyup(function (e) { 
+        function pressEventKey() {
+            $('#course-name').keyup(function(e) {
             $(".validate:eq(0)").text("");
             console.log(1);
         });
-        $('#start-date').change(function (e) { 
+        $('#start-date').change(function(e) {
             $(".validate:eq(1)").text("");
-            
+
         });
-        $('#end-date').change(function (e) { 
+        $('#end-date').change(function(e) {
             $(".validate:eq(2)").text("");
-            
+
         });
-        $('#decription-text').keyup(function (e) { 
+        $('#decription-text').keyup(function(e) {
             $(".validate:eq(3)").text("");
-            
+
         });
+          }
         $("#btnEditCourse").click(function(e) {
             e.preventDefault();
             $('.loader').attr('class', 'loader');
@@ -163,6 +163,7 @@
 
         });
     })
+
     function Infor(response) {
         setTimeout(function() {
             // Đoạn mã HTML bạn muốn gắn
@@ -176,6 +177,7 @@
             }, 3000);
         }, 1000);
     }
+
     function loadIndex() {
         $.ajax({
             url: `http://127.0.0.1:8000/api/courses/index`,

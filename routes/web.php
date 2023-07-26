@@ -55,7 +55,6 @@ Route::get('/courses', function () {
     return view('layout');
 })->name('courses');
 Route::get('/courses/add/form', function () {
-    
     return view('layout');
 })->name('courses');
 //

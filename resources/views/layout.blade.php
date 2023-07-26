@@ -177,7 +177,8 @@
                 success: function(response) {
                     var history = window.history || window.location.history;
                     history.pushState(null, null, `/subjects`);
-                    $(".loader").hide();
+                    $('.loader').attr('class', 'loader loader--hidden');
+                   
                     // console.log(response);
                     $('.subjectRender').html(response);
                 }
@@ -185,7 +186,11 @@
         });
         if (window.location.href == 'http://127.0.0.1:8000/subjects') {
             // $('.loader').attr('class', 'loader');
-            $('body').append('<title>Subject</title>')
+            $('.menu-item').each(function(i, e) {
+                $(e).removeClass('active')
+            })
+            $('#subject-page').addClass('active')
+            $('body').append('<title>Subjects</title>')
             $.ajax({
                 type: "GET",
 
@@ -227,9 +232,6 @@
                 },
                 complete: function() {
                     $('.loader').attr('class', 'loader loader--hidden');
-
-
-
                 }
             });
         });
@@ -260,7 +262,7 @@
             $.ajax({
                 type: "GET",
 
-                url: "http://127.0.0.1:8000/courses/add/form",
+                url: "http://127.0.0.1:8000/api/courses/add/form",
 
                 dataType: "html",
                 success: function(response) {
