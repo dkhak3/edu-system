@@ -108,7 +108,7 @@
                     </a>
 
                     {{-- subject --}}
-                    <a href="{{ route('subject') }}" id="menuItem_subject" id="subject-page" class="menu-item"
+                    <a href="{{ route('subject') }}" id="subject-page" class="menu-item"
                         aria-current="page">
                         <span class="menu-icon">
                             {{-- <i class="fa-solid fa-book-open"></i> --}}
@@ -161,7 +161,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
 
     <script>
-        $('#subject-page').on('click', function(e) {
+        $('#subject-page').on('click', function(e) { 
         e.preventDefault();
             // $(self.container).html('<div id="loader" class="loader"></div>');
             $.ajax({
