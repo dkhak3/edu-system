@@ -168,7 +168,7 @@
                 $(e).removeClass('active')
             })
             $('#subject-page').addClass('active')
-
+            
             $('.loader').attr('class', 'loader');
             $.ajax({
                 url: 'http://127.0.0.1:8000/api/indexSubject',
@@ -177,19 +177,13 @@
                 success: function(response) {
                     var history = window.history || window.location.history;
                     history.pushState(null, null, `/subjects`);
-                    $(".loader").hide();
+                    // $("#loader").hide();
                     // console.log(response);
                     $('.subjectRender').html(response);
                 }
             });
         });
         if (window.location.href == 'http://127.0.0.1:8000/subjects') {
-            $('body').append('<title>Subjects</title>')
-            //Gan the xanh
-            $('.menu-item').each(function(i, e) {
-                $(e).removeClass('active')
-            })
-            $('#subject-page').addClass('active')
             // $('.loader').attr('class', 'loader');
             $('body').append('<title>Subject</title>')
             $.ajax({
