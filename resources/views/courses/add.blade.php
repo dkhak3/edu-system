@@ -114,6 +114,7 @@
         });
         $("#btnEditCourse").click(function(e) {
             e.preventDefault();
+            $('.loader').attr('class', 'loader');
 
             $(".validate:eq(0)").text("");
             $(".validate:eq(1)").text("");
@@ -131,6 +132,8 @@
                 },
 
                 success: function(response) {
+
+                    Infor(response)
                     if (response.success == false) {
                         if (response.validate.name) {
 
@@ -151,6 +154,7 @@
                         loadIndex()
                     }
 
+                    $('.loader').attr('class', 'loader loader--hidden');
 
 
 
@@ -159,7 +163,19 @@
 
         });
     })
+    function Infor(response) {
+        setTimeout(function() {
+            // Đoạn mã HTML bạn muốn gắn
 
+            // Thêm mã HTML vào cuối phần tử body
+            $("body").append(response.viewsuccess);
+
+            setTimeout(function() {
+                $(".n-sc").remove();
+                $(".n-er").remove();
+            }, 3000);
+        }, 1000);
+    }
     function loadIndex() {
         $.ajax({
             url: `http://127.0.0.1:8000/api/courses/index`,

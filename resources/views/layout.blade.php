@@ -10,9 +10,9 @@
 
 
     <link rel="stylesheet" href="{{ asset('/css/style.css') }}">
-    @if (strpos($_SERVER['REQUEST_URI'], '/courses') !== false)
+  
         <link rel="stylesheet" href="{{ asset('/css/styleCourses.css') }}">
-    @endif
+    
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"

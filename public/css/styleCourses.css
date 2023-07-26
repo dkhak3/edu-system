@@ -1,103 +1,10 @@
-body {
 
-    position: relative;
-
-}
-
-.func {
-
-    height: 100%;
-}
-
-.point {
-    cursor: pointer;
-}
-
-
-.page {
-    display: inline-block;
-    list-style-type: none;
-    width: 40px;
-    height: 40px;
-    text-align: center;
-    cursor: pointer;
-
-    box-shadow: 2px 2px 2px #916868a4;
-}
-
-.page:hover {
-    background-color: aqua;
-
-}
-
-.page>span {
-    line-height: 40px;
-}
-
-.activeCourses {
-    background-color: aqua;
-    
-}
-.search-courses:focus ~ .icon-search{
-    color: aqua;
-}
-.search-courses:focus{
-    border: 2px solid aqua;
-    width: 300px;
-}
-
-.icon-search {
-    position: absolute;
-    right: 20px;
-    line-height: 37px;
-    top: 10px;
-}
-
-.form-search {
-    position: relative;
-    right: 0;
-
-}
-
-.search-courses {
-    border-radius: 50px !important;
-    border: 1px solid #ccc;
-    transition: all linear .2s;
-}
 
 .sortAZ,
 .sortZA {
     cursor: pointer;
 }
 
-.form-edit>div>label>div>.info,
-.form-c>div>label>div>.info {
-    padding: 4px 8px;
-    min-width: 600px;
-
-
-}
-
-.form-edit>div>label>span,
-.form-c>div>label>span {
-    text-align: right;
-}
-
-.form-edit>div>label,
-.form-c>div>label {
-
-    display: flex !important;
-    align-items: baseline;
-    justify-content: space-around;
-}
-
-.form-search>input {
-    right: 0;
-    width: 200px;
-    padding: 6px 12px;
-    float: right;
-    border-radius: 3px;
-}
 
 .loading {
     width: 100%;
@@ -204,25 +111,7 @@ body {
 
 }
 
-.edit-item,
-.success-form {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    top: 0;
-    display: none;
-    right: 0;
-    background-color: rgb(194 167 167 / 50%);
-    z-index: 999;
 
-}
-
-.form-edit {
-    width: 80%;
-    margin: 0 auto;
-    background-color: #fff;
-    animation: scaleW 2s linear;
-}
 
 @keyframes scaleW {
     0% {
@@ -236,99 +125,3 @@ body {
     }
 }
 
-.error-form {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    top: 0;
-    display: none;
-    right: 0;
-    background-color: rgb(194 167 167 / 50%);
-    z-index: 999;
-}
-
-.error-text {
-    color: red;
-}
-
-.error-form>.message,
-.success-form>.message {
-    width: 50%;
-    text-align: center;
-    position: absolute;
-    margin: 0 auto;
-    transform: translate(-50%, -50%);
-    top: 50%;
-    left: 50%;
-    background-color: #fff;
-
-}
-
-.error-form>.message>.title {
-    color: rgb(148, 47, 47);
-    width: 70px;
-    font-size: 30px;
-    margin: 0 auto;
-    border-radius: 50%;
-    border: 5px solid rgb(148, 47, 47);
-    height: 70px;
-}
-
-.success-form>.message>.title {
-    color: aquamarine;
-    width: 70px;
-    font-size: 30px;
-    margin: 0 auto;
-    border-radius: 50%;
-    border: 5px solid aquamarine;
-    height: 70px;
-}
-
-.error-form>.message>.title>i,
-.success-form>.message>.title>i {
-
-    line-height: 60px;
-}
-
-@media (max-width: 768px) {
-    .mbl-none {
-        display: none;
-    }
-
-    .func {
-        /* display: none; */
-        position: fixed;
-        right: 0;
-        top: 100px;
-    }
-
-    .form-edit>div>label>div>.info,
-    .form-c>div>label>div>.info {
-        padding: 4px 8px;
-        min-width: 200px;
-
-
-    }
-}
-
-@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 1) {
-    .md-12 {
-        flex: 0 0 auto;
-        width: 100%;
-    }
-
-    .func {
-        /* display: none; */
-        position: fixed;
-        right: 0;
-        top: 100px;
-    }
-
-    .form-edit>div>label>div>.info,
-    .form-c>div>label>div>.info {
-        padding: 4px 8px;
-        min-width: 300px;
-
-
-    }
-}

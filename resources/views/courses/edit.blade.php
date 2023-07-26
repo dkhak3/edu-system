@@ -73,39 +73,39 @@
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
     $(document).ready(function() {
-        $(window).on('popstate', function () {
+        $(window).on('popstate', function() {
             console.log(window.location.href);
             if (window.location.href == 'http://127.0.0.1:8000/courses') {
-            $.ajax({
-                type: "GET",
-                
-                url: "http://127.0.0.1:8000/api/courses/index",
-              
-                dataType: "html",
-                success: function (response) {
-                    var history = window.history || window.location.history;
-                     history.pushState(null, null, `/courses`);
-                    $(".coursesRender").html(response);
-                }
-            });
-        }
-        
-    });
-    $('#course-name').keydown(function (e) { 
+                $.ajax({
+                    type: "GET",
+
+                    url: "http://127.0.0.1:8000/api/courses/index",
+
+                    dataType: "html",
+                    success: function(response) {
+                        var history = window.history || window.location.history;
+                        history.pushState(null, null, `/courses`);
+                        $(".coursesRender").html(response);
+                    }
+                });
+            }
+
+        });
+        $('#course-name').keydown(function(e) {
             $(".validate:eq(0)").text("");
-            
+
         });
-        $('#start-date').change(function (e) { 
+        $('#start-date').change(function(e) {
             $(".validate:eq(1)").text("");
-            
+
         });
-        $('#end-date').change(function (e) { 
+        $('#end-date').change(function(e) {
             $(".validate:eq(2)").text("");
-            
+
         });
-        $('#decription-text').change(function (e) { 
+        $('#decription-text').change(function(e) {
             $(".validate:eq(3)").text("");
-            
+
         });
         $("#course-name").val('{{ $course->name }}')
         $("#start-date").val('{{ $course->startdate }}')
@@ -115,7 +115,8 @@
 
         $("#btnEditCourse").click(function(e) {
             e.preventDefault();
-            console.log($("#course-name").val());
+            $('.loader').attr('class', 'loader');
+
             $(".validate:eq(0)").text("");
             $(".validate:eq(1)").text("");
             $(".validate:eq(2)").text("");
@@ -132,6 +133,8 @@
                 },
 
                 success: function(response) {
+                    
+                    Infor(response)
                     if (response.success == false) {
                         if (response.validate.name) {
 
@@ -151,9 +154,7 @@
                     } else {
                         loadIndex()
                     }
-
-
-
+                    $('.loader').attr('class', 'loader loader--hidden');
 
                 },
             });
@@ -161,15 +162,29 @@
         });
     })
 
+    function Infor(response) {
+        setTimeout(function() {
+            // Đoạn mã HTML bạn muốn gắn
+
+            // Thêm mã HTML vào cuối phần tử body
+            $("body").append(response.viewsuccess);
+
+            setTimeout(function() {
+                $(".n-sc").remove();
+                $(".n-er").remove();
+            }, 3000);
+        }, 1000);
+    }
+
     function loadIndex() {
         $.ajax({
             url: `http://127.0.0.1:8000/api/courses/index`,
             type: "GET",
-            success: function (response) {
+            success: function(response) {
                 var history = window.history || window.location.history;
-              history.pushState(null, null, `/courses`);
+                history.pushState(null, null, `/courses`);
                 $(".coursesRender").html(response);
-                
+
             },
         })
     }

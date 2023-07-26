@@ -170,15 +170,11 @@
                             arrCourses: arrCourses
                         },
                         dataType: "html",
-
                         success: function(response) {
                             course.list.load(dataCourses.page, dataCourses.keySearch, dataCourses.sort);
-
-                           
                         },
                     });
             })
-
             $("#select_all_ids").click(function(e) {
                 if (e.target.checked) {
                     $('#deleteAllSelectedRecord').css('display', 'block');
@@ -186,19 +182,14 @@
                     $.ajax({
                         url: "http://127.0.0.1:8000/api/courses/all",
                         type: "GET",
-
                         dataType: "html",
-
                         success: function(response) {
-
                             arrCourses = JSON.parse(response).courses;
-
                             course.list.checklist(arrCourses, cheked);
                         },
                     });
                 } else {
                     $('#deleteAllSelectedRecord').css('display', 'none');
-
                     arrCourses = [];
                     cheked = false;
                     course.list.checklist(arrCourses, cheked);
@@ -206,12 +197,9 @@
             });
             $('#deleteAllSelectedRecord').click(function (e) { 
                 e.preventDefault();
-                
             });
 
             $("#search").keydown(function(e) {
-
-
                 dataCourses.keySearch = e.target.value;
                 if (e.keyCode === 13) {
                     e.preventDefault()

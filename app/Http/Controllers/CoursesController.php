@@ -174,10 +174,12 @@ class CoursesController extends Controller
             'description'=>'required',
         ]);
         if ($validate->fails()) {
-        
-
+            $viewsc =  View::make('courses.error')->render();
+            
+            
             return response()->json([
                 'validate'=>$validate->errors()->messages(),
+                'viewsuccess'=>$viewsc,
                 'success'=>false,
 
 
@@ -190,8 +192,10 @@ class CoursesController extends Controller
         $course->startdate = $request->startdate;
         $course->enddate = $request->enddate;
         $course->save();
+        $viewsc =  View::make('courses.success')->render();
         
             return  response()->json([
+                'viewsuccess'=>$viewsc,
                 
                 'success'=>true,
             ]);
