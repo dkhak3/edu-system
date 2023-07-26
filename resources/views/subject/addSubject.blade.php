@@ -69,19 +69,29 @@
                             name: $('#nameInput').val(),
                             description: $('#descriptionInput').val()
                         },
-                    success: function(response) {
+                        success: function(response) {
                         console.log("Them thanh cong");
                             $.ajax({
                                 url: 'http://127.0.0.1:8000/api/indexSubject',
                                 type: 'GET',
                                 dataType: 'html',
                                 success: function(response) {
+                                    $('.loader-sub').css('display', 'none');
                                     // Xử lý kết quả AJAX ở đây (ví dụ: hiển thị form add)
                                     $('.subjectRender').html(response);
-                                    }
+                                }
+
                             });
+                        },
+                        error: function() {
+                            // Xử lý lỗi
+                            console.log("ko thanh cong");
+                            $('.loader-subject').css('display', 'flex');
+                            $('.loader-subject').css('display', 'none');
+                            // $('.loader-sub').css('display', 'none'); // Ẩn loader-subject nếu có lỗi
                         }
                     });
+               
             });
         });
 

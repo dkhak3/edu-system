@@ -90,9 +90,7 @@
             $('#btn-edit').on('click', function(e) {
             e.preventDefault();
             var url = `http://127.0.0.1:8000/api/edit-subject/${(id)}`;
-            // $('.loader-sub').attr('class', 'loader-subject');
-            // $('.loader-subject').css('display', 'block');
-            $('.loader-sub').attr('class', 'loader-subject');
+            $('.loader-subject').css('display', 'flex');
             $.ajax({
                 url: url,
                 type: 'PUT',
@@ -102,6 +100,7 @@
                     },
                 success: function(response) {
                     // Sua xong quay ve
+                    $('.loader-subject').css('display', 'none');
                     var urlz = 'http://127.0.0.1:8000/api/indexSubject';
                         $.ajax({
                             url: urlz,

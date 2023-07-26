@@ -70,7 +70,7 @@
             //Bắt sự kiện cho btn-add
             $('.link-to-add').on('click', function(e) {
                 var self = this; 
-                // $('.loader').attr('class', 'loader');
+                $('.loader-sub').attr('class', 'loader-subject');
                 // $('.loader-sub').attr('class', 'loader-subject');
                 // $(self.container).html('<div id="loader-subject" class="loader-sub"></div>');
                 $.ajax({
@@ -197,8 +197,7 @@
           
             loadz() {
                 var self = this; 
-                $('.loader-sub').attr('class', 'loader-subject');
-                $('.loader-subject').css('display', 'block');
+                $('.loader-subject').css('display', 'flex');
                 $.ajax({
                         url: this.urlz,
                         type: 'GET',
@@ -206,9 +205,7 @@
                             mycustomtype: 'application/x-some-custom-type'
                         },
                         complete: function() {
-                            // $('.loader-sub').attr('class', 'loader loader-subject--hidden');
                             $('.loader-subject').css('display', 'none');
-                            // $('.loader-sub').addClass('loader-subject-hidden')
                         },
                         
                     })
@@ -261,7 +258,7 @@
             
             loadsearch(key) {
                 var self = this; 
-                $('.loader-sub').attr('class', 'loader-subject');
+                $('.loader-subject').css('display', 'flex');
                 $.ajax({
                     url: this.urlsearch,
                     type: 'GET',
@@ -278,7 +275,7 @@
                     },  
                 })
                 .done(function(result) {
-                    $('.loader-sub').attr('class', 'loader-subject--hidden');
+                    $('.loader-subject').css('display', 'none');
                         //Sau khi lấy danh sach -> render ra table
                         $(self.container).html(
                             result.subjects.map(e => {
@@ -357,11 +354,13 @@
                     $("#a-z").hide();
                     $("#z-a").show();
                     self.loadz();
+                      
                     
                 });
                 $('.btn-z-a').on('click', function(e) {
                     $("#a-z").show();
                     $("#z-a").hide();
+                    $('.loader-subject').css('display', 'flex');
                     self.load();
                 });
                 $('#goSearch').on('click', function() {
@@ -372,24 +371,7 @@
                     // $(self.container).html('<div id="loader" class="loader"></div>');
                     
                 });
-                $('.inputzzz').each(function(index, element) {
-                    $(element).on('keyup', function() {
-                        $(self.container).html('<div id="loader" class="loader"></div>');
-                        setTimeout(() => {
-                            // Xử lý logic khi xảy ra sự kiện keyup
-                        var value = $(this).val();
-                        if(value==''){
-                            console.log("getall");
-                            self.load();
-                        }
-                        else{
-                            // console.log('Input value:', value);
-                            self.loadsearch(value);
-                        }
-                        // Các xử lý khác...
-                        }, 2000);
-                    });
-                });
+               
             }
         }
     </script>

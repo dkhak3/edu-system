@@ -168,7 +168,7 @@
                 $(e).removeClass('active')
             })
             $('#subject-page').addClass('active')
-
+            
             $('.loader').attr('class', 'loader');
             $.ajax({
                 url: 'http://127.0.0.1:8000/api/indexSubject',
@@ -177,8 +177,8 @@
                 success: function(response) {
                     var history = window.history || window.location.history;
                     history.pushState(null, null, `/subjects`);
+
                     $('.loader').attr('class', 'loader loader--hidden');
-                   
                     // console.log(response);
                     $('.subjectRender').html(response);
                 }
