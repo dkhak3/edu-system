@@ -3,9 +3,9 @@
         <td> <input type="checkbox" data-item="{{ $e->id }}" class="checklist" name="checkall"></td>
         <td>{{ $e->name }}</td>
         <td class="mbl-none">{{ $e->description }}</td>
-        <td class="mbl-none">{{ $e->created_at }}</td>
-        <td class="mbl-none">{{ $e->startdate }}</td>
-        <td class="mbl-none">{{ $e->enddate }}</td>
+        <td>{{ $e->created_at }}</td>
+        <td >{{ $e->startdate }}</td>
+        <td >{{ $e->enddate }}</td>
         <td>
 
             <div class="actions-style">

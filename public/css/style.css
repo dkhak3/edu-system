@@ -688,3 +688,9 @@ table {
 .icon-sort:hover {
     color: #0d6efd;
 }
+@media (max-width: 767px) {
+    
+    .mbl-none{
+        display: none;
+    }
+  }

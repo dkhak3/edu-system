@@ -75,7 +75,7 @@
                             </th>
                             <th style="white-space: nowrap;">Name <i style="margin-left: 3px; padding: 5px; cursor: pointer;" id="sort"
                                     class="fa-solid fa-arrow-down-a-z"></i></th>
-                            <th>Description</th>
+                            <th class="mbl-none">Description</th>
                             <th style="white-space: nowrap;">Create At <i style="margin-left: 3px; padding: 5px; cursor: pointer;" id="sortTime"
                                     class="fa-solid fa-arrow-down-a-z"></i></th>
                             <th>Start Date</th>
@@ -161,7 +161,23 @@
 
                 // course.list.checklist(arrCourses);
             });
+            $('#btnDelete').click(function (e) {
+                e.preventDefault()
+                $.ajax({
+                        url: "http://127.0.0.1:8000/api/courses/delete/selected",
+                        type: "POST",
+                        data: {
+                            arrCourses: arrCourses
+                        },
+                        dataType: "html",
 
+                        success: function(response) {
+                            course.list.load(dataCourses.page, dataCourses.keySearch, dataCourses.sort);
+
+                           
+                        },
+                    });
+            })
 
             $("#select_all_ids").click(function(e) {
                 if (e.target.checked) {
@@ -313,6 +329,7 @@
                 loadPage() {
                     var self = this
                     var pageElement = 1
+                    
                     $('.page-item').each(function(i, e) {
                         if ($(e).attr('class') == 'page-item active') {
                             pageElement = parseInt($(e).text())
