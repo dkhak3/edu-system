@@ -30,7 +30,10 @@ Route::get('/courses/index', function () {
     
     return view('courses.tablecourses');
 })->name('courses');
-
+Route::get('/courses/add/form', function () {
+    
+    return view('courses.add');
+});
 Route::get('/courses/search',[CoursesController::class,'search']);
 Route::get('/courses/getall',[CoursesController::class,'getAll']);
 Route::post('/courses/add-course',[CoursesController::class,'store']);
