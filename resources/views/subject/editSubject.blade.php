@@ -26,7 +26,7 @@
                     {{-- @if ($errors->has('lecturer_name'))
                     <span class="text-danger">{{ $errors->first('lecturer_name') }}</span>
                     @endif --}}
-                    <span class="form-message"></span>
+                    <span class="form-message" style="color: red"></span>
                 </div>
             </div>
             <div class="col-md">
@@ -39,7 +39,7 @@
                     {{-- @if ($errors->has('lecturer_address'))
                     <span class="text-danger">{{ $errors->first('lecturer_address') }}</span>
                     @endif --}}
-                    <span class="form-message"></span>
+                    <span class="form-message" style="color: red"></span>
                 </div>
             </div>
         </div>
@@ -109,8 +109,13 @@
                             success: function(response) {
                                 // Xử lý kết quả AJAX ở đây (ví dụ: hiển thị form add)
                                 $('.subjectRender').html(response);
-                            }
+                            },
                         });
+                    },  
+                    error: function() {
+                        $('.loader-subject').css('display', 'none');
+                        $('.form-message').text('Không được bỏ trống.');
+                        $('.form-message').text('Không được bỏ trống.');
                     }
                 });
             });

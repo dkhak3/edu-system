@@ -179,6 +179,7 @@
             DeleteSubject(element) {
                 var self = this;
                 $('.loader-sub').attr('class', 'loader-subject');
+                $('.loader-subject').css('display', 'flex');
                 $.ajax({
                     url: `http://127.0.0.1:8000/api/deleteSubject/${$(element).attr("data-item")}`,
                     type: 'DELETE',
@@ -187,8 +188,8 @@
                         mycustomtype: 'application/x-some-custom-type'
                     },
                     success: function(response) {
-                        $('.loader-sub').attr('class', 'loader-subject--hidden');
                         self.load() 
+                        // $('.loader-subject').css('display', 'none');
                         //Load lại sau khi xóa
                     }
                 })

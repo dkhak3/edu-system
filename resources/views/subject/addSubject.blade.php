@@ -27,7 +27,7 @@
                     {{-- @if ($errors->has('lecturer_name'))
                     <span class="text-danger">{{ $errors->first('lecturer_name') }}</span>
                     @endif --}}
-                    <span class="form-message"></span>
+                    <span class="form-message" style="color: red"></span>
                 </div>
             </div>
             <div class="col-md">
@@ -40,7 +40,7 @@
                     {{-- @if ($errors->has('lecturer_address'))
                     <span class="text-danger">{{ $errors->first('lecturer_address') }}</span>
                     @endif --}}
-                    <span class="form-message"></span>
+                    <span class="form-message" style="color: red"></span>
                 </div>
             </div>
         </div>
@@ -70,7 +70,7 @@
                             description: $('#descriptionInput').val()
                         },
                         success: function(response) {
-                        console.log("Them thanh cong");
+                        // console.log("Them thanh cong");
                             $.ajax({
                                 url: 'http://127.0.0.1:8000/api/indexSubject',
                                 type: 'GET',
@@ -86,8 +86,10 @@
                         error: function() {
                             // Xử lý lỗi
                             console.log("ko thanh cong");
-                            $('.loader-subject').css('display', 'flex');
+                            // $('.loader-subject').css('display', 'flex');
                             $('.loader-subject').css('display', 'none');
+                            $('.form-message').text('Không được bỏ trống.');
+                            $('.form-message').text('Không được bỏ trống.');
                             // $('.loader-sub').css('display', 'none'); // Ẩn loader-subject nếu có lỗi
                         }
                     });
