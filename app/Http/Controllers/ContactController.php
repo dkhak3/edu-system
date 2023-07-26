@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Contact;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\View;
 
 class ContactController extends Controller
 {
@@ -72,7 +73,9 @@ class ContactController extends Controller
         $item = Contact::find($id);
         if ($item) {
             $item->update($request->all());
-            return response()->json(['message' => 'You have successfully updated contact.']);
+            return response()->json([
+                'message' => 'You have successfully updated contact.'
+            ]);
         }
         else {
             return response()->json(['message' => 'Contact Not Found!']);
@@ -89,6 +92,7 @@ class ContactController extends Controller
             $allContacts = Contact::orderBy('created_at', 'desc')->paginate(3);
             return response()->json([
                 'allContacts' => $allContacts,
+                'pagination' => $allContacts->links()->toHtml(),
                 'message' => 'You have successfully deleted contact.'
             ]);
         }
@@ -117,34 +121,18 @@ class ContactController extends Controller
         return response()->json(['result' => $result]);
     }
 
-    // Sort Name
-    public function sortName(Request $request)
+    // Sort
+    public function sort(Request $request)
     {
-        $allContacts = [];
-        if ($request->status == 0){
-            $allContacts = Contact::orderBy('name', 'asc')->paginate(3);
-        }
-        else {
-            $allContacts = Contact::orderBy('name', 'desc')->paginate(3);
-        }
+        
+        
+        $allContacts = Contact::orderBy($request->sortField, $request->sortType)->paginate(3);
+        // $allContacts = Contact::orderBy($request->sortField, $request->sortType)->paginate(3);
         return response()->json([
-            'allContacts' => $allContacts
+            'allContacts' => $allContacts,
+            'pagination' => $allContacts->links()->toHtml()
         ]);
-    }
-
-    // Sort Created_at
-    public function sortCreatedAt(Request $request)
-    {
-        $allContacts = [];
-        if ($request->status == 0){
-            $allContacts = Contact::orderBy('created_at', 'asc')->paginate(3);
-        }
-        else {
-            $allContacts = Contact::orderBy('created_at', 'desc')->paginate(3);
-        }
-        return response()->json([
-            'allContacts' => $allContacts
-        ]);
+        
     }
 
 }

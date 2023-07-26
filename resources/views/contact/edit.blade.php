@@ -108,11 +108,11 @@
                 url: 'contacts/update/'+ {{ $item->id }},
                 type: 'PUT',
                 data: data,
-                dataType: 'json',
+                dataType: 'html',
                 success: function(response) {
                     removeLoaderSpinner();
                     showSuccessToast(response.message);
-                    //window.location.href = '/contacts';
+                    loadIndex();
                 }
             });
         }
@@ -129,6 +129,18 @@
     function removeLoaderSpinner() {
         $('.load').remove();
         $('#btn_submit_edit_contact').removeClass('d-none');
+    }
+
+    function loadIndex() {
+        $.ajax({
+            url: 'contacts',
+            type: "GET",
+            success: function (response) {
+                console.log(response);
+                $('body').html(response);
+                
+            },
+        })
     }
 
 </script>

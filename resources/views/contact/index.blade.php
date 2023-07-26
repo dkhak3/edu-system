@@ -1,5 +1,6 @@
-@extends('layout')
 <title>Contacts</title>
+
+@extends('layout')
 
 @section('content')
 
@@ -57,7 +58,7 @@
         @endif
 
         {{-- Button delete all selected record --}}
-        <a id="deleteAllSelectedRecord" href="">
+        <a id="deleteAllSelectedRecord">
             <button type="button" data-bs-toggle="modal" data-bs-target="#modalDeleteAllSelectedRecord"
                 class="btn-style icon-delete menu-item">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24"
@@ -78,7 +79,7 @@
                     <th>ID</th>
                     <th>
                         Name
-                        <button id="btn_sort_name" value="0"><i id="icon_sort_name"
+                        <button class="btn_sort" value="asc"><i id="name"
                                 class="fa-solid fa-arrow-down-a-z icon-sort"></i></button>
                     </th>
                     <th>Address</th>
@@ -86,7 +87,7 @@
                     <th>Birthday</th>
                     <th>
                         Created at
-                        <button id="btn_sort_created_at" value="0"><i id="icon_sort_created_at"
+                        <button class="btn_sort" value="asc"><i id="created_at"
                                 class="fa-solid fa-arrow-down-short-wide icon-sort"></i></button>
                     </th>
                     <th>Actions</th>
@@ -95,73 +96,73 @@
 
             <tbody>
                 {{-- <div type="text" id="arrLength" value="{{ count($allContacts) }}"> --}}
-                <div id="arrLength" class="d-none">{{ count($allContacts) }}</div>
-                @foreach ($allContacts as $item)
-                <tr id="{{ $item->id }}">
-                    <td>
-                        <input type="checkbox" name="ids" class="checkbox_ids" value="{{$item->id}}">
-                    </td>
-                    <td>{{$item->id}}</td>
-                    <td>{{$item->name}}</td>
-                    <td>{{$item->address}}</td>
-                    <td>{{$item->phone}}</td>
-                    <td>{{$item->birthday}}</td>
-                    <td>{{$item->created_at}}</td>
-                    <td>
-                        <div class="actions-style">
-                            {{-- Edit --}}
-                            <button type="button" id="btn_edit_contact" value="{{$item->id}}" class="menu-item">
-                                <span
-                                    class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon-action" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
-                                        </path>
-                                    </svg>
-                                </span>
-                            </button>
-                            {{-- Delete --}}
-                            <button type="button" id="btn_delete_contact" value="{{$item->id}}" data-bs-toggle="modal"
-                                data-bs-target="#modalDelete">
-                                <span
-                                    class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon-action" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                                        </path>
-                                    </svg>
-                                </span>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
+                    <div id="arrLength" class="d-none">{{ count($allContacts) }}</div>
+                    @foreach ($allContacts as $item)
+                    <tr id="{{ $item->id }}">
+                        <td>
+                            <input type="checkbox" name="ids" class="checkbox_ids" value="{{$item->id}}">
+                        </td>
+                        <td>{{$item->id}}</td>
+                        <td>{{$item->name}}</td>
+                        <td>{{$item->address}}</td>
+                        <td>{{$item->phone}}</td>
+                        <td>{{$item->birthday}}</td>
+                        <td>{{$item->created_at}}</td>
+                        <td>
+                            <div class="actions-style">
+                                {{-- Edit --}}
+                                <button type="button" id="btn_edit_contact" value="{{$item->id}}" class="menu-item">
+                                    <span
+                                        class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon-action" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                                            </path>
+                                        </svg>
+                                    </span>
+                                </button>
+                                {{-- Delete --}}
+                                <button type="button" id="btn_delete_contact" value="{{$item->id}}"
+                                    data-bs-toggle="modal" data-bs-target="#modalDelete">
+                                    <span
+                                        class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon-action" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                            </path>
+                                        </svg>
+                                    </span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
 
-                <!-- The Modal for Delete Contact -->
-                <div class="modal fade" id="modalDelete" tabindex="-1" aria-labelledby="exampleModalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog modal-confirm modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <div class="icon-box">
-                                    <div class="material-icons">!</div>
+                    <!-- The Modal for Delete Contact -->
+                    <div class="modal fade" id="modalDelete" tabindex="-1" aria-labelledby="exampleModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-confirm modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <div class="icon-box">
+                                        <div class="material-icons">!</div>
+                                    </div>
+                                    <h2 class="modal-title">Are you sure?</h2>
                                 </div>
-                                <h2 class="modal-title">Are you sure?</h2>
-                            </div>
-                            <div class="modal-body">
-                                <input type="hidden" id="contact_id">
-                                <p>You won't be able to revert this!</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-info" data-bs-dismiss="modal">Cancel</button>
-                                <button type="button" id="btn_submit_delete_contact" class="btn btn-danger"
-                                    data-bs-dismiss="modal">Yes, delete it!</button>
+                                <div class="modal-body">
+                                    <input type="hidden" id="contact_id">
+                                    <p>You won't be able to revert this!</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-info" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="button" id="btn_submit_delete_contact" class="btn btn-danger"
+                                        data-bs-dismiss="modal">Yes, delete it!</button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                @endforeach
+                    @endforeach
             </tbody>
         </table>
         <div id="pagination" class="float-end mt-3">
@@ -254,7 +255,8 @@
                 <!-- Modal footer -->
                 <div class="modal-footer">
                     <button type="button" id="btn_confirm_edit_contact" class="btn-primary-style btn-submit form-submit"
-                        data-bs-dismiss="modal">Update contact</button>
+                        data-bs-dismiss="modal">Update
+                        contact</button>
                 </div>
             </form>
         </div>
@@ -274,49 +276,7 @@
     $(document).ready(function() {
         //loadDataTable()
 
-        function loadDataTable(data) {
-            //console.log(Object.keys(data).length);
-            $('#arrLength').html(Object.keys(data).length);
-            
-            $('tbody').html('');
-            $.each(data, function(key, item) {
-                $('tbody').append('<tr id="'+ item.id +'">\
-                <td><input type="checkbox" name="ids" class="checkbox_ids" value="'+ item.id +'"></td>\
-                <td>' + item.id + '</td>\
-                <td>' + item.name + '</td>\
-                <td>' + item.address + '</td>\
-                <td>' + item.phone + '</td>\
-                <td>' + item.birthday + '</td>\
-                <td>' + moment(item.created_at).format('DD-MM-YYYY HH:mm:ss') + '</td>\
-                <td>\
-                    <div class="actions-style">\
-                        <button type="button" id="btn_edit_contact" value="'+ item.id +'" class="menu-item">\
-                            <span\
-                                class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">\
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon-action" fill="none"\
-                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">\
-                                    <path stroke-linecap="round" stroke-linejoin="round"\
-                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">\
-                                    </path>\
-                                </svg>\
-                            </span>\
-                        </button>\
-                        <button type="button" id="btn_delete_contact" value="'+ item.id +'" data-bs-toggle="modal" data-bs-target="#modalDelete">\
-                            <span\
-                                class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">\
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon-action" fill="none"\
-                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">\
-                                    <path stroke-linecap="round" stroke-linejoin="round"\
-                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">\
-                                    </path>\
-                                </svg>\
-                            </span>\
-                        </button>\
-                    </div>\
-                </td>\
-                \</tr>');
-            });
-        }
+       
 
         // Change into Create contact page
         $(document).on('click', '#btnAdd', function (e) {
@@ -366,6 +326,8 @@
                 success: function (response) {
                     // Load data
                     loadDataTable(response.allContacts.data);
+                    // Refresh pagination
+                    $('#pagination').html(response.pagination);
                     // Display success message
                     showSuccessToast(response.message);
                     //Romove loader spinner
@@ -387,7 +349,7 @@
         // Submit Delete all selected contacts
         $(document).on('click','#btnDeleteAllSelectedRecord', function (e) {
             e.preventDefault();
-            
+            $('#deleteAllSelectedRecord').css('display', 'none');
             var all_ids = [];
             $('input:checkbox[name=ids]:checked').each(function () {
                 all_ids.push($(this).val());
@@ -408,7 +370,6 @@
                     loadDataTable(response.allContacts.data)
                     // Remove loader
                     removeLoader();
-
                     //console.log(response.allContacts.data);
                 }
             });
@@ -458,137 +419,156 @@
             });
         });
 
-        // Sort Name field
-        $('#btn_sort_name').on('click', function () {
-            console.log($('#arrLength').html());
-            if (+$('#arrLength').html() > 1) {
-                // Display loader
-                displayLoader($('tbody'));
-                var btn = $(this);
-                $.ajax({
-                    url: '/sort-name',
-                    data: {
-                        status: btn.val()
-                    },
-                    dataType: "json",
-                    success: function (response) {
-                        // Load data 
-                        loadDataTable(response.allContacts.data);
-                        // Remove loader
-                        removeLoader();
-                        // Change icon
-                        changIconSortName();
-                        // Change status
-                        if (btn.val() == 0) {
-                            btn.val('1');
-                        }
-                        else {
-                            btn.val('0');
-                        }
-                    },
-                    error: function () {
-                        showErrorToast('Can not sort Name field !');
-                    }
-                });
-            }
-            else {
-                //showErrorToast('No need to sort !');
-                showWarningToast('No need to sort !');
-            }
-
-        });
-
-        // Sort Created_at field
-        $('#btn_sort_created_at').on('click', function () {
-            if ($('#arrLength').val() > 1) {
-                // Display loader
-                displayLoader($('tbody'));
-                var btn = $(this);
-                $.ajax({
-                    url: '/sort-created_at',
-                    data: {
-                        status: btn.val()
-                    },
-                    dataType: "json",
-                    success: function (response) {
-                        // Load data 
-                        loadDataTable(response.allContacts.data);
-                        // Remove loader
-                        removeLoader();
-                        // Change icon
-                        changIconSortCreatedAt();
-                        // Change status
-                        if (btn.val() == 0) {
-                            btn.val('1');
-                        }
-                        else {
-                            btn.val('0');
-                        }
-                    },
-                    error: function () {
-                        showErrorToast('Can not sort Created at field !');
-                    }
-                });
-            }
-            else{
-                showWarningToast('No need to sort !');
-            }
-        });
-
         //Update Pagination using Ajax
-        // $('.page-link').click(function (e) {
-        //     e.preventDefault();
-        //     //console.log($(this).html());
+        $(document).on('click', '.page-link',function (e) {
+            e.preventDefault();
+            displayLoader($('tbody'));
+            console.log('da click');
 
-        //     $.ajax({
-        //         url: 'http://127.0.0.1:8000/contacts?page=' + $(this).html(),
-        //         type: 'GET',
-        //         success: function (response) {
-        //             console.log(response);
-        //             console.log(typeof(response));
-        //         }
-        //     });
-        // });
+            $.ajax({
+                url: $(this).attr('href'),
+                data: {
+                    sortField: 'name',
+                    sortType: 'asc',
+                },
+                type: 'GET',
+                success: function (response) {
+                    removeLoader();
+                    console.log(response);
+                    if (typeof(response) != 'string') {
+                        loadDataTable(response.allContacts.data);
+                    }
+                    else {
+                        $('body').html(response);
+                        $('.loader').css('display', 'none');
+                    }
+                    
+                    $('#pagination').html(response.pagination);
+                }
+            });
+        });
 
-        function displayLoader(element) {
-            element.html('');
-            element.html('<div class="load d-block text-center m-auto mt-5"></div>');
-            for (let i = 0; i < 3; i++) {
-                $('.load').append('<div class="spinner-grow text-info ms-1"></div>');
+        // Sort
+        $('.btn_sort').on('click', function () {
+            // Display loader
+            displayLoader($('tbody'));
+            var btn = $(this);
+            $.ajax({
+                url: 'sortContacts',
+                data: {
+                    sortField: btn.children().attr('id'),
+                    sortType: btn.val(),
+                },
+                dataType: "json",
+                success: function (response) {
+                    // Load data 
+                    loadDataTable(response.allContacts.data);
+                    // Remove loader
+                    removeLoader();
+                    // Change icon
+                    changeIconSort(btn);
+                    // Change status
+                    if (btn.val() == 'asc') {
+                        btn.val('desc');
+                    }
+                    else {
+                        btn.val('asc');
+                    }
+                    
+                    $('#pagination').html(response.pagination);
+                },
+                error: function () {
+                    showErrorToast('Can not sort Name field !');
+                }
+            });
+        });
+
+        function changeIconSort(btn) {
+            var icon = btn.children();
+            // Nếu là asc
+            if (btn.val() == 'asc') {
+                // Nếu là trường name
+                if (icon.attr('id') == 'name') {
+                    icon.removeClass('fa-arrow-down-a-z');
+                    icon.addClass('fa-arrow-down-z-a');
+                }
+                // Nếu là trường created_at
+                else if (icon.attr('id') == 'created_at') {
+                    icon.removeClass('fa-arrow-down-short-wide');
+                    icon.addClass('fa-arrow-down-wide-short');
+                }
             }
-        }
-
-        function removeLoader() {
-            $('.load').remove();
-        }
-
-        function changIconSortName() {
-            var btn = $('#btn_sort_name');
-            var icon = $('#icon_sort_name');
-            if (btn.val() == 0) {
-                icon.removeClass('fa-arrow-down-a-z');
-                icon.addClass('fa-arrow-down-z-a');
-            }
+            // Nếu là desc
             else {
-                icon.removeClass('fa-arrow-down-z-a');
-                icon.addClass('fa-arrow-down-a-z');
-            }
-        }
-
-        function changIconSortCreatedAt() {
-            var btn = $('#btn_sort_created_at');
-            var icon = $('#icon_sort_created_at');
-            if (btn.val() == 0) {
-                icon.removeClass('fa-arrow-down-short-wide');
-                icon.addClass('fa-arrow-down-wide-short');
-            }
-            else {
-                icon.removeClass('fa-arrow-down-wide-short');
-                icon.addClass('fa-arrow-down-short-wide');
+                // Nếu là trường name
+                if (icon.attr('id') == 'name') {
+                    icon.addClass('fa-arrow-down-a-z');
+                    icon.removeClass('fa-arrow-down-z-a');
+                }
+                // Nếu là trường created_at
+                else if (icon.attr('id') == 'created_at') {
+                    icon.addClass('fa-arrow-down-short-wide');
+                    icon.removeClass('fa-arrow-down-wide-short');
+                }
             }
         }
 
     });   
+
+    function displayLoader(element) {
+        element.html('');
+        element.html('<div class="load d-block text-center m-auto mt-5"></div>');
+        for (let i = 0; i < 3; i++) {
+            $('.load').append('<div class="spinner-grow text-info ms-1"></div>');
+        }
+    }
+
+    function removeLoader() {
+        $('.load').remove();
+    }
+
+    function loadDataTable(data) {
+        $('#arrLength').html(Object.keys(data).length);
+        
+        $('tbody').html('');
+        $.each(data, function(key, item) {
+            $('tbody').append('<tr id="'+ item.id +'">\
+            <td><input type="checkbox" name="ids" class="checkbox_ids" value="'+ item.id +'"></td>\
+            <td>' + item.id + '</td>\
+            <td>' + item.name + '</td>\
+            <td>' + item.address + '</td>\
+            <td>' + item.phone + '</td>\
+            <td>' + item.birthday + '</td>\
+            <td>' + moment(item.created_at).format('DD-MM-YYYY HH:mm:ss') + '</td>\
+            <td>\
+                <div class="actions-style">\
+                    <button type="button" id="btn_edit_contact" value="'+ item.id +'" class="menu-item">\
+                        <span\
+                            class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">\
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon-action" fill="none"\
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">\
+                                <path stroke-linecap="round" stroke-linejoin="round"\
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">\
+                                </path>\
+                            </svg>\
+                        </span>\
+                    </button>\
+                    <button type="button" id="btn_delete_contact" value="'+ item.id +'" data-bs-toggle="modal" data-bs-target="#modalDelete">\
+                        <span\
+                            class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">\
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon-action" fill="none"\
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">\
+                                <path stroke-linecap="round" stroke-linejoin="round"\
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">\
+                                </path>\
+                            </svg>\
+                        </span>\
+                    </button>\
+                </div>\
+            </td>\
+            \</tr>');
+        });
+    }
     
 </script>
 
