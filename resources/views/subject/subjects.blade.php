@@ -1,6 +1,5 @@
-@extends("layout")
+
 <title>Subjects</title>
-@section('content')
 
 <div class="dashboard-children active">
     {{-- Heading --}}
@@ -22,10 +21,12 @@
         </div>
     </div>
 
-    <form class="mb-5 d-flex justify-content-end" autocomplete="off">
+    <div class="mb-5 d-flex justify-content-end" autocomplete="off">
         <input type="text" placeholder="Search..." id="keywords" name="keywords" class="input-search">
-        <button class="btn btn-primary menu-item" style="margin-left: 10px;">Search</button>
-    </form>
+        <button class="btn btn-primary menu-item" id="goSearch" style="margin-left: 10px;">Search</button>
+    </div>
+    {{-- <form class="mb-5 d-flex justify-content-end" autocomplete="off"> --}}
+    {{-- </form> --}}
 
     <div class="table-main">
         <table>
@@ -57,29 +58,28 @@
         </li>
     </ul>
 </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
     integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
-        document.getElementById("dashboard-content").classList.add("d-none");
+        // document.getElementById("dashboard-content").classList.add("d-none");
         //Khởi tạo sự kiện trước khi load
         $(document).ready(function() {
             //Bắt sự kiện cho btn-add
-        $('.link-to-add').on('click', function(e) {
-            
-            var url = 'http://127.0.0.1:8000/api/addSubject';
-            var self = this; 
-            $(self.container).html('<div id="loader" class="loader"></div>');
-            $.ajax({
-                url: 'http://127.0.0.1:8000/api/addSubject',
-                type: 'GET',
-                dataType: 'html',
-                success: function(response) {
-                    console.log(response);
-                    $('.subjectRender').html(response);
-                }
+            $('.link-to-add').on('click', function(e) {
+                var self = this; 
+                // $(self.container).html('<div id="loader" class="loader"></div>');
+                $.ajax({
+                    url: 'http://127.0.0.1:8000/api/addSubject',
+                    type: 'GET',
+                    dataType: 'html',
+                    success: function(response) {
+                        // console.log(response);
+                        $('.subjectRender').html(response);
+                    }
+                });
             });
-        });
         });
 
         var subject = {
@@ -88,13 +88,13 @@
         // var sortA = 'increaseName';
         // var sortB = 'reduceName';
         $(function() {
-            subject.list = new DataList();
+            subject.list = new DataListSub();
             subject.list.load();
         });
        
       
         //Class danh sách dữ liệu
-        var DataList  = class{
+        var DataListSub  = class DataListSub{
             constructor() {
                 this.url = 'http://127.0.0.1:8000/api/getAllSubject';
                 this.urlz = 'http://127.0.0.1:8000/api/getAllSubjectZA';
@@ -120,6 +120,7 @@
                         
                     })
                     .done(function(result) {
+                        $("#loader").hide();
                         //Sau khi lấy danh sach -> render ra table
                         $(self.container).html(
                             result.subjects.map(e => {
@@ -130,7 +131,7 @@
                                 <td>
                                     <div class="actions-style">
                                     {{-- Edit --}}
-                                    <a class="btn-edit" data-item="${e.id}" class="menu-item" data-bs-toggle="tooltip"
+                                    <button class="btn-edit" data-item="${e.id}" class="menu-item" data-bs-toggle="tooltip"
                                         title="Edit">
                                         <span
                                             class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">
@@ -141,7 +142,7 @@
                                                 </path>
                                             </svg>
                                         </span>
-                                    </a>
+                                    </button>
                                     {{-- Delete --}}
 
                                     <button class="btn-delete" data-item="${e.id}" data-bs-toggle="tooltip" title="Delete">
@@ -206,12 +207,34 @@
                                 <td>${e.name}</td>
                                 <td>${e.description}</td>
                                 <td>
-                                <button data-item="${e.id}" class="btn btn-delete btn-danger">
-                                    Delete
-                                </button>
-                                <button data-item="${e.id}" class="btn btn-edit btn-info">
-                                    Update
-                                </button>
+                                    <div class="actions-style">
+                                    {{-- Edit --}}
+                                    <a class="btn-edit" data-item="${e.id}" class="menu-item" data-bs-toggle="tooltip"
+                                        title="Edit">
+                                        <span
+                                            class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon-action" fill="none" viewBox="0 0 24 24"
+                                                stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                                                </path>
+                                            </svg>
+                                        </span>
+                                    </a>
+                                    {{-- Delete --}}
+
+                                    <button class="btn-delete" data-item="${e.id}" data-bs-toggle="tooltip" title="Delete">
+                                        <span
+                                            class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon-action" fill="none" viewBox="0 0 24 24"
+                                                stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                                </path>
+                                            </svg>
+                                        </span>
+                                    </button>
+                                </div>
                                 </td>
                             </tr>`;
                             }).join('')
@@ -248,12 +271,34 @@
                                 <td>${e.name}</td>
                                 <td>${e.description}</td>
                                 <td>
-                                <button data-item="${e.id}" class="btn btn-delete btn-danger">
-                                    Delete
-                                </button>
-                                <button data-item="${e.id}" class="btn btn-edit btn-info">
-                                    Update
-                                </button>
+                                    <div class="actions-style">
+                                    {{-- Edit --}}
+                                    <a class="btn-edit" data-item="${e.id}" class="menu-item" data-bs-toggle="tooltip"
+                                        title="Edit">
+                                        <span
+                                            class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon-action" fill="none" viewBox="0 0 24 24"
+                                                stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                                                </path>
+                                            </svg>
+                                        </span>
+                                    </a>
+                                    {{-- Delete --}}
+
+                                    <button class="btn-delete" data-item="${e.id}" data-bs-toggle="tooltip" title="Delete">
+                                        <span
+                                            class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon-action" fill="none" viewBox="0 0 24 24"
+                                                stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                                </path>
+                                            </svg>
+                                        </span>
+                                    </button>
+                                </div>
                                 </td>
                             </tr>`;
                             }).join('')
@@ -275,7 +320,7 @@
                 $('.btn-edit').each(function(index, element) {
                     //Trả về trang edit + id của element
                     $(element).click(function() {
-                        $(self.container).html('<div id="loader" class="loader"></div>');
+                        // $(self.container).html('<div id="loader" class="loader"></div>');
                         number = $(element).attr('data-item');
                         var url = `http://127.0.0.1:8000/api/editSubject/${(number)}`;
                         $.ajax({
@@ -287,6 +332,7 @@
                             }
                         });
                     }); 
+                    
                 });
                 $('.btn-a-z').on('click', function(e) {  
                     $("#a-z").hide();
@@ -299,7 +345,15 @@
                     $("#z-a").hide();
                     self.load();
                 });
-                $('.input-search').each(function(index, element) {
+                $('#goSearch').on('click', function() {
+                    var value = $('input[name="keywords"]').val();
+                    console.log(value);
+                    self.loadsearch(value);
+                    // e.preventDefault();
+                    // $(self.container).html('<div id="loader" class="loader"></div>');
+                    
+                });
+                $('.inputzzz').each(function(index, element) {
                     $(element).on('keyup', function() {
                         $(self.container).html('<div id="loader" class="loader"></div>');
                         setTimeout(() => {
@@ -320,4 +374,3 @@
             }
         }
     </script>
-@endsection

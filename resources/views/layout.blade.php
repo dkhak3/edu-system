@@ -161,6 +161,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
 
     <script>
+        $('#subject-page').on('click', function(e) {
+        e.preventDefault();
+            // $(self.container).html('<div id="loader" class="loader"></div>');
+            $.ajax({
+                url: 'http://127.0.0.1:8000/api/indexSubject',
+                type: 'GET',
+                dataType: 'html',
+                success: function(response) {
+                    var history = window.history || window.location.history;
+                    history.pushState(null, null, `/subjects`);
+                    // $("#loader").hide();
+                    // console.log(response);
+                    $('.subjectRender').html(response);
+                }
+            });
+        });
         $('#courses-page').click(function(e) {
 
             e.preventDefault();

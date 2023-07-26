@@ -12,7 +12,7 @@
     </div>
 
     {{-- Form --}}
-    <form autocomplete="off" class="form-main">
+    <div autocomplete="off" class="form-main">
         @csrf
         {{-- Name, Address --}}
         <div class="row">
@@ -43,11 +43,11 @@
             </div>
         </div>
       
-        <button type="submit" id="btn-edit" class="btn-primary-style btn-submit form-submit">
+        <button id="btn-edit" class="btn-primary-style btn-submit form-submit">
             <span class="spinner-border-xl spinner" role="status" aria-hidden="true"></span>
             Update subject
         </button>
-    </form>
+    </div>
 </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
@@ -70,24 +70,23 @@
                 }
             })
 
-            $('.btn-cancel').on('click', function(e) {
-            e.preventDefault();
-            // var url = 'http://127.0.0.1:8000/api/cancelSubject';
-            // $.ajax({
-            //     url: url,
-            //     type: 'GET',
-            //     dataType: 'html',
-            //     success: function(response) {
-            //         // Xử lý kết quả AJAX ở đây (ví dụ: hiển thị form add)
-            //         $('.subjectRender').html(response);
-            //         }
-            //     });
-            window.location.href="/subjects";
-            });
-            $('.btn-edit').on('click', function(e) {
+            // $('.btn-cancel').on('click', function(e) {
+            // e.preventDefault();
+            // // var url = 'http://127.0.0.1:8000/api/cancelSubject';
+            // // $.ajax({
+            // //     url: url,
+            // //     type: 'GET',
+            // //     dataType: 'html',
+            // //     success: function(response) {
+            // //         // Xử lý kết quả AJAX ở đây (ví dụ: hiển thị form add)
+            // //         $('.subjectRender').html(response);
+            // //         }
+            // //     });
+            // window.location.href="/subjects";
+            // });
+            $('#btn-edit').on('click', function(e) {
             e.preventDefault();
             var url = `http://127.0.0.1:8000/api/edit-subject/${(id)}`;
-           
             $.ajax({
                 url: url,
                 type: 'PUT',
@@ -96,18 +95,17 @@
                         description: $('#descriptionInput').val()
                     },
                 success: function(response) {
-                    console.log("xong roi");
-                    //Sua xong quay ve
-                    // var urlz = 'http://127.0.0.1:8000/api/cancelSubject';
-                    //     $.ajax({
-                    //         url: urlz,
-                    //         type: 'GET',
-                    //         dataType: 'html',
-                    //         success: function(response) {
-                    //             // Xử lý kết quả AJAX ở đây (ví dụ: hiển thị form add)
-                    //             $('.subjectRender').html(response);
-                    //             }
-                    //     });
+                    // Sua xong quay ve
+                    var urlz = 'http://127.0.0.1:8000/api/indexSubject';
+                        $.ajax({
+                            url: urlz,
+                            type: 'GET',
+                            dataType: 'html',
+                            success: function(response) {
+                                // Xử lý kết quả AJAX ở đây (ví dụ: hiển thị form add)
+                                $('.subjectRender').html(response);
+                                }
+                        });
                     }
                 });
             });

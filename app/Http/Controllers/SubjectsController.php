@@ -86,7 +86,12 @@ class SubjectsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function add()  {
-        return view('subject.addSubject');
+        // return view('subject.addSubject');
+
+        $subjects = Subject::all();
+        //
+        return view('subject.addSubject')->with('zzz',$subjects);
+
     }
     public function editSubject($id)  {
         return view('subject.editSubject')->with('id',$id);
@@ -103,9 +108,17 @@ class SubjectsController extends Controller
             'success'=>false
             ]);
         }else{
-            $subjects = new Subject($request->all());
-            $subjects->save();
+            // $subjects = Subject::all();
+            // $subjects->save();
+            // return response()->json([
+            //     'subjects'=> $subjects,
+            //     'success'=>true
+            // ]);
+            $subject = new Subject($request->all());
+            $subject->save();
+            $subjects = Subject::all();
             return response()->json([
+            'subjects'=> $subjects,
             'result'=>true
             ]); 
         }

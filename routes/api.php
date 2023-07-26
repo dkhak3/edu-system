@@ -45,8 +45,11 @@ Route::get('/getAllSubjectZA',[SubjectsController::class,'getAllZa']);
 Route::get('/getSearchSubject',[SubjectsController::class,'search']);
 Route::get('/cancelSubject', [SubjectsController::class,'index']);
 
+
+Route::get('/indexSubject', [SubjectsController::class,'index']);
 Route::get('/addSubject', [SubjectsController::class,'add']);
 Route::post('/add-subjects',[SubjectsController::class,'store']);
+
 Route::get('/editSubject/{id}', [SubjectsController::class,'editSubject']);
 Route::get('/edit/showSubject/{id}', [SubjectsController::class,'show']);
 Route::put('/edit-subject/{id}',[SubjectsController::class,'update']);
