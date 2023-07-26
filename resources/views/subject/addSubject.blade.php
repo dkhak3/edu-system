@@ -1,6 +1,7 @@
 
 <title>Add subject</title>
 
+<div class="loader-sub"></div>
 <div class="dashboard-children active">
     {{-- Heading --}}
     <div class="mb-5 d-flex justify-content-between align-items-center">
@@ -46,7 +47,7 @@
       
         <button id="btn-add" class="btn-primary-style btn-submit form-submit">
             <span class="spinner-border-xl spinner" role="status" aria-hidden="true"></span>
-            Update subject
+            Add subject
         </button>
     </div>
 </div>
@@ -58,6 +59,7 @@
        
         $(document).ready(function() {
             $('#btn-add').on('click', function(e) {
+                $('.loader-sub').attr('class', 'loader-subject');
                 e.preventDefault();
                 var url = 'http://127.0.0.1:8000/api/add-subjects';
                 $.ajax({

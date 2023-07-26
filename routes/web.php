@@ -60,7 +60,7 @@ Route::get('/courses/add/form', function () {
 })->name('courses');
 //
 Route::get('/subjects', function () {
-    return view('subject.subjects');
+    return view('layout');
 })->name('subject');
 
 

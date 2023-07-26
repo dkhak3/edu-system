@@ -148,7 +148,6 @@
                         </div>
                     </div>
                 </div>
-
                 @yield('content')
             </div>
         </div>
@@ -163,7 +162,14 @@
     <script>
         $('#subject-page').on('click', function(e) { 
         e.preventDefault();
-            // $(self.container).html('<div id="loader" class="loader"></div>');
+            $('body').append('<title>Subjects</title>')
+            //Gan the xanh
+            $('.menu-item').each(function(i, e) {
+                $(e).removeClass('active')
+            })
+            $('#subject-page').addClass('active')
+
+            $('.loader').attr('class', 'loader');
             $.ajax({
                 url: 'http://127.0.0.1:8000/api/indexSubject',
                 type: 'GET',
@@ -171,12 +177,31 @@
                 success: function(response) {
                     var history = window.history || window.location.history;
                     history.pushState(null, null, `/subjects`);
-                    // $("#loader").hide();
+                    $(".loader").hide();
                     // console.log(response);
                     $('.subjectRender').html(response);
                 }
             });
         });
+        if (window.location.href == 'http://127.0.0.1:8000/subjects') {
+            // $('.loader').attr('class', 'loader');
+            $('body').append('<title>Subject</title>')
+            $.ajax({
+                type: "GET",
+
+                url: "http://127.0.0.1:8000/api/indexSubject",
+
+                dataType: "html",
+                success: function(response) {
+                    var history = window.history || window.location.history;
+                    history.pushState(null, null, `/subjects`);
+                    $(".subjectRender").html(response);
+                },
+                complete: function() {
+                    // $('.loader').attr('class', 'loader loader--hidden');
+                }
+            });
+        }
         $('#courses-page').click(function(e) {
 
             e.preventDefault();
@@ -186,6 +211,7 @@
 
             })
             $('#courses-page').addClass('active')
+
             $('.loader').attr('class', 'loader');
             $.ajax({
                 type: "GET",

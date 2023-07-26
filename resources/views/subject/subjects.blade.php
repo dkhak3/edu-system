@@ -1,6 +1,7 @@
 
 <title>Subjects</title>
 
+<div class="loader-sub"></div>
 <div class="dashboard-children active">
     {{-- Heading --}}
     <div class="mb-5 d-flex justify-content-between align-items-center">
@@ -69,7 +70,9 @@
             //Bắt sự kiện cho btn-add
             $('.link-to-add').on('click', function(e) {
                 var self = this; 
-                // $(self.container).html('<div id="loader" class="loader"></div>');
+                // $('.loader').attr('class', 'loader');
+                // $('.loader-sub').attr('class', 'loader-subject');
+                // $(self.container).html('<div id="loader-subject" class="loader-sub"></div>');
                 $.ajax({
                     url: 'http://127.0.0.1:8000/api/addSubject',
                     type: 'GET',
@@ -77,6 +80,10 @@
                     success: function(response) {
                         // console.log(response);
                         $('.subjectRender').html(response);
+                    },
+                    complete: function() {
+
+                        // $('.loader-sub').attr('class', 'loader-subject--hidden');
                     }
                 });
             });
@@ -104,10 +111,10 @@
             
             //Hàm hiển thị danh sách
             load() {
-                console.log("a-z");
+                // console.log("a-z");
                 $("#z-a").hide();
                 var self = this; 
-                $(self.container).html('<div id="loader" class="loader"></div>');
+                $('.loader-sub').attr('class', 'loader-subject');
                 $.ajax({
                         url: this.url,
                         type: 'GET',
@@ -115,12 +122,14 @@
                             mycustomtype: 'application/x-some-custom-type'
                         },
                         complete: function() {
-                        $("#loader").hide();
+                            $('.loader-subject').css('display', 'none');
                         },
                         
                     })
                     .done(function(result) {
-                        $("#loader").hide();
+                        // console.log("xoa load");
+                        // $(".loader-sub").hide();    
+                        // $('.loader-sub').attr('class', 'loader');
                         //Sau khi lấy danh sach -> render ra table
                         $(self.container).html(
                             result.subjects.map(e => {
@@ -169,6 +178,7 @@
             //Hàm xóa Subject
             DeleteSubject(element) {
                 var self = this;
+                $('.loader-sub').attr('class', 'loader-subject');
                 $.ajax({
                     url: `http://127.0.0.1:8000/api/deleteSubject/${$(element).attr("data-item")}`,
                     type: 'DELETE',
@@ -177,6 +187,7 @@
                         mycustomtype: 'application/x-some-custom-type'
                     },
                     success: function(response) {
+                        $('.loader-sub').attr('class', 'loader-subject--hidden');
                         self.load() 
                         //Load lại sau khi xóa
                     }
@@ -186,7 +197,8 @@
           
             loadz() {
                 var self = this; 
-                $(self.container).html('<div id="loader" class="loader"></div>');
+                $('.loader-sub').attr('class', 'loader-subject');
+                $('.loader-subject').css('display', 'block');
                 $.ajax({
                         url: this.urlz,
                         type: 'GET',
@@ -194,11 +206,14 @@
                             mycustomtype: 'application/x-some-custom-type'
                         },
                         complete: function() {
-                        $("#loader").hide();
+                            // $('.loader-sub').attr('class', 'loader loader-subject--hidden');
+                            $('.loader-subject').css('display', 'none');
+                            // $('.loader-sub').addClass('loader-subject-hidden')
                         },
                         
                     })
                     .done(function(result) {
+                        // $('.loader-sub').attr('class', 'loader-subject--hidden');
                         //Sau khi lấy danh sach -> render ra table
                         $(self.container).html(
                             result.subjects.map(e => {
@@ -246,7 +261,7 @@
             
             loadsearch(key) {
                 var self = this; 
-                $(self.container).html('<div id="loader" class="loader"></div>');
+                $('.loader-sub').attr('class', 'loader-subject');
                 $.ajax({
                     url: this.urlsearch,
                     type: 'GET',
@@ -255,7 +270,7 @@
                     success: function(response) {
                         // Xử lý phản hồi thành công từ server
                         console.log(response.subjects);
-                        $("#loader").hide();
+                    
                     },
                     error: function(xhr, status, error) {
                         // Xử lý lỗi khi yêu cầu không thành công
@@ -263,6 +278,7 @@
                     },  
                 })
                 .done(function(result) {
+                    $('.loader-sub').attr('class', 'loader-subject--hidden');
                         //Sau khi lấy danh sach -> render ra table
                         $(self.container).html(
                             result.subjects.map(e => {
@@ -321,13 +337,16 @@
                     //Trả về trang edit + id của element
                     $(element).click(function() {
                         // $(self.container).html('<div id="loader" class="loader"></div>');
+                        $('.loader-sub').attr('class', 'loader-subject');
                         number = $(element).attr('data-item');
                         var url = `http://127.0.0.1:8000/api/editSubject/${(number)}`;
+                        $('.loader-sub').attr('class', 'loader-subject');
                         $.ajax({
                             url: url,
                             type: 'GET',
                             dataType: 'html',
                             success: function(response) {
+                                // $('.loader-sub').attr('class', 'loader-subject--hidden');
                                 $('.subjectRender').html(response);
                             }
                         });

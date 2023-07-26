@@ -1,6 +1,7 @@
 
 <title>Update subject</title>
 
+<div class="loader-sub"></div>
 <div class="dashboard-children active">
     {{-- Heading --}}
     <div class="mb-5 d-flex justify-content-between align-items-center">
@@ -58,13 +59,15 @@
         $(document).ready(function() {
             id = {{$id}}
             console.log(id);
+            $('.loader-sub').attr('class', 'loader-subject');
             $.ajax({
             url: `http://127.0.0.1:8000/api/edit/showSubject/${(id)}`,
             type: 'GET',
             accepts: {
-            mycustomtype: 'application/x-some-custom-type'
+                    mycustomtype: 'application/x-some-custom-type'
                 },
                 success: function(response) {
+                $('.loader-subject').css('display', 'none');
                 $('#nameInput').val(response.subject.name)
                 $('#descriptionInput').text(response.subject.description)
                 }
@@ -87,6 +90,9 @@
             $('#btn-edit').on('click', function(e) {
             e.preventDefault();
             var url = `http://127.0.0.1:8000/api/edit-subject/${(id)}`;
+            // $('.loader-sub').attr('class', 'loader-subject');
+            // $('.loader-subject').css('display', 'block');
+            $('.loader-sub').attr('class', 'loader-subject');
             $.ajax({
                 url: url,
                 type: 'PUT',
@@ -104,7 +110,7 @@
                             success: function(response) {
                                 // Xử lý kết quả AJAX ở đây (ví dụ: hiển thị form add)
                                 $('.subjectRender').html(response);
-                                }
+                            }
                         });
                     }
                 });
