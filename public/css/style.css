@@ -332,10 +332,10 @@ table {
     border-radius: 50%;
     animation: loading 0.75s ease infinite;
 }
-.loader-subject--hidden {
+/* .loader-subject--hidden {
     opacity: 0;
     visibility: hidden;
-}
+} */
 .loader--hidden {
     opacity: 0;
     visibility: hidden;

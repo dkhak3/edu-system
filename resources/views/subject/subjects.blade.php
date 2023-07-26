@@ -70,7 +70,7 @@
             //Bắt sự kiện cho btn-add
             $('.link-to-add').on('click', function(e) {
                 var self = this; 
-                // $('.loader').attr('class', 'loader');
+                $('.loader-sub').attr('class', 'loader-subject');
                 // $('.loader-sub').attr('class', 'loader-subject');
                 // $(self.container).html('<div id="loader-subject" class="loader-sub"></div>');
                 $.ajax({
@@ -197,8 +197,7 @@
           
             loadz() {
                 var self = this; 
-                $('.loader-sub').attr('class', 'loader-subject');
-                $('.loader-subject').css('display', 'block');
+                $('.loader-subject').css('display', 'flex');
                 $.ajax({
                         url: this.urlz,
                         type: 'GET',
@@ -206,9 +205,7 @@
                             mycustomtype: 'application/x-some-custom-type'
                         },
                         complete: function() {
-                            // $('.loader-sub').attr('class', 'loader loader-subject--hidden');
                             $('.loader-subject').css('display', 'none');
-                            // $('.loader-sub').addClass('loader-subject-hidden')
                         },
                         
                     })
@@ -357,11 +354,13 @@
                     $("#a-z").hide();
                     $("#z-a").show();
                     self.loadz();
+                      
                     
                 });
                 $('.btn-z-a').on('click', function(e) {
                     $("#a-z").show();
                     $("#z-a").hide();
+                    $('.loader-subject').css('display', 'flex');
                     self.load();
                 });
                 $('#goSearch').on('click', function() {

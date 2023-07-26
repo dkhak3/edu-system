@@ -184,6 +184,12 @@
             });
         });
         if (window.location.href == 'http://127.0.0.1:8000/subjects') {
+            $('body').append('<title>Subjects</title>')
+            //Gan the xanh
+            $('.menu-item').each(function(i, e) {
+                $(e).removeClass('active')
+            })
+            $('#subject-page').addClass('active')
             // $('.loader').attr('class', 'loader');
             $('body').append('<title>Subject</title>')
             $.ajax({
