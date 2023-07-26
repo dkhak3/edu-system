@@ -258,7 +258,7 @@
             
             loadsearch(key) {
                 var self = this; 
-                $('.loader-sub').attr('class', 'loader-subject');
+                $('.loader-subject').css('display', 'flex');
                 $.ajax({
                     url: this.urlsearch,
                     type: 'GET',
@@ -275,7 +275,7 @@
                     },  
                 })
                 .done(function(result) {
-                    $('.loader-sub').attr('class', 'loader-subject--hidden');
+                    $('.loader-subject').css('display', 'none');
                         //Sau khi lấy danh sach -> render ra table
                         $(self.container).html(
                             result.subjects.map(e => {
@@ -371,24 +371,7 @@
                     // $(self.container).html('<div id="loader" class="loader"></div>');
                     
                 });
-                $('.inputzzz').each(function(index, element) {
-                    $(element).on('keyup', function() {
-                        $(self.container).html('<div id="loader" class="loader"></div>');
-                        setTimeout(() => {
-                            // Xử lý logic khi xảy ra sự kiện keyup
-                        var value = $(this).val();
-                        if(value==''){
-                            console.log("getall");
-                            self.load();
-                        }
-                        else{
-                            // console.log('Input value:', value);
-                            self.loadsearch(value);
-                        }
-                        // Các xử lý khác...
-                        }, 2000);
-                    });
-                });
+               
             }
         }
     </script>
