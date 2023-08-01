@@ -95,7 +95,7 @@
                     </a>
 
                     {{-- courses --}}
-                    <a href="{{ route('courses') }}" id="courses-page" class="menu-item" aria-current="page">
+                    <a href="{{ route('courses.index') }}" id="courses-page" class="menu-item" aria-current="page">
                         <span class="menu-icon">
                             {{-- <i class="fa-solid fa-book-open"></i> --}}
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" class="icon" viewBox="0 0 24 24"
@@ -138,16 +138,7 @@
 
 
             <div class="col-lg-9 col-md-12 col-12 subjectRender coursesRender">
-                <div class="dashboard-children">
-                    <div class="mb-5" id="dashboard-content">
-                        <div class="">
-                            <h1 class="dashboard-heading">
-                                Dashboard
-                            </h1>
-                            <p class="dashboard-short-desc">Overview dashboard monitor</p>
-                        </div>
-                    </div>
-                </div>
+                
                 @yield('content')
             </div>
         </div>
@@ -159,120 +150,7 @@
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
 
-    <script>
-        $('#subject-page').on('click', function(e) { 
-        e.preventDefault();
-            $('body').append('<title>Subjects</title>')
-            //Gan the xanh
-            $('.menu-item').each(function(i, e) {
-                $(e).removeClass('active')
-            })
-            $('#subject-page').addClass('active')
-            
-            $('.loader').attr('class', 'loader');
-            $.ajax({
-                url: 'http://127.0.0.1:8000/api/indexSubject',
-                type: 'GET',
-                dataType: 'html',
-                success: function(response) {
-                    var history = window.history || window.location.history;
-                    history.pushState(null, null, `/subjects`);
-
-                    $('.loader').attr('class', 'loader loader--hidden');
-                    // console.log(response);
-                    $('.subjectRender').html(response);
-                }
-            });
-        });
-        if (window.location.href == 'http://127.0.0.1:8000/subjects') {
-            // $('.loader').attr('class', 'loader');
-            $('.menu-item').each(function(i, e) {
-                $(e).removeClass('active')
-            })
-            $('#subject-page').addClass('active')
-            $('body').append('<title>Subjects</title>')
-            $.ajax({
-                type: "GET",
-
-                url: "http://127.0.0.1:8000/api/indexSubject",
-
-                dataType: "html",
-                success: function(response) {
-                    var history = window.history || window.location.history;
-                    history.pushState(null, null, `/subjects`);
-                    $(".subjectRender").html(response);
-                },
-                complete: function() {
-                    // $('.loader').attr('class', 'loader loader--hidden');
-                }
-            });
-        }
-        $('#courses-page').click(function(e) {
-
-            e.preventDefault();
-            $('body').append('<title>Courses</title>')
-            $('.menu-item').each(function(i, e) {
-                $(e).removeClass('active')
-
-            })
-            $('#courses-page').addClass('active')
-
-            $('.loader').attr('class', 'loader');
-            $.ajax({
-                type: "GET",
-
-                url: "http://127.0.0.1:8000/api/courses/index",
-
-                dataType: "html",
-                success: function(response) {
-                    var history = window.history || window.location.history;
-                    history.pushState(null, null, `/courses`);
-                    $(".coursesRender").html(response);
-
-                },
-                complete: function() {
-                    $('.loader').attr('class', 'loader loader--hidden');
-                }
-            });
-        });
-        if (window.location.href == 'http://127.0.0.1:8000/courses') {
-            $('.loader').attr('class', 'loader');
-            $('body').append('<title>Courses</title>')
-
-            $.ajax({
-                type: "GET",
-
-                url: "http://127.0.0.1:8000/api/courses/index",
-
-                dataType: "html",
-                success: function(response) {
-                    var history = window.history || window.location.history;
-                    history.pushState(null, null, `/courses`);
-                    $(".coursesRender").html(response);
-                },
-                complete: function() {
-                    $('.loader').attr('class', 'loader loader--hidden');
-
-
-
-                }
-            });
-        }
-        if (window.location.href == 'http://127.0.0.1:8000/courses/add/form') {
-            $.ajax({
-                type: "GET",
-
-                url: "http://127.0.0.1:8000/api/courses/add/form",
-
-                dataType: "html",
-                success: function(response) {
-                    var history = window.history || window.location.history;
-                    history.pushState(null, null, `/courses/add/form`);
-                    $(".coursesRender").html(response);
-                }
-            });
-        }
-    </script>
+    
 
 </body>
 

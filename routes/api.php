@@ -23,25 +23,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 //Courses
-Route::get('/courses/add/form', [CoursesController::class,'create']);
 Route::get('/courses/all', [CoursesController::class,'all']);
-Route::get('/courses', [CoursesController::class,'index']);
-Route::get('/courses/index', function () {
-    
-    return view('courses.tablecourses');
-})->name('courses');
-Route::get('/courses/add/form', function () {
-    
-    return view('courses.add');
-});
 Route::get('/courses/search',[CoursesController::class,'search']);
-Route::get('/courses/getall',[CoursesController::class,'getAll']);
-Route::post('/courses/add-course',[CoursesController::class,'store']);
 Route::post('/courses/delete/selected',[CoursesController::class,'delete']);
 Route::delete('/courses/delete/{id}',[CoursesController::class,'destroy']);
-Route::post('/courses/delete/courses/all',[CoursesController::class,'delete']);
-Route::post('/courses/edit/show/{id}',[CoursesController::class,'show']);
-Route::put('/courses/update-course/{id}',[CoursesController::class,'update']);
 //Subject
 Route::get('/getAllSubject',[SubjectsController::class,'getAll']);
 Route::get('/getAllSubjectZA',[SubjectsController::class,'getAllZa']);

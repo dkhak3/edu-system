@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LecturerController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\CoursesController;
 use App\Models\Course;
 
 /*
@@ -46,13 +47,8 @@ Route::get('sortContacts', [ContactController::class, 'sort']);
 // ------------------------------------------------------------------------------------------------
 
 //Courses
-Route::get('/courses', function () {
-    
-    return view('layout');
-})->name('courses');
-Route::get('/courses/add/form', function () {
-    return view('layout');
-})->name('courses');
+Route::resource('courses',CoursesController::class);
+
 //
 Route::get('/subjects', function () {
     return view('layout');

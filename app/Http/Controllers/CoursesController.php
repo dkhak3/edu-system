@@ -39,13 +39,8 @@ class CoursesController extends Controller
         }
         $perPage = 4;
     $searchResult = $search->paginate($perPage, ['*'], 'page', $request->page);
-    $search = $search->paginate($perPage, ['*'], 'page', $request->page);
-    
-    // Trích xuất thông tin cần thiết từ đối tượng phân trang
-    
+    $search = $search->paginate($perPage, ['*'], 'page', $request->page);  
     $paginationLinks = $searchResult->links()->toHtml();
-        
-        
         $view =  View::make('componentChirld.tablelist')->with('courses', $search)->render();
             return  response()->json([
                 'blade'=> $view,
@@ -58,33 +53,11 @@ class CoursesController extends Controller
     
     public function index()
     {
+        return view('courses.index');
         
-        $courses = Course::all();
-
-        $view =  View::make('componentChirld.tablelist')->with('courses', $courses)->render();
-            return  response()->json([
-                'blade'=> $view,
-                'courses'=> $courses
-            ]);
     }
-    public function getAll()
-    {
-        return view('courses.tablecourses')->with('courses',Course::all());
-
-    }
-    public function getPage()
-    {
-        session()->forget('courses');
-
-        $html = view()->file(resource_path('views/courses/tablecourses.blade.php'))->render();
-        return $html;
-    }
-    public function all() {
-        $courses = new Course();
-        return  response()->json([
-            'courses'=> $courses->getAllUserIds(),
-        ]);
-    }
+    
+   
     /**
      * Show the form for creating a new resource.
      *
@@ -92,9 +65,7 @@ class CoursesController extends Controller
      */
     public function create()
     {
-        $view =  View::make('courses.add')->render();
-       
-       return $view;
+       return view('courses.add');
          
     }
 
@@ -113,21 +84,17 @@ class CoursesController extends Controller
             'description'=>'required',
         ]);
         if ($validate->fails()) {
-            $viewsc =  View::make('courses.error')->render();
-            return  response()->json([
-                'validate'=>$validate->errors()->messages(),
-                'viewsuccess'=>$viewsc,
-                'success'=> false
-            ]);
+           
+            
+            return view('courses.add')->with('request',$request->all())->with('validate', $validate->errors()->messages());
+            
         }else{
             $course = new Course($request->all());
         $course->save();
         $viewsc =  View::make('courses.success')->render();
-            return  response()->json([
-                'viewsuccess'=>$viewsc,
-                
-                'success'=>true,
-            ]);
+        
+        return view('courses.index')->with('success', $viewsc);
+    
         }
         
        
@@ -142,9 +109,8 @@ class CoursesController extends Controller
     public function show($id)
     {
         
-        $view =  View::make('courses.edit')->with('course', Course::find($id))->render();
-       
-       return $view;
+       $course = Course::find($id); 
+       return view('courses.edit')->with('course',$course);
     }
 
     /**
@@ -167,6 +133,7 @@ class CoursesController extends Controller
      */
     public function update(Request $request, $id)
     {
+        
         $validate = Validator::make($request->all(),[
             'name'=> 'required|max:191',
             'startdate'=>'required',
@@ -174,17 +141,9 @@ class CoursesController extends Controller
             'description'=>'required',
         ]);
         if ($validate->fails()) {
-            $viewsc =  View::make('courses.error')->render();
+            $course = Course::find($id); 
             
-            
-            return response()->json([
-                'validate'=>$validate->errors()->messages(),
-                'viewsuccess'=>$viewsc,
-                'success'=>false,
-
-
-
-            ]);
+            return view('courses.edit')->with('course',$course)->with('validate', $validate->errors()->messages());
         }
         $course = Course::find($id);
         $course->name = $request->name;
@@ -194,11 +153,7 @@ class CoursesController extends Controller
         $course->save();
         $viewsc =  View::make('courses.success')->render();
         
-            return  response()->json([
-                'viewsuccess'=>$viewsc,
-                
-                'success'=>true,
-            ]);
+            return view('courses.index')->with('success', $viewsc);
         
     }
 
@@ -237,7 +192,6 @@ class CoursesController extends Controller
         $courses = new Course();
         try {
             Course::whereIN('id',$request->arrCourses)->delete();
-           
             $viewsc =  View::make('courses.success')->render();
 
             return  response()->json([
@@ -256,5 +210,11 @@ class CoursesController extends Controller
         ]);
         }         
         
+    }
+    public function all() {
+        $courses = new Course();
+        return  response()->json([
+            'courses'=> $courses->getAllUserIds(),
+        ]);
     }
 }

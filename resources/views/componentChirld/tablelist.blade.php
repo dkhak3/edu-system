@@ -4,14 +4,14 @@
         <td>{{ $e->name }}</td>
         <td class="mbl-none">{{ $e->description }}</td>
         <td>{{ $e->created_at }}</td>
-        <td >{{ $e->startdate }}</td>
-        <td >{{ $e->enddate }}</td>
+        <td>{{ $e->startdate }}</td>
+        <td>{{ $e->enddate }}</td>
         <td>
-
+            {{--  --}}
             <div class="actions-style">
                 {{-- Edit --}}
-                <a class="btnEdit" data-item="{{ $e->id }}" class="menu-item" data-bs-toggle="tooltip"
-                    title="Edit">
+                <a href="{{ route('courses.show', $e->id) }}" class="btnEdit" data-item="{{ $e->id }}"
+                    class="menu-item" data-bs-toggle="tooltip" title="Edit">
                     <span
                         class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon-action" fill="none" viewBox="0 0 24 24"
@@ -24,7 +24,8 @@
                 </a>
                 {{-- Delete --}}
 
-                <button class="deleteCourses" data-item="{{ $e->id }}" data-bs-toggle="tooltip" title="Delete">
+                <button data-bs-toggle="modal" data-item="{{ $e->id }}" class="chooseID"
+                    data-bs-target="#modalDelete" title="Delete">
                     <span
                         class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon-action" fill="none" viewBox="0 0 24 24"
@@ -35,6 +36,29 @@
                         </svg>
                     </span>
                 </button>
+
+            </div>
+            <div class="modal fade" id="modalDelete" tabindex="-1" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-confirm modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <div class="icon-box">
+                                <div class="material-icons">!</div>
+                            </div>
+                            <h2 class="modal-title">Are you sure?</h2>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" id="contact_id">
+                            <p>You won't be able to revert this!</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-info" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-danger deleteCourses"
+                              data-bs-dismiss="modal">Yes, delete it! </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </td>
         {{-- <td style="white-space: nowrap"><button type="button"  class="btn btnEdit btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@getbootstrap" data-id="{{$e->id}}"><i class="fa-solid fa-pen"></i></button> | <button data-item="{{$e->id}}" class="btn btn-danger btnDelete"><i class="fa-solid fa-trash"></i></button></td> --}}
@@ -44,34 +68,19 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
 
 <script>
-    $(".btnEdit").each(function(index, element) {
-        $(element).click(function(e) {
-            e.preventDefault();
-            var history = window.history || window.location.history;
-            history.pushState(null, null, `courses/edit/show/${$(element).attr('data-item')}`);
-
-
-            $.ajax({
-                url: `http://127.0.0.1:8000/api/courses/edit/show/${$(element).attr('data-item')}`,
-                type: "POST",
-                dataType: "html",
-
-
-                success: function(response) {
-                    $('.coursesRender').html(response);
-
-                },
-            });
+    var chooseEL = -1;
+    $('.chooseID').each( function (i, el) { 
+        $(el).click(function (e) { 
+            chooseEL = $(el).attr(
+                "data-item"
+            )
+            console.log(chooseEL);
         });
     });
-    
     $(".deleteCourses").each(function(index, element) {
         $(element).click(function(e) {
-
             $.ajax({
-                url: `http://127.0.0.1:8000/api/courses/delete/${$(element).attr(
-                "data-item"
-            )}`,
+                url: `http://127.0.0.1:8000/api/courses/delete/${chooseEL}}`,
                 type: "DELETE",
                 dataType: "html",
                 accepts: {
@@ -79,8 +88,6 @@
                 },
                 success: function(response) {
                     setTimeout(function() {
-
-                        
                         $("body").append(JSON.parse(response).success);
                         loadTB()
                         setTimeout(function() {
@@ -92,6 +99,7 @@
             });
         });
     });
+    
     function loadTB(){
         $('#renderTB').html(
                             '<tr><td id="loading" class="loading" colspan="6"></td></tr>'
