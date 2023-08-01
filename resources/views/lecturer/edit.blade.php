@@ -1,27 +1,35 @@
-{{-- Edit Lecturers --}}
+@extends('layout')
+<title>Update Lecturers</title>
+
+
+@section('content')
+
+{{-- New Lecturers --}}
 <div class="dashboard-children active">
     {{-- Heading --}}
     <div class="mb-5 d-flex justify-content-between align-items-center">
         <div class="">
             <h1 class="dashboard-heading">
-                Update Lecturers
+                Update Lecturer
             </h1>
-            <p class="dashboard-short-desc">Update your lecturer id: <strong>{{ $item->id }}</strong></p>
+            <p class="dashboard-short-desc">Update your lecturer id: <strong>{{$lecturer[0]->id}}</strong></p>
         </div>
     </div>
     
     {{-- Form --}}
-    <form class="form-main" id="form-1">
+    <form action="{{ route('edit',$lecturer[0]->id) }}" method="POST" class="form-main" id="form-1">
         @csrf
-        @method('PUT')
         {{-- Name, Address --}}
         <div class="row">
             <div class="col-md">
                 <div class="form-input form-group">
                     <label for="name">Name</label>
                     <div>
-                        <input type="text" placeholder="Enter your name" name="name" id="edit_name" class="form-control" value="{{ $item->name }}">
+                        <input type="text" placeholder="Enter your name" name="name" id="name" class="form-control" value="{{$lecturer[0]->name}}">
                     </div>
+                    @if ($errors->has('name'))
+                        <span class="text-danger">{{ $errors->first('name') }}</span>
+                    @endif
                     <span class="form-message"></span>
                 </div>
             </div>
@@ -29,8 +37,11 @@
                 <div class="form-input form-group">
                     <label for="address">Address</label>
                     <div>
-                        <input type="text" placeholder="Enter your address" name="address" id="edit_address" class="form-control" value="{{ $item->address }}">
+                        <input type="text" placeholder="Enter your address" name="address" id="address" class="form-control" value="{{$lecturer[0]->address}}">
                     </div>
+                    @if ($errors->has('address'))
+                        <span class="text-danger">{{ $errors->first('address') }}</span>
+                    @endif
                     <span class="form-message"></span>
                 </div>
             </div>
@@ -41,8 +52,11 @@
                 <div class="form-input form-group">
                     <label for="phone">Phone</label>
                     <div>
-                        <input type="text" placeholder="Enter your phone" name="phone" id="edit_phone" class="form-control" value="{{ $item->phone }}">
+                        <input type="text" placeholder="Enter your phone" name="phone" id="phone" class="form-control" value="{{$lecturer[0]->phone}}">
                     </div>
+                    @if ($errors->has('phone'))
+                        <span class="text-danger">{{ $errors->first('phone') }}</span>
+                    @endif
                     <span class="form-message"></span>
                 </div>
             </div>
@@ -50,93 +64,42 @@
                 <div class="form-input form-group">
                     <label for="birthday">Birthday</label>
                     <div>
-                        <input type="date" placeholder="Enter your birthday" name="birthday" id="edit_birthday" class="form-control" value="{{ $item->birthday }}">
+                        <input type="date" placeholder="Enter your birthday" name="birthday" id="birthday" class="form-control" value="{{$lecturer[0]->birthday}}">
                     </div>
+                    @if ($errors->has('birthday'))
+                        <span class="text-danger">{{ $errors->first('birthday') }}</span>
+                    @endif
                     <span class="form-message"></span>
                 </div>
             </div>
         </div>
 
-        <button type="submit" class="btn-primary-style btn-submit form-submit" id="btnEditLecturer">
-            <span class="spinner-border-xl spinner" role="status" aria-hidden="true"></span>
-            Update lecturer
-        </button>
+        <div class="d-flex justify-content-center align-items-center mx-auto gap-3">
+            <button type="submit" class="btn-primary-style-2 btn-submit form-submit">
+                <span class="spinner-border-xl spinner" role="status" aria-hidden="true"></span>
+                Update lecturer
+            </button>
+            <a href="/lecturers" class="btn-cancel">
+                Cancel
+            </a>
+        </div>
     </form>
 </div>
 
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
-integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
-crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="{{ asset ('/js/toast.js') }}"></script>
-<script src="{{ asset ('/js/validate_form_lecturer.js') }}"></script>
-
 <script>
-    Validator({
-        form: '#form-1',
-        formGroupSelector: '.form-group',
-        errorSelector: '.form-message',
-        rules: [
-            Validator.isRequired('#edit_name'),
-            Validator.isRequired('#edit_address'),
-            Validator.isRequired('#edit_phone'),
-            Validator.isRequired('#edit_birthday'),
-            Validator.isName('#edit_name'),
-            Validator.isPhone('#edit_phone'),
-            Validator.isBirthday('#edit_birthday'),
-            Validator.maxLength('#edit_name', 191),
-            Validator.maxLength('#edit_address', 191),
-            Validator.maxLength('#edit_phone', 191),
-        ],
-    });
+    document.getElementById("lecturer").classList.add("active");
+    document.getElementById("dashboard-content").classList.add("d-none");
+    document.getElementById("dashboard").classList.remove("active");
 
-    $(document).ready(function() {
-        $('#btnEditLecturer').on('click', function(e) {
-            e.preventDefault();
+    const form = document.querySelector("form");
+    form.addEventListener("submit", (e) => {
+        displayLoader();
+    })
 
-            var url = `http://127.0.0.1:8000/api/lecturers/edit-lecturer/`+{{$item->id}};
-        
-            var data = {
-                'name': $('#edit_name').val(),
-                'address': $('#edit_address').val(),
-                'phone': $('#edit_phone').val(),
-                'birthday': $('#edit_birthday').val(),
-            }
-
-            if ($('#edit_name').val() != "" && $('#edit_address').val() != "" 
-                && $('#edit_phone').val() != "" && $('#edit_birthday').val() != "") {
-                    addLoaderSpinner();
-            }
-
-            $.ajax({
-                url: url,
-                type: 'PUT',
-                data: data,
-                    success: function(response) {
-                        showSuccessToast("Update lecturer successfully.");
-
-                        removeLoaderSpinner();
-
-                        window.location.href="/lecturers";
-                    },
-                    error: function(res) {
-                        showErrorToast("Can not update lecturer.");
-                        removeLoaderSpinner();
-                    }
-            });
-        });
-    });
-
-    function addLoaderSpinner() {
+    function displayLoader() {
+        $('.btn-submit').prop('disabled', true)
         $('.spinner').addClass("spinner-border mx-auto");
         $('.btn-submit').addClass("opacity-25");
-        $('.btn-submit').prop('disabled', true)
     }
-
-    function removeLoaderSpinner() {
-        $('.spinner').removeClass("spinner-border mx-auto");
-        $('.btn-submit').removeClass("opacity-25");
-        $('.btn-submit').prop('disabled', false)
-    }
-
 </script>
+@endsection

@@ -2,22 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Lecturer;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Http\Request;
+use App\Models\Lecturer;
 use Illuminate\Support\Facades\DB;
 
 class LecturerController extends Controller
 {
-    public function index(Request $request)
-    {
-        $allLecturers = Lecturer::sortable()->paginate(5);
-        return view('lecturer.index', compact('allLecturers'));
-    }
-    
-    public function loadDataTableLecturer()
-    {
-        $allLecturers = Lecturer::orderBy('created_at', 'asc')->paginate(5);
-        return response()->json(['allLecturers' => $allLecturers]);
+    public function index(Request $request) {
+        $lecturers=[];
+        if ($request->search != null) {
+            $lecturers = Lecturer::where('name', 'LIKE', '%' . $request->search . '%')
+            ->orWHERE('phone',$request->search)
+            ->sortable()
+            ->paginate(5);
+        }
+        else if ($request->search == null) {
+            $lecturers = Lecturer::sortable()->paginate(5);
+        }
+        return view('lecturer.index')->with('lecturers', $lecturers);
     }
 
     public function create()
@@ -28,117 +31,59 @@ class LecturerController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'name' => 'required',
-            'address' => 'required',
-            'phone' => 'required',
-            'birthday' => 'required',
+            'name' => ["required", "regex:/^[A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*(?:[ ][A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*)*$/", "max:191"],
+            'address' => 'required|max:191',
+            'phone' => ["required", "regex:/^(0|84)(2(0[3-9]|1[0-6|8|9]|2[0-2|5-9]|3[2-9]|4[0-9]|5[1|2|4-9]|6[0-3|9]|7[0-7]|8[0-9]|9[0-4|6|7|9])|3[2-9]|5[5|6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])([0-9]{7})$/", "max:191"],
+            'birthday' => 'required|date|max:191',
         ]);
 
         Lecturer::create($validatedData);
-        return response()->json(['message' => 'Add new lecturer successfully!']);
+        return redirect()->route('index')->with('thongbao', 'Add new lecturer successfully');
     }
 
-    public function update(Request $request, string $id)
+    public function edit($id, Request $request)
     {
-        $item = Lecturer::find($id);
-
         $validatedData = $request->validate([
-            'name' => 'required',
-            'address' => 'required',
-            'phone' => 'required',
-            'birthday' => 'required',
+            'name' => ["required", "regex:/^[A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*(?:[ ][A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*)*$/", "max:191"],
+            'address' => 'required|max:191',
+            'phone' => ["required", "regex:/^(0|84)(2(0[3-9]|1[0-6|8|9]|2[0-2|5-9]|3[2-9]|4[0-9]|5[1|2|4-9]|6[0-3|9]|7[0-7]|8[0-9]|9[0-4|6|7|9])|3[2-9]|5[5|6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])([0-9]{7})$/", "max:191"],
+            'birthday' => 'required|date|max:191',
         ]);
 
-        if ($item) {
-            $item->update($validatedData);
-            return response()->json(['message' => 'Update lecturer successfully!']);
-        }
-        else {
-            return response()->json(['message' => 'Lecturer Not Found!']);
-        }
+        DB::table('lecturers')->where("id", $id)->update(['name' => $validatedData['name']]);
+        DB::table('lecturers')->where("id", $id)->update(['address' => $validatedData['address']]);
+        DB::table('lecturers')->where("id", $id)->update(['phone' => $validatedData['phone']]);
+        DB::table('lecturers')->where("id", $id)->update(['birthday' => $validatedData['birthday']]);
+        
+        return redirect()->route('index')->with('thongbao', 'Update lecturer successfully');
     }
 
-    public function destroy(string $id)
+    public function editScreenLecturer($id)
     {
-        if (Lecturer::find($id)){
-            Lecturer::destroy($id);
-            $allLecturers = Lecturer::orderBy('created_at', 'asc')->paginate(5);
-            return response()->json([
-                'allLecturers' => $allLecturers,
-                'message' => 'You have successfully deleted Lecturer.'
-            ]);
-        }
+        $lecturer = DB::table('lecturers')->where('id', $id)->get();
+        return view("lecturer.edit")->with('lecturer', $lecturer);
+    }
+
+    public function update(Request $request, Lecturer $lecturer)
+    {
+        $lecturer->update($request->all());
+        return redirect()->view('lecturer.index');
+    }
+
+    public function destroy($id)
+    {
+        DB::table("lecturers")->where("id",$id)->delete();
+        return redirect()->route('index')->with('thongbao', 'Delete lecturer successfully');
     }
 
     public function deleteAll(Request $request) {
         $ids = $request->ids;
         Lecturer::whereIn('id', $ids)->delete();
-        $allLecturers = Lecturer::orderBy('created_at', 'asc')->paginate(5);
+        $lecturers = Lecturer::sortable()->paginate(5);
         return response()->json([
-            'message' => 'Delete all selected successfully!',
-            'allLecturers' => $allLecturers
+            "success" => "Lecturer have been deleted!",
+            "lecturers" => $lecturers
         ]);
-    }
-
-    public function destroyItemsSelected (Request $request)
-    {
-        $ids = $request->ids;
-        Lecturer::whereIn('id', $ids)->delete();
-        return response()->json(['message' => 'Delete items selected successfully']);
-    }
-
-    public function edit(string $id)
-    {
-        $item = Lecturer::find($id);
-        if ($item) {
-            return view('lecturer.edit')->with('item', $item);
-        }
-        else {
-            return response()->json(['message' => 'Contact Not Found!']);
-        }
-    }
-
-    public function search(Request $request)
-    {
-        $result = [];
-        if ($request->keywords != null) {
-            $result = Lecturer::where('name', 'LIKE', '%' . $request->keywords . '%')
-            ->orderBy('created_at', 'asc')
-            ->paginate(5);
-        } else if ($request->keywords == null) {
-            $result = Lecturer::orderBy('created_at', 'asc')->paginate(5);
-        } else {
-            return response()->json(['message' => 'Not Found!']);
-        }
         
-        return response()->json(['result' => $result]);
-    }
-
-    public function sortName(Request $request)
-    {
-        $allLecturers = [];
-        if ($request->status == 0){
-            $allLecturers = Lecturer::orderBy('name', 'asc')->paginate(5);
-        }
-        else {
-            $allLecturers = Lecturer::orderBy('name', 'desc')->paginate(5);
-        }
-        return response()->json([
-            'allLecturers' => $allLecturers
-        ]);
-    }
-
-    public function sortCreatedAt(Request $request)
-    {
-        $allLecturers = [];
-        if ($request->status == 0){
-            $allLecturers = Lecturer::orderBy('created_at', 'asc')->paginate(5);
-        }
-        else {
-            $allLecturers = Lecturer::orderBy('created_at', 'desc')->paginate(5);
-        }
-        return response()->json([
-            'allLecturers' => $allLecturers
-        ]);
     }
 }

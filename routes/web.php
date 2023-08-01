@@ -21,17 +21,13 @@ Route::get('/', function () {
 
 
 // Lecturer
-Route::resource('lecturers', LecturerController::class);
-Route::get('loadDataTableLecturer', [LecturerController::class, 'loadDataTableLecturer']);
-Route::get('lecturers/create', [LecturerController::class, 'create']);
-Route::post('lecturers/store', [LecturerController::class, 'store']);
-Route::get('lecturers/edit/{id}', [LecturerController::class, 'edit']);
-Route::put('lecturers/update/{id}', [LecturerController::class, 'update']);
-Route::delete('delete-lecturer/{id}', [LecturerController::class, 'destroy']);
+Route::get('/lecturers', [LecturerController::class,'index'])->name('index');
+Route::get('lecturer/add', [LecturerController::class,'create'])->name('add');
+Route::post('/lecturer/store', [LecturerController::class,'store'])->name('store');
+Route::get('/lecturer/delete/{id}', [LecturerController::class,'destroy'])->name('delete');
+Route::post('lecturer/edit/{id}', [LecturerController::class,'edit'])->name('edit');
+Route::get('/lecturer/editScreen/{id}',[LecturerController::class,'editScreenLecturer'])->name("editScreenLecturer");
 Route::delete("/lecturer/selected-lecturer", [LecturerController::class, 'deleteAll'])->name("deleteAll");
-Route::get('searchLecturers', [LecturerController::class, 'search']);
-// Route::get('sortLecturersName', [LecturerController::class, 'sortName']);
-// Route::get('sortLecturersCreatedAt', [LecturerController::class, 'sortCreatedAt']);
 
 // Contact ---------------------------------------------------------------------------------------
 Route::get('contacts/load-data-table', [ContactController::class, 'loadDataTable']);
@@ -61,7 +57,3 @@ Route::get('/courses/add/form', function () {
 Route::get('/subjects', function () {
     return view('layout');
 })->name('subject');
-
-
-
-

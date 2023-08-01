@@ -60,14 +60,3 @@ Route::delete('/deleteSubject/{id}',[SubjectsController::class,'destroy']);
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-
-//Lecturers
-Route::get('/lecturers/addLecturer', [LecturerController::class,'add']);
-Route::get('/lecturers/editLecturer/{id}', [LecturerController::class,'editLecturer']);
-Route::get('/lecturers/edit/showLecturer/{id}', [LecturerController::class,'show']);
-Route::put('/lecturers/edit-lecturer/{id}',[LecturerController::class,'update']);
-Route::get('/lecturers/cancelLecturer', [LecturerController::class,'index']);
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
