@@ -13,7 +13,7 @@
             </h1>
             <p class="dashboard-short-desc">Manage your contacts</p>
         </div>
-        <a href="" class="inline-block" id="btnAdd">
+        <a href="{{ route('contacts.create') }}" class="inline-block" id="btnAdd">
             <button class="btn-style menu-item">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="icon">
@@ -33,14 +33,14 @@
     {{-- Table --}}
     <div class="table-main">
         {{-- Thông báo alert --}}
-        @if (Session::has('thongbao'))
-        <div class="alert alert-success alert-dismissible fade show d-flex" role="alert">
+        @if (Session::has('message'))
+        <div id="alert" class="alert alert-success alert-dismissible fade show d-flex" role="alert">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                 stroke="currentColor" class="icon-alert">
                 <path stroke-linecap="round" stroke-linejoin="round"
                     d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            {{Session::get('thongbao')}}
+            {{Session::get('message')}}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         @endif
@@ -58,7 +58,7 @@
         @endif
 
         {{-- Button delete all selected record --}}
-        <a id="deleteAllSelectedRecord">
+        <a id="btn_delete_all_selected" style="display: none">
             <button type="button" data-bs-toggle="modal" data-bs-target="#modalDeleteAllSelectedRecord"
                 class="btn-style icon-delete menu-item">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24"
@@ -74,7 +74,10 @@
             <thead>
                 <tr>
                     <th>
+                        @if (!($allContacts->isEmpty()))
                         <input type="checkbox" id="select_all">
+                        @endif
+
                     </th>
                     <th>ID</th>
                     <th>
@@ -95,74 +98,78 @@
             </thead>
 
             <tbody>
-                {{-- <div type="text" id="arrLength" value="{{ count($allContacts) }}"> --}}
-                    <div id="arrLength" class="d-none">{{ count($allContacts) }}</div>
-                    @foreach ($allContacts as $item)
-                    <tr id="{{ $item->id }}">
-                        <td>
-                            <input type="checkbox" name="ids" class="checkbox_ids" value="{{$item->id}}">
-                        </td>
-                        <td>{{$item->id}}</td>
-                        <td>{{$item->name}}</td>
-                        <td>{{$item->address}}</td>
-                        <td>{{$item->phone}}</td>
-                        <td>{{$item->birthday}}</td>
-                        <td>{{$item->created_at}}</td>
-                        <td>
-                            <div class="actions-style">
-                                {{-- Edit --}}
-                                <button type="button" id="btn_edit_contact" value="{{$item->id}}" class="menu-item">
-                                    <span
-                                        class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon-action" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
-                                            </path>
-                                        </svg>
-                                    </span>
-                                </button>
-                                {{-- Delete --}}
-                                <button type="button" id="btn_delete_contact" value="{{$item->id}}"
-                                    data-bs-toggle="modal" data-bs-target="#modalDelete">
-                                    <span
-                                        class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon-action" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                                            </path>
-                                        </svg>
-                                    </span>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
+                @foreach ($allContacts as $item)
+                <tr id="{{ $item->id }}">
+                    <td>
+                        <input type="checkbox" name="ids" class="checkbox_ids" value="{{$item->id}}">
+                    </td>
+                    <td>{{$item->id}}</td>
+                    <td>{{$item->name}}</td>
+                    <td>{{$item->address}}</td>
+                    <td>{{$item->phone}}</td>
+                    <td>{{$item->birthday}}</td>
+                    <td>{{$item->created_at}}</td>
+                    <td>
+                        <div class="actions-style">
+                            {{-- Edit --}}
+                            <a href="{{ route('contacts.edit', $item->id) }}" id="btn_edit_contact" class="menu-item">
+                                <span
+                                    class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon-action" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                                        </path>
+                                    </svg>
+                                </span>
+                            </a>
+                            {{-- Delete --}}
+                            <button type="button" id="btn_delete_contact" value="{{$item->id}}" data-bs-toggle="modal"
+                                data-bs-target="#modalDelete">
+                                <span
+                                    class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon-action" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                        </path>
+                                    </svg>
+                                </span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
 
-                    <!-- The Modal for Delete Contact -->
-                    <div class="modal fade" id="modalDelete" tabindex="-1" aria-labelledby="exampleModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog modal-confirm modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <div class="icon-box">
-                                        <div class="material-icons">!</div>
-                                    </div>
-                                    <h2 class="modal-title">Are you sure?</h2>
+                <!-- The Modal for Delete Contact -->
+                <div class="modal fade" id="modalDelete" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-confirm modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <div class="icon-box">
+                                    <div class="material-icons">!</div>
                                 </div>
-                                <div class="modal-body">
-                                    <input type="hidden" id="contact_id">
-                                    <p>You won't be able to revert this!</p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-info" data-bs-dismiss="modal">Cancel</button>
-                                    <button type="button" id="btn_submit_delete_contact" class="btn btn-danger"
-                                        data-bs-dismiss="modal">Yes, delete it!</button>
-                                </div>
+                                <h2 class="modal-title">Are you sure?</h2>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" id="contact_id">
+                                <p>You won't be able to revert this!</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-info" data-bs-dismiss="modal">Cancel</button>
+
+                                <form action="{{ route('contacts.destroy', $item->id) }}" id="modal_submit_delete"
+                                    method="post">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" id="btn_submit_delete_contact" class="btn btn-danger">Yes,
+                                        delete it!</button>
+                                </form>
                             </div>
                         </div>
                     </div>
-                    @endforeach
+                </div>
+                @endforeach
             </tbody>
         </table>
         <div id="pagination" class="float-end mt-3">
@@ -171,11 +178,11 @@
     </div>
 </div>
 
-<div id="spinner" class="text-center d-none mt-5">
+{{-- <div id="spinner" class="text-center d-none mt-5">
     <div class="spinner-grow text-info"></div>
     <div class="spinner-grow text-info"></div>
     <div class="spinner-grow text-info"></div>
-</div>
+</div> --}}
 
 {{-- The Modal for Delete All Selected Record --}}
 <div class="modal fade" id="modalDeleteAllSelectedRecord" tabindex="-1" aria-labelledby="exampleModalLabel2"
@@ -193,7 +200,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-info" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" id="btnDeleteAllSelectedRecord"
+                <button type="button" class="btn btn-danger" id="btn_submit_delete_all_selected"
                     data-bs-dismiss="modal">Yes, delete
                     it!</button>
             </div>
@@ -265,91 +272,116 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
 <script src="{{ asset ('/js/toast.js') }}"></script>
-
 <script>
-    // Change menu item active
-    document.querySelector('#menuItem_contact').classList.add('active');
-    document.querySelector('#lecturer').classList.remove('active');
-    document.querySelector("#dashboard").classList.remove("active");
-    document.querySelector("#dashboard-content").classList.add("d-none");
-
     $(document).ready(function() {
-        //loadDataTable()
-
-       
+        // Change menu item active
+        document.querySelector('#menuItem_contact').classList.add('active');
+        // Function remove alert after 5s
+        removeAlert();
 
         // Change into Create contact page
-        $(document).on('click', '#btnAdd', function (e) {
-            e.preventDefault();
-            // Display loader spinner
-            displayLoader($('.main-content'));
+        // $(document).on('click', '#btnAdd', function (e) {
+        //     e.preventDefault();
+        //     // Display loader spinner
+        //     displayLoader($('.main-content'));
 
-            $.ajax({
-                url: 'contacts/create',
-                type: 'GET',
-                dataType: 'html',
-                success: function(response) {
-                    //Romove loader spinner
-                    removeLoader();
-                    // Load content
-                    $('.subjectRender').html(response);
+        //     $.ajax({
+        //         url: 'contacts/create',
+        //         type: 'GET',
+        //         dataType: 'html',
+        //         success: function(response) {
+        //             //Romove loader spinner
+        //             removeLoader();
+        //             // Load content
+        //             $('.subjectRender').html(response);
                     
-                }
-            });
-        });
+        //         }
+        //     });
+        // });
 
         // Delete contact (Save ID which is deleted)
-        $(document).on('click', '#btn_delete_contact', function () {
-            var contact_id = $(this).val();
-            $('#contact_id').val(contact_id);
-        });
+        // $(document).on('click', '#btn_delete_contact', function () {
+        //     var contact_id = $(this).val();
+        //     $('#contact_id').val(contact_id);
+        // });
 
         // Submit delete contact (Delete contact in database)
-        $(document).on('click', '#btn_submit_delete_contact', function (e) {
-            e.preventDefault();
+        // $(document).on('click', '#btn_submit_delete_contact', function (e) {
+        //     e.preventDefault();
 
-            // Display loader spinner
-            displayLoader($('tbody'));
+        //     // Display loader spinner
+        //     displayLoader($('tbody'));
 
-            var contact_id = $('#contact_id').val();
+        //     var contact_id = $('#contact_id').val();
 
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
+        //     $.ajaxSetup({
+        //         headers: {
+        //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //         }
+        //     });
 
-            $.ajax({
-                url: "contacts/destroy/" + contact_id,
-                type: "DELETE",
-                dataType: "json",
-                success: function (response) {
-                    // Load data
-                    loadDataTable(response.allContacts.data);
-                    // Refresh pagination
-                    $('#pagination').html(response.pagination);
-                    // Display success message
-                    showSuccessToast(response.message);
-                    //Romove loader spinner
-                    removeLoader();
-                }
-            });
-        });
+        //     $.ajax({
+        //         url: "contacts/destroy/" + contact_id,
+        //         type: "DELETE",
+        //         dataType: "json",
+        //         success: function (response) {
+        //             // Load data
+        //             loadDataTable(response.allContacts.data);
+        //             // Refresh pagination
+        //             $('#pagination').html(response.pagination);
+        //             // Display success message
+        //             showSuccessToast(response.message);
+        //             //Romove loader spinner
+        //             removeLoader();
+        //         }
+        //     });
+        // });
 
+        var temp = 0;
+        var arr_checkbox = $('.checkbox_ids');
         $(document).on('click', '#select_all', function (e) {
             if ($(this).prop('checked')) {
-                $('#deleteAllSelectedRecord').css('display', 'block');
+                $('#btn_delete_all_selected').css('display', 'block');
+                temp = arr_checkbox.length;
             }
             else {
-                $('#deleteAllSelectedRecord').css('display', 'none');
+                $('#btn_delete_all_selected').css('display', 'none');
+                temp = 0;
             }
             $('.checkbox_ids').prop('checked', $(this).prop('checked'));
         });
 
-        // Submit Delete all selected contacts
-        $(document).on('click','#btnDeleteAllSelectedRecord', function (e) {
+        $(arr_checkbox).each(function() {
+            $(this).on('click',function (e) {
+            if ($(this).prop('checked')) {
+                temp++;
+                if (temp == arr_checkbox.length) {
+                    $('#select_all').prop('checked', true);
+                    $('#btn_delete_all_selected').css({display:'unset'});
+                }
+            }
+            else{
+                temp--;
+                
+                $('#select_all').prop('checked', false);
+                $('#btn_delete_all_selected').css({display:'none'});
+            }  
+            console.log('temp: '+temp);
+            if (temp >= 2 || temp == arr_checkbox.length){
+                $('#btn_delete_all_selected').css({display:'unset'});
+            }
+            else{
+                $('#select_all').prop('checked', false);
+                $('#btn_delete_all_selected').css({display:'none'});
+            }
+            });
+        });
+
+        // Delete all selected contacts
+        $(document).on('click','#btn_submit_delete_all_selected', function (e) {
             e.preventDefault();
-            $('#deleteAllSelectedRecord').css('display', 'none');
+            $('#btn_delete_all_selected').css('display', 'none');
+            $('#select_all').prop('checked', false);
             var all_ids = [];
             $('input:checkbox[name=ids]:checked').each(function () {
                 all_ids.push($(this).val());
@@ -367,38 +399,41 @@
                 },
                 success: function (response) {
                     // Load data
-                    loadDataTable(response.allContacts.data)
+                    loadDataTable(response.allContacts.data);
                     // Remove loader
                     removeLoader();
-                    //console.log(response.allContacts.data);
+                    // Update pagination
+                    $('#pagination').html(response.pagination);
+                    // Show success toast
+                    showSuccessToast('Delete all selected successfully!');
                 }
             });
         });
 
         // Update contact (Change into Update contact page)
-        $(document).on('click', '#btn_edit_contact', function () {
-            // Display loader spinner
-            displayLoader($('.main-content'))
+        // $(document).on('click', '#btn_edit_contact', function () {
+        //     // Display loader spinner
+        //     displayLoader($('.main-content'))
 
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
+        //     $.ajaxSetup({
+        //         headers: {
+        //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //         }
+        //     });
 
-            $.ajax({
-                url: "contacts/edit/" + $(this).val(),
-                type: "GET",
-                dataType: "html",
-                success: function (response) {
-                    //Romove loader spinner
-                    removeLoader();
-                    // Load content
-                    $('.subjectRender').html(response);
-                }
-            });
+        //     $.ajax({
+        //         url: "contacts/edit/" + $(this).val(),
+        //         type: "GET",
+        //         dataType: "html",
+        //         success: function (response) {
+        //             //Romove loader spinner
+        //             removeLoader();
+        //             // Load content
+        //             $('.subjectRender').html(response);
+        //         }
+        //     });
             
-        });
+        // });
 
         // Search
         $('#formSearch').submit(function(e) {
@@ -410,7 +445,14 @@
                 dataType: "json",
                 success: function (response) {
                     removeLoader();
-                    loadDataTable(response.result.data);
+                    if (response.result.data.length == 0) {
+                        showWarningToast('Not found any contact!');
+                    }
+                    else {
+                        loadDataTable(response.result.data);
+                    }
+                    
+                    
                 },
                 error: function () {
                     showErrorToast('Can not search !');
@@ -423,7 +465,6 @@
         $(document).on('click', '.page-link',function (e) {
             e.preventDefault();
             displayLoader($('tbody'));
-            console.log('da click');
 
             $.ajax({
                 url: $(this).attr('href'),
@@ -434,7 +475,7 @@
                 type: 'GET',
                 success: function (response) {
                     removeLoader();
-                    console.log(response);
+                    
                     if (typeof(response) != 'string') {
                         loadDataTable(response.allContacts.data);
                     }
@@ -528,8 +569,12 @@
     }
 
     function loadDataTable(data) {
-        $('#arrLength').html(Object.keys(data).length);
-        
+        if (data.length == 0) {
+            $('#select_all').css('display', 'none');
+        }
+        else {
+            $('#select_all').css('display', 'unset');
+        }
         $('tbody').html('');
         $.each(data, function(key, item) {
             $('tbody').append('<tr id="'+ item.id +'">\
@@ -542,7 +587,7 @@
             <td>' + moment(item.created_at).format('DD-MM-YYYY HH:mm:ss') + '</td>\
             <td>\
                 <div class="actions-style">\
-                    <button type="button" id="btn_edit_contact" value="'+ item.id +'" class="menu-item">\
+                    <a href="http://127.0.0.1:8000/contacts/' + item.id + '/edit" id="btn_edit_contact" value="'+ item.id +'" class="menu-item">\
                         <span\
                             class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">\
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon-action" fill="none"\
@@ -552,7 +597,7 @@
                                 </path>\
                             </svg>\
                         </span>\
-                    </button>\
+                    </a>\
                     <button type="button" id="btn_delete_contact" value="'+ item.id +'" data-bs-toggle="modal" data-bs-target="#modalDelete">\
                         <span\
                             class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">\
@@ -568,6 +613,13 @@
             </td>\
             \</tr>');
         });
+    }
+
+    function removeAlert() {
+        //const alert = document.querySelector('.alert');
+        setTimeout(function () {
+            $('#alert').alert('close');
+        }, 5000);
     }
     
 </script>

@@ -57,7 +57,7 @@
             <div class="col-lg-2 col-md-12 col-12">
                 <div class="dashboard-left">
                     {{-- dashboard --}}
-                    <a href="/" class="menu-item active" id="dashboard" aria-current="page">
+                    <a href="/" class="menu-item" id="dashboard" aria-current="page">
                         <span class="menu-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor" stroke-width="2">

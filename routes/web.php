@@ -16,10 +16,10 @@ use App\Models\Course;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('/', function () {
-    return view('layout');
-});
 
+Route::get('/', function () {
+    return view('dashboard');
+});
 
 // Lecturer
 Route::get('/lecturers', [LecturerController::class,'index'])->name('index');
@@ -30,21 +30,12 @@ Route::post('lecturer/edit/{id}', [LecturerController::class,'edit'])->name('edi
 Route::get('/lecturer/editScreen/{id}',[LecturerController::class,'editScreenLecturer'])->name("editScreenLecturer");
 Route::delete("/lecturer/selected-lecturer", [LecturerController::class, 'deleteAll'])->name("deleteAll");
 
-// Contact ---------------------------------------------------------------------------------------
+// Contact
 Route::get('contacts/load-data-table', [ContactController::class, 'loadDataTable']);
 Route::resource('contacts', ContactController::class);
-Route::get('contacts/create', [ContactController::class, 'create']);
-Route::post('contacts/store', [ContactController::class, 'store']);
-Route::delete('contacts/destroy/{id}', [ContactController::class, 'destroy']);
-Route::get('contacts/edit/{id}', [ContactController::class, 'edit']);
-Route::put('contacts/update/{id}', [ContactController::class, 'update']);
 Route::get('searchContacts', [ContactController::class, 'search']);
 Route::delete('contacts-destroyAllSelectedRecord', [ContactController::class, 'destroyAllSelectedRecord'])->name('contacts.destroyAllSelectedRecord');
-// Sort
 Route::get('sortContacts', [ContactController::class, 'sort']);
-// Route::get('sort-created_at', [ContactController::class, 'sortCreatedAt']);
-
-// ------------------------------------------------------------------------------------------------
 
 //Courses
 Route::resource('courses',CoursesController::class);

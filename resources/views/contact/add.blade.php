@@ -1,6 +1,9 @@
 <title>Add new contact</title>
+@extends('layout')
+@section('content')
 
-{{-- New Lecturers --}}
+
+{{-- New Contact --}}
 <div class="dashboard-children active subjectRender">
     {{-- Heading --}}
     <div class="mb-5 d-flex justify-content-between align-items-center">
@@ -13,7 +16,7 @@
     </div>
 
     {{-- Form --}}
-    <form id="form" class="form-main" method="POST" enctype="multipart/form-data" accept-charset="UTF-8">
+    <form action="{{ route('contacts.store') }}" class="form-main" method="POST" enctype="multipart/form-data">
         @csrf
         {{-- Name, Address --}}
         <div class="row">
@@ -23,13 +26,10 @@
                     <div>
                         <input type="text" placeholder="Enter your name..." name="name" id="name" class="form-control"
                             autofocus>
-                        <div class="valid-feedback">Valid data.</div>
-                        <div class="invalid-feedback">Invalid data.</div>
+                        @if ($errors->has('name'))
+                        <span class="text-danger">{{ $errors->first('name') }}</span>
+                        @endif
                     </div>
-                    {{-- @if ($errors->has('lecturer_name'))
-                    <span class="text-danger">{{ $errors->first('lecturer_name') }}</span>
-                    @endif --}}
-                    <span class="form-message"></span>
                 </div>
             </div>
             <div class="col-md">
@@ -38,13 +38,10 @@
                     <div>
                         <input type="text" placeholder="Enter your address..." name="address" id="address"
                             class="form-control">
-                        <div class="valid-feedback">Valid data.</div>
-                        <div class="invalid-feedback">Invalid data.</div>
+                        @if ($errors->has('address'))
+                        <span class="text-danger">{{ $errors->first('address') }}</span>
+                        @endif
                     </div>
-                    {{-- @if ($errors->has('lecturer_address'))
-                    <span class="text-danger">{{ $errors->first('lecturer_address') }}</span>
-                    @endif --}}
-                    <span class="form-message"></span>
                 </div>
             </div>
         </div>
@@ -56,13 +53,10 @@
                     <div>
                         <input type="text" placeholder="Enter your phone..." name="phone" id="phone"
                             class="form-control">
-                        <div class="valid-feedback">Valid data.</div>
-                        <div class="invalid-feedback">Invalid data.</div>
+                        @if ($errors->has('phone'))
+                        <span class="text-danger">{{ $errors->first('phone') }}</span>
+                        @endif
                     </div>
-                    {{-- @if ($errors->has('lecturer_phone'))
-                    <span class="text-danger">{{ $errors->first('lecturer_phone') }}</span>
-                    @endif --}}
-                    <span class="form-message"></span>
                 </div>
             </div>
             <div class="col-md">
@@ -71,69 +65,41 @@
                     <div>
                         <input type="date" placeholder="Enter your birthday..." name="birthday" id="birthday"
                             class="form-control">
-                        <div class="valid-feedback">Valid data.</div>
-                        <div class="invalid-feedback">Invalid data.</div>
+                        @if ($errors->has('birthday'))
+                        <span class="text-danger">{{ $errors->first('birthday') }}</span>
+                        @endif
                     </div>
-                    {{-- @if ($errors->has('lecturer_birthday'))
-                    <span class="text-danger">{{ $errors->first('lecturer_birthday') }}</span>
-                    @endif --}}
-                    <span class="form-message"></span>
                 </div>
             </div>
         </div>
-        <button type="submit" id="btn_submit_add_contact" class="btn-primary-style btn-submit form-submit">
-            <span class="spinner-border-xl spinner" role="status" aria-hidden="true"></span>
-            Add new contact
-        </button>
+
+        <div class="d-flex justify-content-center align-items-center mx-auto gap-3">
+            <button type="submit" id="btn_submit" class="btn-primary-style-2 btn-submit form-submit">
+                <span class="spinner-border-xl spinner" role="status" aria-hidden="true"></span>
+                Add new contact
+            </button>
+            <a href="{{ url('contacts') }}" class="btn-cancel">Cancel</a>
+        </div>
+
     </form>
 </div>
 
-<script src="{{ asset ('/js/validate_form.js') }}"></script>
-<script src="{{ asset ('/js/toast.js') }}"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
 <script>
-    $('form').submit(function (e) {
-        e.preventDefault();
-        if (checkFormInput()) {
-            displayLoader();
-            
-            var data = {
-                _token: "{{ csrf_token() }}",
-                'name' : $('#name').val(),
-                'address' : $('#address').val(),
-                'phone' : $('#phone').val(),
-                'birthday' : $('#birthday').val(),
-            }
-            
-            $.ajax({
-                url: 'contacts/store',
-                type: 'POST',
-                data: data,
-                dataType: 'json',
-                success: function(response) {
-                    removeLoader();
-                    showSuccessToast(response.message);
-                    refreshForm();
-                }
-            });
-        }
-        else {
-            console.log('Sai input');
-        }
-        
+    // Change menu item active
+    document.querySelector('#menuItem_contact').classList.add('active');
+
+    $('form').submit(function(){
+        displayLoader();
     });
 
     function displayLoader() {
-        $('#btn_submit_add_contact').addClass('d-none');
+        $('#btn_submit').addClass('d-none');
         $('form').append('<div class="load d-block text-center mx-auto"></div>');
         for (let i = 0; i < 3; i++) {
             $('.load').append('<div class="spinner-grow text-info ms-1"></div>');
         }
     }
-
-    function removeLoader() {
-        $('.load').remove();
-        $('#btn_submit_add_contact').removeClass('d-none');
-    }
-    
 </script>
+
+@endsection

@@ -37,8 +37,14 @@ class ContactController extends Controller
      */
     public function store(Request $request)
     {
-        Contact::create($request->all());
-        return response()->json(['message' => 'You have successfully added contact.']);
+        $data = $request->validate([
+            'name' => ['required', 'regex: /^[A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*(?:[ ][A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*)*$/'],
+            'address' => ['required',],
+            'phone' => ['required', 'regex: /^0{1}[0-9]{9}$/'],
+            'birthday' => 'required'
+        ]);
+        Contact::create($data);
+        return redirect('contacts')->with(['message' => 'You have successfully added contact.']);
     }
 
     /**
@@ -72,14 +78,16 @@ class ContactController extends Controller
     {
         $item = Contact::find($id);
         if ($item) {
-            $item->update($request->all());
-            return response()->json([
-                'message' => 'You have successfully updated contact.'
+            $data = $request->validate([
+                'name' => ['required', 'regex: /^[A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*(?:[ ][A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*)*$/'],
+                'address' => ['required',],
+                'phone' => ['required', 'regex: /^0{1}[0-9]{9}$/'],
+                'birthday' => 'required'
             ]);
+            $item->update($data);
+            return redirect('contacts')->with(['message' => 'You have successfully updated contact.']);
         }
-        else {
-            return response()->json(['message' => 'Contact Not Found!']);
-        } 
+        
     }
 
     /**
@@ -89,12 +97,7 @@ class ContactController extends Controller
     {
         if (Contact::find($id)){
             Contact::destroy($id);
-            $allContacts = Contact::orderBy('created_at', 'desc')->paginate(3);
-            return response()->json([
-                'allContacts' => $allContacts,
-                'pagination' => $allContacts->links()->toHtml(),
-                'message' => 'You have successfully deleted contact.'
-            ]);
+            return redirect('contacts')->with(['message' => 'You have successfully deleted contact.']);
         }
     }
 
@@ -105,7 +108,8 @@ class ContactController extends Controller
         $allContacts = Contact::orderBy('created_at', 'desc')->paginate(3);
         return response()->json([
             'message' => 'Delete all selected successfully!',
-            'allContacts' => $allContacts
+            'allContacts' => $allContacts,
+            'pagination' => $allContacts->links()->toHtml()
         ]);
     }
 
@@ -124,10 +128,7 @@ class ContactController extends Controller
     // Sort
     public function sort(Request $request)
     {
-        
-        
         $allContacts = Contact::orderBy($request->sortField, $request->sortType)->paginate(3);
-        // $allContacts = Contact::orderBy($request->sortField, $request->sortType)->paginate(3);
         return response()->json([
             'allContacts' => $allContacts,
             'pagination' => $allContacts->links()->toHtml()

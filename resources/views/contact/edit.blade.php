@@ -1,4 +1,6 @@
 <title>Update contact</title>
+@extends('layout')
+@section('content')
 
 <div class="dashboard-children active">
     {{-- Heading --}}
@@ -12,7 +14,7 @@
     </div>
 
     {{-- Form --}}
-    <form class="form-main">
+    <form action="{{ route('contacts.update', $item->id) }}" method="POST" class="form-main">
         @csrf
         @method('PUT')
         {{-- Name, Address --}}
@@ -23,13 +25,10 @@
                     <div>
                         <input type="text" name="name" id="name" class="form-control" value="{{ $item->name }}"
                             placeholder="Enter your name...">
-                        <div class="valid-feedback">Valid data.</div>
-                        <div class="invalid-feedback">Invalid data.</div>
+                        @if ($errors->has('name'))
+                        <span class="text-danger">{{ $errors->first('name') }}</span>
+                        @endif
                     </div>
-                    {{-- @if ($errors->has('lecturer_name'))
-                    <span class="text-danger">{{ $errors->first('lecturer_name') }}</span>
-                    @endif --}}
-                    <span class="form-message"></span>
                 </div>
             </div>
             <div class="col-md">
@@ -38,13 +37,10 @@
                     <div>
                         <input type="text" name="address" id="address" class="form-control" value="{{ $item->address }}"
                             placeholder="Enter your address...">
-                        <div class="valid-feedback">Valid data.</div>
-                        <div class="invalid-feedback">Invalid data.</div>
+                        @if ($errors->has('lecturer_address'))
+                        <span class="text-danger">{{ $errors->first('lecturer_address') }}</span>
+                        @endif
                     </div>
-                    {{-- @if ($errors->has('lecturer_address'))
-                    <span class="text-danger">{{ $errors->first('lecturer_address') }}</span>
-                    @endif --}}
-                    <span class="form-message"></span>
                 </div>
             </div>
         </div>
@@ -56,13 +52,10 @@
                     <div>
                         <input type="text" name="phone" id="phone" class="form-control" value="{{ $item->phone }}"
                             placeholder="Enter your phone...">
-                        <div class="valid-feedback">Valid data.</div>
-                        <div class="invalid-feedback">Invalid data.</div>
+                        @if ($errors->has('lecturer_phone'))
+                        <span class="text-danger">{{ $errors->first('lecturer_phone') }}</span>
+                        @endif
                     </div>
-                    {{-- @if ($errors->has('lecturer_phone'))
-                    <span class="text-danger">{{ $errors->first('lecturer_phone') }}</span>
-                    @endif --}}
-                    <span class="form-message"></span>
                 </div>
             </div>
             <div class="col-md">
@@ -71,28 +64,46 @@
                     <div>
                         <input type="date" name="birthday" id="birthday" class="form-control"
                             value="{{ $item->birthday }}" placeholder="Enter your birthday...">
-                        <div class="valid-feedback">Valid data.</div>
-                        <div class="invalid-feedback">Invalid data.</div>
+                        @if ($errors->has('lecturer_birthday'))
+                        <span class="text-danger">{{ $errors->first('lecturer_birthday') }}</span>
+                        @endif
                     </div>
-                    {{-- @if ($errors->has('lecturer_birthday'))
-                    <span class="text-danger">{{ $errors->first('lecturer_birthday') }}</span>
-                    @endif --}}
-                    <span class="form-message"></span>
                 </div>
             </div>
         </div>
 
-        <button type="submit" id="btn_submit_edit_contact" class="btn-primary-style btn-submit form-submit">
-            <span class="spinner-border-xl spinner" role="status" aria-hidden="true"></span>
-            Update contact
-        </button>
+        <div class="d-flex justify-content-center align-items-center mx-auto gap-3">
+            <button type="submit" id="btn_submit" class="btn-primary-style-2 btn-submit form-submit">
+                <span class="spinner-border-xl spinner" role="status" aria-hidden="true"></span>
+                Update contact
+            </button>
+            <a href="{{ url('contacts') }}" class="btn-cancel">Cancel</a>
+        </div>
+
     </form>
 </div>
 
-<script src="{{ asset ('/js/validate_form.js') }}"></script>
-<script src="{{ asset ('/js/toast.js') }}"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
 <script>
+    // Change menu item active
+    document.querySelector('#menuItem_contact').classList.add('active');
+
+    $('form').submit(function(){
+        displayLoader();
+    });
+
+    function displayLoader() {
+        $('#btn_submit').addClass('d-none');
+        $('form').append('<div class="load d-block text-center mx-auto"></div>');
+        for (let i = 0; i < 3; i++) {
+            $('.load').append('<div class="spinner-grow text-info ms-1"></div>');
+        }
+    }
+</script>
+
+@endsection
+
+{{-- <script>
     $('form').submit(function (e){
         e.preventDefault();
         if (checkFormInput()) {
@@ -143,4 +154,4 @@
         })
     }
 
-</script>
+</script> --}}
