@@ -10,6 +10,6 @@ class Subject extends Model
     use HasFactory;
     protected $table = 'subjects';
     protected $fillable = ['name', 'description'];
-    public $timestamps = false;
+    public $timestamps = true;
 
 }

@@ -1,6 +1,6 @@
 @extends('layout')
 @section('content')
-<title>Add subject</title>
+<title>Update subject</title>
 
 <div class="loader-sub"></div>
 <div class="dashboard-children active">
@@ -8,21 +8,22 @@
     <div class="mb-5 d-flex justify-content-between align-items-center">
         <div class="">
             <h1 class="dashboard-heading">
-                Add subject
+                Update subject
             </h1>
-            <p class="dashboard-short-desc">Add your new subject</p>
+            <p class="dashboard-short-desc">Update your subject</p>
         </div>
     </div>
 
     {{-- Form --}}
-    <form action="{{ route('newSubject') }}" method="post">
+    <form action="{{ route('editSubject', ['id' => $subject->id]) }}" method="post">
         @csrf
+        @method('PUT')
         <div class="row">
             <div class="col-md">
                 <div class="form-input form-group">
                     <label for="nameInput">Name</label>
                     <div>
-                        <input type="text" name="nameInput" id="nameInput" class="form-control" placeholder="Enter your name...">
+                        <input type="text" name="nameInput" id="nameInput" class="form-control" value="{{ $subject->name }}" placeholder="Edit your name...">
                     </div>
                     @if ($errors->has('nameInput'))
                         <div class="alert alert-danger">
@@ -35,7 +36,7 @@
                 <div class="form-input form-group">
                     <label for="descriptionInput">Description</label>
                     <div>
-                        <textarea class="form-control info" id="desInput" name="desInput" rows="5" placeholder="Input Description"></textarea>
+                        <textarea class="form-control info" id="desInput" name="desInput" rows="5" placeholder="Edit Description">{{ $subject->description }}</textarea>
                     </div>
                     @if ($errors->has('desInput'))
                     <div class="alert alert-danger">
@@ -45,10 +46,11 @@
                 </div>
             </div>
         </div>
+
         <div class="d-flex justify-content-center align-items-center mx-auto gap-3">
             <button type="submit" id="btn-add" class="btn-primary-style-2  btn-submit form-submit ">
                 <span class="spinner-border-xl spinner" role="status" aria-hidden="true"></span>
-                Create subject
+                Update Subject
             </button>
             <button id="btn-cancel" class="btn-cancel">
                 <span class="spinner-border-xl spinner" role="status" aria-hidden="true"></span>
@@ -56,8 +58,7 @@
             </button>
         </div>  
     </form>
-    
-</div> 
+</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
 integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
 crossorigin="anonymous" referrerpolicy="no-referrer"></script>
