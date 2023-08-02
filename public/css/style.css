@@ -674,3 +674,6 @@ table {
         display: none;
     }
 }
+.blue-background {
+    color: blue;
+}

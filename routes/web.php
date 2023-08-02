@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LecturerController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CoursesController;
+use App\Http\Controllers\SubjectsController;
 use App\Models\Course;
 
 /*
@@ -40,7 +41,16 @@ Route::get('sortContacts', [ContactController::class, 'sort']);
 //Courses
 Route::resource('courses',CoursesController::class);
 
+//Subjects
+Route::get('/subjects', [SubjectsController::class, 'index'])->name('subject');
+Route::get('/addSubject', [SubjectsController::class, 'create'])->name('addSubject');
+Route::post('/newSubject', [SubjectsController::class, 'store'])->name('newSubject');
+Route::delete('/subjects/{id}', [SubjectsController::class, 'destroy'])->name('deleteSubject');
+Route::get('/updateSubject/{id}', [SubjectsController::class, 'edit'])->name('updateSubject');
+Route::put('/editSubject/{id}', [SubjectsController::class, 'update'])->name('editSubject');
+Route::get('/search', [SubjectsController::class, 'search'])->name('searchSubject');
+
 //
-Route::get('/subjects', function () {
-    return view('layout');
-})->name('subject');
+// Route::get('/subjects', function () {
+//     return view('layout');
+// })->name('subject');
