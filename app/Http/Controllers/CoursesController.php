@@ -93,7 +93,7 @@ class CoursesController extends Controller
         $course->save();
         $viewsc =  View::make('courses.success')->render();
         
-        return view('courses.index')->with('success', $viewsc);
+        return redirect()->route('courses.index')->with('success', $viewsc);
     
         }
         

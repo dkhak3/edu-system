@@ -54,8 +54,8 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-info" data-bs-dismiss="modal">Cancel</button>
-                            <button type="button" class="btn btn-danger deleteCourses"
-                              data-bs-dismiss="modal">Yes, delete it! </button>
+                            <button type="button" class="btn btn-danger deleteCourses" data-bs-dismiss="modal">Yes,
+                                delete it! </button>
                         </div>
                     </div>
                 </div>
@@ -68,15 +68,89 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
 
 <script>
+    var dataCheckedArrCourses = {
+        arrNotCheck: [],
+        arrCourses:[],
+        arrCheck:[],
+        arrDeleteAllSelected: []
+    }
     var chooseEL = -1;
-    $('.chooseID').each( function (i, el) { 
-        $(el).click(function (e) { 
+    if (sessionStorage.getItem('arrNotCheckCourses')) {
+        dataCheckedArrCourses.arrNotCheck = sessionStorage.getItem('arrNotCheckCourses').slice(1, -1).trim().split(',').map(Number)
+        dataCheckedArrCourses.arrCourses = sessionStorage.getItem('arrCourses').slice(1, -1).trim().split(',').map(Number)
+        dataCheckedArrCourses.arrCheck = sessionStorage.getItem('arrCheck').slice(1, -1).trim().split(',').map(Number)
+        dataCheckedArrCourses.arrCourses = dataCheckedArrCourses.arrCourses.filter(function(item) {
+            return !dataCheckedArrCourses.arrNotCheck.includes(item);
+        });
+        
+        sessionStorage.setItem('arrDeleteCourses',JSON.stringify(dataCheckedArrCourses.arrCourses) )
+        if (sessionStorage.getItem('checkList') =='true') {
+            $('.checklist').each(function(i, e) {
+            if (dataCheckedArrCourses.arrCourses.includes(parseInt($(e).attr("data-item")))) {
+                $(e).prop('checked',true)
+                $(e).attr('checked',true)
+            }else{
+                $(e).removeAttr("checked")
+                $(e).prop('checked',false)
+                $(e).attr('checked',false)
+            }
+        });
+        }else{
+            $('.checklist').each(function(i, e) {
+            if (dataCheckedArrCourses.arrCheck.includes(parseInt($(e).attr("data-item")))) {
+                $(e).prop('checked',true)
+                $(e).attr('checked',true)
+                console.log("check: "+$(e).attr('data-item'));
+            }
+        });
+        }
+
+    }
+
+    $('.chooseID').each(function(i, el) {
+        $(el).click(function(e) {
             chooseEL = $(el).attr(
                 "data-item"
             )
-            console.log(chooseEL);
         });
     });
+    $('.checklist').each(function(i, e) {
+        $(e).click(function() {
+            if (!$(e).prop('checked')) { 
+                const dataItem = parseInt($(e).attr("data-item"));
+                dataCheckedArrCourses.arrCheck = dataCheckedArrCourses.arrCheck.filter(
+                    (item) => item !== parseInt($(e).attr("data-item"))
+                );
+                dataCheckedArrCourses.arrNotCheck = [
+                    ...dataCheckedArrCourses.arrNotCheck,
+                    dataItem,
+                ];
+                
+                sessionStorage.setItem('arrNotCheckCourses', JSON.stringify(dataCheckedArrCourses
+                    .arrNotCheck)); 
+                    sessionStorage.setItem('arrCheck', JSON.stringify(dataCheckedArrCourses
+                    .arrCheck));
+
+            }
+            if ($(e).prop('checked')) { 
+                const dataItem = parseInt($(e).attr("data-item"));
+                dataCheckedArrCourses.arrNotCheck = dataCheckedArrCourses.arrNotCheck.filter(
+                    (item) => item !== parseInt($(e).attr("data-item"))
+                );
+                dataCheckedArrCourses.arrCheck = [
+                    ...dataCheckedArrCourses.arrCheck,
+                    dataItem,
+                ];
+                sessionStorage.setItem('arrNotCheckCourses', JSON.stringify(dataCheckedArrCourses
+                    .arrNotCheck)); 
+                    sessionStorage.setItem('arrCheck', JSON.stringify(dataCheckedArrCourses
+                    .arrCheck));
+
+            }
+           
+        });
+    });
+
     $(".deleteCourses").each(function(index, element) {
         $(element).click(function(e) {
             $.ajax({
@@ -99,32 +173,29 @@
             });
         });
     });
-    
-    function loadTB(){
+
+    function loadTB() {
         $('#renderTB').html(
-                            '<tr><td id="loading" class="loading" colspan="6"></td></tr>'
-                            );
-                        $.ajax({
-                            url: 'http://127.0.0.1:8000/api/courses/search',
-                            type: "GET",
-                            data: {
-                                page: `{{ session()->get('pageCourses') }}`,
-                                key: `{{ session()->get('keyCourses') }}`,
-                                sort: `{{ session()->get('sortCourses') }}`,
-                            },
-                            dataType: "html",
+            '<tr><td class="loader-subject" colspan="6"></td></tr>'
+        );
+        $.ajax({
+            url: 'http://127.0.0.1:8000/api/courses/search',
+            type: "GET",
+            data: {
+                page: `{{ session()->get('pageCourses') }}`,
+                key: `{{ session()->get('keyCourses') }}`,
+                sort: `{{ session()->get('sortCourses') }}`,
+            },
+            dataType: "html",
 
-                            success: function(response) {
-                                $("#renderTB").html("");
-                                $("#renderTB").html(JSON.parse(response)
-                                    .blade);
-
-                                // self.bindEvent();
-                                // self.loadPage(JSON.parse(response), page, keySearch, sort);
-                            },
-                            complete: function() {
-                                $("#loading").hide();
-                            },
-                        });
+            success: function(response) {
+                $("#renderTB").html("");
+                $("#renderTB").html(JSON.parse(response)
+                    .blade);
+            },
+            complete: function() {
+                $("#loading").hide();
+            },
+        });
     }
 </script>
