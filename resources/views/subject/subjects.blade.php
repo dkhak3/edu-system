@@ -116,12 +116,38 @@
             $('#deleteAllSelectedRecord').on('click', function(e) {
                 // e.preventDefault();
                 console.log("xoa tat car");
-                
+
             });
             $('#btn-add').on('click', function(e) {
                 e.preventDefault(); // Ngăn chặn hành vi mặc định của nút (chuyển hướng)
                 var addRoute = "{{ route('addSubject') }}"; // Lấy đường dẫn tới tuyến "subject"
                 window.location.href = addRoute;
+            });
+            $('input[name="keywords"]').keypress(function(e) {
+                if (e.which == 13) { // Kiểm tra phím Enter
+                    e.preventDefault(); // Ngăn chặn hành vi mặc định của phím Enter (thường là gửi form)
+                    
+                    var keywords = $(this).val();
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const sortParam = urlParams.get('sort');
+                    const pageParam = urlParams.get('page');
+                    let newPath = "/subjects";
+                    
+                    if (pageParam || sortParam) {
+                        newPath += "?";
+                        if(pageParam && sortParam == null){
+                            newPath += `keyword=${keywords}`;
+                        }
+                        if (sortParam) {
+                            newPath += `keyword=${keywords}&sort=${sortParam}`;
+                        }
+                    }
+                    else{
+                        newPath += `?keyword=${keywords}`;
+                    }
+                    window.history.pushState(null, null, newPath);
+                    subject.list.load(keywords, sortParam);
+                }
             });
             $('#goSearch').on('click', function() {
                     var keywords = $('input[name="keywords"]').val();
@@ -265,59 +291,66 @@
 
                         // console.log(result.link);
                         if (result && result.subjects && result.subjects.data && result.subjects.data.length > 0) {
-                            $('.alert-info').css('display','none')
-                        // console.log("xoa load");
-                        // $(".loader-sub").hide();    
-                        // $('.loader-sub').attr('class', 'loader');
-                        //Sau khi lấy danh sach -> render ra table
-                        $(self.container).html(
-                           
-                            result.subjects.data.map(e => {
-                                return `<tr>
-                                <td><input class="form-check-input toCheck" type="checkbox" data-item="${e.id}"></td>
-                                <td>${e.name}</td>
-                                <td>${e.description}</td>
-                                <td>
-                                    <div class="actions-style">
-                                    {{-- Edit --}}
-                                    <button class="btn-edit" data-item="${e.id}" class="menu-item" data-bs-toggle="tooltip"
-                                        title="Edit">
-                                        <span
-                                            class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon-action" fill="none" viewBox="0 0 24 24"
-                                                stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
-                                                </path>
-                                            </svg>
-                                        </span>
-                                    </button>
-                                    {{-- Delete --}}
+                                console.log("tim thay ne");
+                                $('.alert-info').css('display','none')
+                            // console.log("xoa load");
+                            // $(".loader-sub").hide();    
+                            // $('.loader-sub').attr('class', 'loader');
+                            //Sau khi lấy danh sach -> render ra table
+                            $(self.container).html(
+                            
+                                result.subjects.data.map(e => {
+                                    return `<tr>
+                                    <td><input class="form-check-input toCheck" type="checkbox" data-item="${e.id}"></td>
+                                    <td>${e.name}</td>
+                                    <td>${e.description}</td>
+                                    <td>
+                                        <div class="actions-style">
+                                        {{-- Edit --}}
+                                        <button class="btn-edit" data-item="${e.id}" class="menu-item" data-bs-toggle="tooltip"
+                                            title="Edit">
+                                            <span
+                                                class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon-action" fill="none" viewBox="0 0 24 24"
+                                                    stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                                                    </path>
+                                                </svg>
+                                            </span>
+                                        </button>
+                                        {{-- Delete --}}
 
-                                    <button class="btn-delete" data-item="${e.id}" data-bs-toggle="tooltip" title="Delete">
-                                        <span
-                                            class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon-action" fill="none" viewBox="0 0 24 24"
-                                                stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                                                </path>
-                                            </svg>
-                                        </span>
-                                    </button>
-                                </div>
-                                </td>
-                            </tr>`;
-                            }).join('')
-                        
-                        );
-                        // Gọi phương thức AfterLoadEvent để gắn sự kiện sau khi load
-                        $('.page-subjects').html(result.link)
-                        self.loadPage();
-                        self.AfterLoadEvent();    
+                                        <button class="btn-delete" data-item="${e.id}" data-bs-toggle="tooltip" title="Delete">
+                                            <span
+                                                class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon-action" fill="none" viewBox="0 0 24 24"
+                                                    stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                                    </path>
+                                                </svg>
+                                            </span>
+                                        </button>
+                                    </div>
+                                    </td>
+                                </tr>`;
+                                }).join('')
+                            
+                            );
+                            // Gọi phương thức AfterLoadEvent để gắn sự kiện sau khi load
+                            $('.page-subjects').html(result.link)
+                            self.loadPage();
+                            self.AfterLoadEvent();    
                         }else{
-                            // console.log("ko tim thay gi");
-                            $('.alert-info').css('display','block')
+                            $('.alert-info').css('display','block');
+                            $(self.container).html(
+                                result.subjects.data.map(e => {
+                                    return null;
+                                }).join('')
+                            );
+                            $('.page-subjects').html(result.link)
+                            self.loadPage();
                         }
                 });
             }
