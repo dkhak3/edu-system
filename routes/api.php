@@ -30,6 +30,7 @@ Route::delete('/courses/delete/{id}',[CoursesController::class,'destroy']);
 
 //Subject
 Route::get('/getAllSubject',[SubjectsController::class,'search']);
+Route::get('/getAll',[SubjectsController::class,'getAll']);
 // Route::get('/search?keyword={keyword}',[SubjectsController::class,'search']);
 // Route::get('/getAllSubjectZA',[SubjectsController::class,'getAllZa']);
 // Route::get('/getSearchSubject',[SubjectsController::class,'search']);

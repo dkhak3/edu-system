@@ -78,7 +78,7 @@ class SubjectsController extends Controller
         //     ]);
         // }
        
-        $subjects = Subject::orderBy('name', 'asc')->get();
+        $subjects = Subject::all();
             return response()->json([
                 'subjects'=> $subjects
             ]);

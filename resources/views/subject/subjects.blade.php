@@ -110,12 +110,34 @@
         $('#subject-page').addClass('active');
         $("#z-a").toggleClass('blue-background');
         $("#z-a").hide();
+
         //Khởi tạo sự kiện trước khi load
         $(document).ready(function() {
+            
             //Bắt sự kiện cho btn-add
             $('#deleteAllSelectedRecord').on('click', function(e) {
-                // e.preventDefault();
-                console.log("xoa tat car");
+                // console.log(subject.list.arrSub); DeleteSubject
+
+                if ($('#checkAll').prop('checked')) {
+                    subject.list.arrAllSub.forEach(function(itemId) {
+                        if (subject.list.arrSub.includes(itemId)) {
+                            subject.list.DeleteSubject(itemId);
+                            subject.list.loadCheck();
+                            $('#deleteAllSelectedRecord').css('display', 'none');
+                        }
+                    });
+
+                } else {
+                    subject.list.arrSub.forEach(function(itemId) {
+                        if (subject.list.arrSub.includes(itemId)) {
+                            subject.list.DeleteSubject(itemId);
+                            subject.list.loadCheck();
+                            $('#deleteAllSelectedRecord').css('display', 'none');
+                        }
+                    });
+                    // Các hành động khác tùy ý
+                }
+                
 
             });
             $('#btn-add').on('click', function(e) {
@@ -256,6 +278,7 @@
             const pageParam = urlParams.get('page');
             const sortParam = urlParams.get('sort');
             subject.list.load(keywordParam, sortParam, pageParam);
+            subject.list.loadCheck();
         });
        
       
@@ -265,6 +288,7 @@
                 this.url = 'http://127.0.0.1:8000/api/getAllSubject';
                 this.container = "#tbSubject";
                 this.arrSub = [];
+                this.arrAllSub = [];
             }
             //Hàm hiển thị danh sách
 
@@ -285,13 +309,9 @@
                         complete: function() {
                             $('.loader-subject').css('display', 'none');
                         },
-                        
                     })
                     .done(function(result) {
-
-                        // console.log(result.link);
                         if (result && result.subjects && result.subjects.data && result.subjects.data.length > 0) {
-                                console.log("tim thay ne");
                                 $('.alert-info').css('display','none')
                             // console.log("xoa load");
                             // $(".loader-sub").hide();    
@@ -341,7 +361,8 @@
                             // Gọi phương thức AfterLoadEvent để gắn sự kiện sau khi load
                             $('.page-subjects').html(result.link)
                             self.loadPage();
-                            self.AfterLoadEvent();    
+                            self.loadChecked();
+                            self.AfterLoadEvent();
                         }else{
                             $('.alert-info').css('display','block');
                             $(self.container).html(
@@ -402,7 +423,6 @@
                                 self.load(keywordParam, sortParam, pageParam);
                             } else {
                                 //Load theo số page
-                                
                                 var currentPage = window.location.search;
                                 var newPage;
                                 if (currentPage.includes('page=')) {
@@ -420,7 +440,37 @@
                         });
                     });
             }
-           
+            loadChecked(){
+                var self = this;
+                self.arrSub.forEach(function(itemId) {
+                    $('.toCheck[data-item="' + itemId + '"]').prop('checked', true);
+                });
+            }
+            //Lay tat ca sub vao mang subAllCheck
+            loadCheck(){
+                var self = this;
+                $.ajax({
+                        url: 'http://127.0.0.1:8000/api/getAll',
+                        type: 'GET',
+                        accepts: {
+                            mycustomtype: 'application/x-some-custom-type'
+                        },
+                        complete: function() {
+                        },
+                    })
+                    .done(function(result) {
+                        if (result && result.subjects && Array.isArray(result.subjects)) {
+                            self.arrAllSub = [];
+                            result.subjects.forEach(function(subject) {
+                                var subjectId = subject.id;
+                                self.arrAllSub.push(subjectId);
+                            });
+                        } else {
+                            console.log("Không có dữ liệu hoặc dữ liệu không hợp lệ");
+                        }
+                    });
+               
+            }
             //Hàm xóa Subject $(element).attr("data-item")
             DeleteSubject(element) {
                 var self = this;
@@ -452,13 +502,13 @@
             }
           
             //Hàm Sự kiện sau khi load
-            AfterLoadEvent() {
+            AfterLoadEvent() { 
                 var self = this; 
                 var subjectId = ''// Lưu trữ tham chiếu đến đối tượng DataList
                 $('.btn-delete').each(function(index, element) {
                     //Gọi hàm DeleteSubject và xóa theo id
                     $(element).click(function() {
-                        subjectId = $(element).data('item');;
+                        subjectId = $(element).data('item');
                         $('#confirmDeleteModal').modal('show');
                     });
                 });
@@ -479,33 +529,57 @@
                 $('#checkAll').on('click', function(e) {
                     $('#deleteAllSelectedRecord').css('display', 'block');
                     if ($(this).prop('checked')) {
-                        $('.toCheck').prop('checked', true);
+                        self.arrSub = [];
+                        self.arrSub = self.arrSub.concat(self.arrAllSub);
+                        self.arrSub.forEach(function(itemId) {
+                        $('.toCheck[data-item="' + itemId + '"]').prop('checked', true);
+                    });
                     } else {
+                        self.arrSub = [];
                         $('.toCheck').prop('checked', false);
                         $('#deleteAllSelectedRecord').css('display', 'none');
                     }
+                    
                 });
                 $('.toCheck').each(function(index, element) {
                     //Gọi hàm DeleteSubject và xóa theo id
                     $(element).click(function() {
+                        
+                        if ($(this).prop('checked')) {
+                            // console.log("Element này đã được chọn.");
+                            self.arrSub.push($(this).data('item'));
+                        } else {
+                            // console.log("Element này chưa được chọn.");
+                            const itemToRemove = $(this).data('item');
+                            const indexToRemove = self.arrSub.indexOf(itemToRemove);
+                            if (indexToRemove !== -1) {
+                                self.arrSub.splice(indexToRemove, 1);
+                            }
+                        }
+                        // console.log(self.arrSub);
+                        // console.log('Mang tat cả :'+self.arrAllSub);
+
+
                         var allChecked = true;
                         var allNoCheck = true;
                         $('#deleteAllSelectedRecord').css('display', 'block');
 
-                        $('.toCheck').each(function() {
-                            if (!$(this).prop('checked')) {
+
+                        self.arrAllSub.forEach(function(itemId) {
+                            if (self.arrSub.indexOf(itemId) === -1) {
+                                // console.log("Phần tử " + itemId + " không tồn tại trong mảng arrSub");
                                 allChecked = false;
-                                // return false; // Dừng vòng lặp nếu tìm thấy checkbox chưa được chọn
                             }
                             else{
                                 allNoCheck = false;
                             }
-                           
                         });
                         if (allChecked) {
                             $('#checkAll').prop('checked', true);
+                            // console.log("tat ca da dc check");
                         } else {
                             $('#checkAll').prop('checked', false);
+                            // console.log("tat ca chua dc check");
                         }
                         if (allNoCheck) {
                             $('#deleteAllSelectedRecord').css('display', 'none');
