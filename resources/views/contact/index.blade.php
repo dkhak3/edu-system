@@ -139,39 +139,11 @@
                         </div>
                     </td>
                 </tr>
-
-                <!-- The Modal for Delete Contact -->
-                <div class="modal fade" id="modalDelete" tabindex="-1" aria-labelledby="exampleModalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog modal-confirm modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <div class="icon-box">
-                                    <div class="material-icons">!</div>
-                                </div>
-                                <h2 class="modal-title">Are you sure?</h2>
-                            </div>
-                            <div class="modal-body">
-                                <input type="hidden" id="contact_id">
-                                <p>You won't be able to revert this!</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-info" data-bs-dismiss="modal">Cancel</button>
-
-                                <form action="{{ route('contacts.destroy', $item->id) }}" id="modal_submit_delete"
-                                    method="post">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" id="btn_submit_delete_contact" class="btn btn-danger">Yes,
-                                        delete it!</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 @endforeach
             </tbody>
         </table>
+        <p id="num_of_record" class="dashboard-short-desc">Showing {{ count($allContacts) }} of {{ $length }} results
+        </p>
         <div id="pagination" class="float-end mt-3">
             {{ $allContacts->links() }}
         </div>
@@ -183,6 +155,34 @@
     <div class="spinner-grow text-info"></div>
     <div class="spinner-grow text-info"></div>
 </div> --}}
+
+<!-- The Modal for Delete Contact -->
+<div class="modal fade" id="modalDelete" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-confirm modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="icon-box">
+                    <div class="material-icons">!</div>
+                </div>
+                <h2 class="modal-title">Are you sure?</h2>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="contact_id">
+                <p>You won't be able to revert this!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" data-bs-dismiss="modal">Cancel</button>
+
+                <form action="{{ route('contacts.destroy', $item->id) }}" id="modal_submit_delete" method="post">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" id="btn_submit_delete_contact" class="btn btn-danger">Yes,
+                        delete it!</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 {{-- The Modal for Delete All Selected Record --}}
 <div class="modal fade" id="modalDeleteAllSelectedRecord" tabindex="-1" aria-labelledby="exampleModalLabel2"
@@ -276,8 +276,11 @@
     $(document).ready(function() {
         // Change menu item active
         document.querySelector('#menuItem_contact').classList.add('active');
-        // Function remove alert after 5s
-        removeAlert();
+
+        // Remove alert after 8s
+        if (document.querySelector('.alert') != null) {
+            removeAlert();
+        }
 
         // Change into Create contact page
         // $(document).on('click', '#btnAdd', function (e) {
@@ -299,11 +302,11 @@
         //     });
         // });
 
-        // Delete contact (Save ID which is deleted)
-        // $(document).on('click', '#btn_delete_contact', function () {
-        //     var contact_id = $(this).val();
-        //     $('#contact_id').val(contact_id);
-        // });
+        //Delete contact (Save ID which is deleted)
+        $(document).on('click', '#btn_delete_contact', function () {
+            var form_submit_delete = $('#modal_submit_delete');
+            $('#modal_submit_delete').attr('action', 'http://127.0.0.1:8000/contacts/' + $(this).val());
+        });
 
         // Submit delete contact (Delete contact in database)
         // $(document).on('click', '#btn_submit_delete_contact', function (e) {
@@ -353,27 +356,26 @@
 
         $(arr_checkbox).each(function() {
             $(this).on('click',function (e) {
-            if ($(this).prop('checked')) {
-                temp++;
-                if (temp == arr_checkbox.length) {
-                    $('#select_all').prop('checked', true);
+                if ($(this).prop('checked')) {
+                    temp++;
+                    if (temp == arr_checkbox.length) {
+                        $('#select_all').prop('checked', true);
+                        $('#btn_delete_all_selected').css({display:'unset'});
+                    }
+                }
+                else{
+                    temp--;
+                    $('#select_all').prop('checked', false);
+                    $('#btn_delete_all_selected').css({display:'none'});
+                }  
+                
+                if (temp >= 2 || temp == arr_checkbox.length){
                     $('#btn_delete_all_selected').css({display:'unset'});
                 }
-            }
-            else{
-                temp--;
-                
-                $('#select_all').prop('checked', false);
-                $('#btn_delete_all_selected').css({display:'none'});
-            }  
-            console.log('temp: '+temp);
-            if (temp >= 2 || temp == arr_checkbox.length){
-                $('#btn_delete_all_selected').css({display:'unset'});
-            }
-            else{
-                $('#select_all').prop('checked', false);
-                $('#btn_delete_all_selected').css({display:'none'});
-            }
+                else{
+                    $('#select_all').prop('checked', false);
+                    $('#btn_delete_all_selected').css({display:'none'});
+                }
             });
         });
 
@@ -438,27 +440,34 @@
         // Search
         $('#formSearch').submit(function(e) {
             e.preventDefault();
-            displayLoader($('tbody'));
-            $.ajax({
-                url: 'searchContacts',
-                data: {keywords: $('#keywords').val()},
-                dataType: "json",
-                success: function (response) {
-                    removeLoader();
-                    if (response.result.data.length == 0) {
-                        showWarningToast('Not found any contact!');
-                    }
-                    else {
-                        loadDataTable(response.result.data);
-                    }
-                    
-                    
-                },
-                error: function () {
-                    showErrorToast('Can not search !');
+            if ($('#keywords').val() == '') {
+                window.location = 'contacts';
+            }
+            else {
+                displayLoader($('tbody'));
+                $.ajax({
+                    url: 'searchContacts',
+                    data: {keywords: $('#keywords').val()},
+                    dataType: "json",
+                    success: function (response) {
+                        removeLoader();
+                        if (response.result.data.length == 0) {
+                            showWarningToast('Not found any contact!');
+                        }
+                        else {
+                            loadDataTable(response.result.data);
+                            $('#pagination').html(response.pagination);
 
-                }
-            });
+                            $('#num_of_record').html('Number of results found: ' + response.result.data.length);
+                        }
+                    },
+                    error: function () {
+                        showErrorToast('Can not search !');
+
+                    }
+                });
+            }
+            
         });
 
         //Update Pagination using Ajax
@@ -475,7 +484,7 @@
                 type: 'GET',
                 success: function (response) {
                     removeLoader();
-                    
+                    // console.log(response);
                     if (typeof(response) != 'string') {
                         loadDataTable(response.allContacts.data);
                     }
@@ -616,10 +625,9 @@
     }
 
     function removeAlert() {
-        //const alert = document.querySelector('.alert');
         setTimeout(function () {
             $('#alert').alert('close');
-        }, 5000);
+        }, 8000);
     }
     
 </script>

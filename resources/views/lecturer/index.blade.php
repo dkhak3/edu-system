@@ -175,7 +175,6 @@
 
 <script>
     document.getElementById("lecturer").classList.add("active");
-    document.getElementById("dashboard-content").classList.add("d-none");
     document.getElementById("dashboard").classList.remove("active");
     const btnDelete = document.querySelector("#btnDelete");
 

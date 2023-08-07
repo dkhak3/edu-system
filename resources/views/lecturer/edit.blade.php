@@ -88,7 +88,6 @@
 
 <script>
     document.getElementById("lecturer").classList.add("active");
-    document.getElementById("dashboard-content").classList.add("d-none");
     document.getElementById("dashboard").classList.remove("active");
 
     const form = document.querySelector("form");

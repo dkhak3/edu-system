@@ -15,7 +15,8 @@ class ContactController extends Controller
     public function index()
     {
         $allContacts = Contact::orderBy('created_at', 'desc')->paginate(3);
-        return view('contact.index')->with('allContacts', $allContacts);
+        $length = $this->getLength();
+        return view('contact.index')->with('allContacts', $allContacts)->with('length', $length);
     }
 
     public function loadDataTable()
@@ -116,13 +117,18 @@ class ContactController extends Controller
     public function search(Request $request)
     {
         $result = [];
+        $length = $this->getLength();
         if ($request->keywords != null) {
             $result = Contact::where('name', 'LIKE', '%' . $request->keywords . '%')->orderBy('created_at', 'desc')->paginate(3);
         }
         else {
             $result = Contact::orderBy('created_at', 'desc')->paginate(3);
         }
-        return response()->json(['result' => $result]);
+        return response()->json([
+            'result' => $result,
+            'length' => $length,
+            'pagination' => $result->links()->toHtml()
+        ]);
     }
 
     // Sort
@@ -134,6 +140,13 @@ class ContactController extends Controller
             'pagination' => $allContacts->links()->toHtml()
         ]);
         
+    }
+
+    public function getLength()
+    {
+        $allContacts = Contact::all();
+        $length = count($allContacts);
+        return $length;
     }
 
 }
