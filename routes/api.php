@@ -27,9 +27,10 @@ Route::get('/courses/all', [CoursesController::class,'all']);
 Route::get('/courses/search',[CoursesController::class,'search']);
 Route::post('/courses/delete/selected',[CoursesController::class,'delete']);
 Route::delete('/courses/delete/{id}',[CoursesController::class,'destroy']);
+
 //Subject
 Route::get('/getAllSubject',[SubjectsController::class,'search']);
-Route::get('/search?keyword={keyword}',[SubjectsController::class,'search']);
+// Route::get('/search?keyword={keyword}',[SubjectsController::class,'search']);
 // Route::get('/getAllSubjectZA',[SubjectsController::class,'getAllZa']);
 // Route::get('/getSearchSubject',[SubjectsController::class,'search']);
 // Route::get('/cancelSubject', [SubjectsController::class,'index']);

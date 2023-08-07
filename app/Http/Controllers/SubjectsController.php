@@ -14,30 +14,29 @@ class SubjectsController extends Controller
      */
 
     public function search(Request $request) {
-        // $perPage = 3;
-        // $sortBy = $request->input('sort_by', 'id');
-        // $sortOrder = $request->input('sort_order', 'asc');
+       
         $sort = $request->input('sort');
-        // $sortZA = $request->input('Za');
         $keyword = $request->input('keyword');
 
         $query = Subject::query();
 
         // Áp dụng tìm kiếm nếu có từ khóa
         if ($keyword) {
-            $query->where('name', 'like', '%' . $keyword . '%')
-                ->orWhere('description', 'like', '%' . $keyword . '%');
+            $query->where('name', 'like', '%' . $keyword . '%');
+                // ->orWhere('description', 'like', '%' . $keyword . '%');
         }
-        // $query->orderBy($sortBy, $sortOrder);
-        else if ($sort == 'Az') {
+
+
+
+        if ($sort == 'Az') {
             $query->orderBy('name', 'asc');
         }
-        else if ($sort == 'Za'){
+        if ($sort == 'Za'){
             $query->orderBy('name', 'desc');
         }
-        else{
-            // $query->orderBy('id', 'asc');
-        }
+        // else{
+        //     // $query->orderBy('id', 'asc');
+        // }
 
         // Lấy danh sách subjects dùng paginate
        

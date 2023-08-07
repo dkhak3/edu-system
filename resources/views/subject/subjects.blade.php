@@ -33,8 +33,9 @@
     {{-- </form> --}}
     
     {{-- Delete all selected --}}
-    <a id="deleteAllSelectedRecord" href="">
-        <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal2"
+    <a id="deleteAllSelectedRecord" href="#">
+        {{--  data-bs-toggle="modal" --}}
+        <button type="button" id="deleteAll" data-bs-target="#exampleModal2"
             class="btn-style icon-delete menu-item">
             <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor" stroke-width="2">
@@ -107,61 +108,128 @@
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
         $('#subject-page').addClass('active');
-        $('#dashboard').removeClass('active');
-        $('#dashboard-content').addClass('d-none');
         $("#z-a").toggleClass('blue-background');
         $("#z-a").hide();
         //Khởi tạo sự kiện trước khi load
         $(document).ready(function() {
             //Bắt sự kiện cho btn-add
+            $('#deleteAllSelectedRecord').on('click', function(e) {
+                // e.preventDefault();
+                console.log("xoa tat car");
+                
+            });
             $('#btn-add').on('click', function(e) {
-                //Chuyển trang đến router add như href="{{ route('subject') }}"
                 e.preventDefault(); // Ngăn chặn hành vi mặc định của nút (chuyển hướng)
                 var addRoute = "{{ route('addSubject') }}"; // Lấy đường dẫn tới tuyến "subject"
                 window.location.href = addRoute;
             });
             $('#goSearch').on('click', function() {
                     var keywords = $('input[name="keywords"]').val();
-                    // var keywords = 'b';
-                    subject.list.load(keywords)
-                    var history = window.history || window.location.history;
-                    history.pushState(null, null, `/search?keyword=${keywords}`);
-                    // e.preventDefault();
-                    // $(self.container).html('<div id="loader" class="loader"></div>');
+                    const urlParams = new URLSearchParams(window.location.search);
+                        const sortParam = urlParams.get('sort');
+                        const pageParam = urlParams.get('page');
+                        let newPath = "/subjects";
+
+                        if (pageParam || sortParam) {
+                            newPath += "?";
+                            if(pageParam && sortParam == null){
+                                newPath += `keyword=${keywords}`;
+                            }
+                            if (sortParam) {
+                                newPath += `keyword=${keywords}&sort=${sortParam}`;
+                            }
+                        }
+                        else{
+                            newPath += `?keyword=${keywords}`;
+                        }
+                        window.history.pushState(null, null, newPath);
+                        subject.list.load(keywords,sortParam)
             });
             $('.btn-a-z').on('click', function(e) {  
                     if ($('.btn-a-z').hasClass('blue-background')) {
                         $("#a-z").hide();
                         $('.btn-a-z').removeClass('blue-background');
-                        // $("#z-a").toggleClass('blue-background');
                         $("#z-a").show();
                         var sortType = 'Za';
-                        subject.list.load('',sortType);
+                        var currentSort = window.location.search;
+                        var newSort;
+                        if (currentSort.includes('sort=')) {
+                            newSort = currentSort.replace(/(sort=)[^&]*/, `$1${sortType}`);
+                        } 
+                        else{
+                            newSort = currentSort ? `${currentSort}&sort=${sortType}` : `?sort=${sortType}`;
+                        }
+                            window.history.pushState(null, null, newSort);
+                            const urlParams = new URLSearchParams(window.location.search);
+                            const keywordParam = urlParams.get('keyword');
+                            const pageParam = urlParams.get('page');
+                            subject.list.load(keywordParam, sortType, pageParam);                                 
                     }
                     else{
                         $(this).toggleClass('blue-background');
                         var sortType = 'Az';
-                        subject.list.load('',sortType);
+                        // subject.list.load('',sortType);
+                        var currentSort = window.location.search;
+                        var newSort;
+                        if (currentSort.includes('sort=')) {
+                            newSort = currentSort.replace(/(sort=)[^&]*/, `$1${sortType}`);
+                        } 
+                        else{
+                            newSort = currentSort ? `${currentSort}&sort=${sortType}` : `?sort=${sortType}`;
+                        }
+                        window.history.pushState(null, null, newSort);
+                            const urlParams = new URLSearchParams(window.location.search);
+                            const keywordParam = urlParams.get('keyword');
+                            const pageParam = urlParams.get('page');
+                            subject.list.load(keywordParam, sortType, pageParam);   
                     }
             });
             $('.btn-z-a').on('click', function(e) {
                 if ($('.btn-z-a').hasClass('blue-background')) {
                         $("#z-a").hide();
                         $("#a-z").show();
-                        // $('.btn-z-a').removeClass('blue-background');
-                        subject.list.load();
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const keywordParam = urlParams.get('keyword');
+                        const pageParam = urlParams.get('page');
+                        let newPath = "/subjects";
+                        if (keywordParam || pageParam) {
+                            newPath += "?";
+                            if (keywordParam) {
+                                newPath += `keyword=${keywordParam}`;
+                            }
+                            if (pageParam) {
+                                newPath += `${keywordParam ? '&' : ''}page=${pageParam}`;
+                            }
+                        }
+                        window.history.pushState(null, null, newPath);
+                        subject.list.load(keywordParam,'', pageParam);
                 }
             });
-        });
 
+            const urlParams = new URLSearchParams(window.location.search);
+            const sortParam = urlParams.get('sort');
+            if(sortParam == 'Az'){
+                    $("#a-z").show();
+                    $("#a-z").toggleClass('blue-background');
+            }
+            if(sortParam == 'Za'){
+                $("#z-a").show();
+                $("#a-z").hide();
+            }
+        });
+        
         var subject = {
             list: null,
         };
-        // var sortA = 'increaseName';
-        // var sortB = 'reduceName';
+       
         $(function() {
             subject.list = new DataListSub();
-            subject.list.load();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const keywordParam = urlParams.get('keyword');
+            const pageParam = urlParams.get('page');
+            const sortParam = urlParams.get('sort');
+            subject.list.load(keywordParam, sortParam, pageParam);
         });
        
       
@@ -170,14 +238,11 @@
             constructor() {
                 this.url = 'http://127.0.0.1:8000/api/getAllSubject';
                 this.container = "#tbSubject";
-                this.arrSub = []
+                this.arrSub = [];
             }
-            // var keyword = 'b';
             //Hàm hiển thị danh sách
 
-            load(keywords, sortType) {
-                // console.log("a-z");
-                
+            load(keywords, sortType, page) {                
                 var self = this; 
                 // $('.loader-sub').attr('class', 'loader-subject');
                 $.ajax({
@@ -186,6 +251,7 @@
                         data: {
                             sort : sortType,
                             keyword: keywords,
+                            page: page,
                         },
                         accepts: {
                             mycustomtype: 'application/x-some-custom-type'
@@ -250,7 +316,7 @@
                         self.loadPage();
                         self.AfterLoadEvent();    
                         }else{
-                            console.log("ko tim thay gi");
+                            // console.log("ko tim thay gi");
                             $('.alert-info').css('display','block')
                         }
                 });
@@ -258,41 +324,74 @@
             loadPage() {
                     var self = this
                     var pageElement = 1
-                    
                     $('.page-item').each(function(i, e) {
                         if ($(e).attr('class') == 'page-item active') {
-                            // pageElement = parseInt($(e).text())
-                            console.log("page -1");
+                            //Nếu trang đó đang được bấm thì gán lại pageElement
+                            pageElement = parseInt($(e).text())
+                            // console.log("Gán lại pageElement: "+pageElement);
                         }
                     })
                     $('.page-link').each(function(i, element) {
-
                         $(element).click(function(e) {
-
                             e.preventDefault();
                             if ($(element).attr('rel') == 'next') {
+                                //Load theo trang sau
                                 pageElement += 1
-                                // self.load(pageElement, dataCourses.keySearch, dataCourses.sort)
-                                console.log("page + 1");
+                                var currentPage = window.location.search;
+                                var newPage;
+                                if (currentPage.includes('page=')) {
+                                    newPage = currentPage.replace(/(page=)[^&]*/, `$1${pageElement}`);
+                                } else {
+                                    newPage = currentPage ? `${currentPage}&page=${pageElement}` : `?page=${pageElement}`;
+                                }
+                                window.history.pushState(null, null, newPage);
+                                const urlParams = new URLSearchParams(window.location.search);
+                                const keywordParam = urlParams.get('keyword');
+                                const pageParam = urlParams.get('page');
+                                const sortParam = urlParams.get('sort');
+                                self.load(keywordParam, sortParam, pageParam);
                             } else if ($(element).attr('rel') == 'prev') {
+                                 //Load theo trang trước
                                 pageElement -= 1
-
-                                // self.load(pageElement, dataCourses.keySearch, dataCourses.sort)
-                                console.log("page -1");
-
+                                // self.load('', '', pageElement);
+                                var currentPage = window.location.search;
+                                var newPage;
+                                if (currentPage.includes('page=')) {
+                                    newPage = currentPage.replace(/(page=)[^&]*/, `$1${pageElement}`);
+                                } else {
+                                    newPage = currentPage ? `${currentPage}&page=${pageElement}` : `?page=${pageElement}`;
+                                }
+                                window.history.pushState(null, null, newPage);
+                                const urlParams = new URLSearchParams(window.location.search);
+                                const keywordParam = urlParams.get('keyword');
+                                const pageParam = urlParams.get('page');
+                                const sortParam = urlParams.get('sort');
+                                self.load(keywordParam, sortParam, pageParam);
                             } else {
-
-                                // self.load($(element).text(), dataCourses.keySearch, dataCourses.sort)
-                                console.log(" no page");
+                                //Load theo số page
+                                
+                                var currentPage = window.location.search;
+                                var newPage;
+                                if (currentPage.includes('page=')) {
+                                    newPage = currentPage.replace(/(page=)[^&]*/, `$1${$(element).text()}`);
+                                } else {
+                                    newPage = currentPage ? `${currentPage}&page=${$(element).text()}` : `?page=${$(element).text()}`;
+                                }
+                                window.history.pushState(null, null, newPage);
+                                const urlParams = new URLSearchParams(window.location.search);
+                                const keywordParam = urlParams.get('keyword');
+                                const pageParam = urlParams.get('page');
+                                const sortParam = urlParams.get('sort');
+                                self.load(keywordParam, sortParam, pageParam);
                             }
                         });
                     });
             }
+           
             //Hàm xóa Subject $(element).attr("data-item")
             DeleteSubject(element) {
                 var self = this;
-                var history = window.history || window.location.history;
-                history.pushState(null, null, `/subjects`);
+                var previousURL = window.location.href;
                 $('#confirmDeleteModal').modal('hide');
                 $('.loader-sub').attr('class', 'loader-subject');
                 // $('.loader-subject').css('display', 'flex');
@@ -307,24 +406,13 @@
                     success: function(response) {
                         $('.loader-subject').css('display', 'none'); 
                        
-                        // self.load() 
-                        if ($('.btn-a-z').hasClass('blue-background')) {
-                            console.log("Load a->z");
-                            var sortType = 'Az';
-                            self.load('',sortType);
-                            return;
-                        }
-                        if ($('.btn-a-z').hasClass('blue-background')==false) {
-                            console.log("load thường");
-                            self.load() 
-                            return;
-                        }
-                        // if ($('.btn-z-a').hasClass('blue-background')) {
-                        //     console.log("load z-a");
-                        //     // self.load() 
-                        //     return;
-                        // }
-                        //Load lại sau khi xóa
+                        const urlParams = new URLSearchParams(window.location.search);
+                            const keywordParam = urlParams.get('keyword');
+                            const pageParam = urlParams.get('page');
+                            const sortParam = urlParams.get('sort');
+                            self.load(keywordParam,sortParam,pageParam);
+
+                            history.pushState(null, null, previousURL);
                     }
                 })
 
@@ -391,7 +479,6 @@
                         }
                     });
                 });
-
 
                 // $('#deleteAllSelectedRecord').css('display', 'block');
                 $('.btn-edit').on('click', function(e) {
