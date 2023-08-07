@@ -116,12 +116,38 @@
             $('#deleteAllSelectedRecord').on('click', function(e) {
                 // e.preventDefault();
                 console.log("xoa tat car");
-                
+
             });
             $('#btn-add').on('click', function(e) {
                 e.preventDefault(); // Ngăn chặn hành vi mặc định của nút (chuyển hướng)
                 var addRoute = "{{ route('addSubject') }}"; // Lấy đường dẫn tới tuyến "subject"
                 window.location.href = addRoute;
+            });
+            $('input[name="keywords"]').keypress(function(e) {
+                if (e.which == 13) { // Kiểm tra phím Enter
+                    e.preventDefault(); // Ngăn chặn hành vi mặc định của phím Enter (thường là gửi form)
+                    
+                    var keywords = $(this).val();
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const sortParam = urlParams.get('sort');
+                    const pageParam = urlParams.get('page');
+                    let newPath = "/subjects";
+                    
+                    if (pageParam || sortParam) {
+                        newPath += "?";
+                        if(pageParam && sortParam == null){
+                            newPath += `keyword=${keywords}`;
+                        }
+                        if (sortParam) {
+                            newPath += `keyword=${keywords}&sort=${sortParam}`;
+                        }
+                    }
+                    else{
+                        newPath += `?keyword=${keywords}`;
+                    }
+                    window.history.pushState(null, null, newPath);
+                    subject.list.load(keywords, sortParam);
+                }
             });
             $('#goSearch').on('click', function() {
                     var keywords = $('input[name="keywords"]').val();
