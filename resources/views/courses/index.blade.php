@@ -137,7 +137,8 @@
         document.querySelector('#courses-page').classList.add('active');
         document.querySelector('#lecturer').classList.remove('active');
         document.querySelector("#dashboard").classList.remove("active");
-
+        sessionStorage.removeItem('arrNotCheckCourses');
+                                sessionStorage.removeItem('arrCheck');
         var course = {
             list: null,
         };
@@ -357,6 +358,8 @@
                         const check = arrCourses.includes(
                             parseInt($(e).attr("data-item"))
                         );
+            
+                        
                         if (check) {
                             arrCourses = arrCourses.filter(
                                 (item) => item !== parseInt($(e).attr("data-item"))
@@ -392,7 +395,14 @@
                             $('#deleteAllSelectedRecord').css('display', 'block');
 
                         }
-                        console.log(sessionStorage.getItem('arrDeleteCourses'));
+                        if (sessionStorage.getItem('checkList') == 'true' && sessionStorage.getItem('arrNotCheckCourses').slice(1, -1).trim().split(',').map(Number).length >0 ) {
+                           if (sessionStorage.getItem('arrNotCheckCourses').slice(1, -1).trim().split(',').map(Number).length  != sessionStorage.getItem('arrCourses').slice(1, -1).trim().split(',').map(Number).length) {
+                            
+                               $('#deleteAllSelectedRecord').css('display', 'block');
+                           }
+                          
+                        
+                    }
                     });
                 });
                 $('#deleteAllCourses').click(function(e) {
