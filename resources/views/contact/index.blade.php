@@ -82,16 +82,20 @@
                     <th>ID</th>
                     <th>
                         Name
+                        @if (!($allContacts->isEmpty()))
                         <button class="btn_sort" value="asc"><i id="name"
                                 class="fa-solid fa-arrow-down-a-z icon-sort"></i></button>
+                        @endif
                     </th>
                     <th>Address</th>
                     <th>Phone</th>
                     <th>Birthday</th>
                     <th>
                         Created at
+                        @if (!($allContacts->isEmpty()))
                         <button class="btn_sort" value="asc"><i id="created_at"
                                 class="fa-solid fa-arrow-down-short-wide icon-sort"></i></button>
+                        @endif
                     </th>
                     <th>Actions</th>
                 </tr>
@@ -142,8 +146,10 @@
                 @endforeach
             </tbody>
         </table>
+        @if (!($allContacts->isEmpty()))
         <p id="num_of_record" class="dashboard-short-desc">Showing {{ count($allContacts) }} of {{ $length }} results
         </p>
+        @endif
         <div id="pagination" class="float-end mt-3">
             {{ $allContacts->links() }}
         </div>
@@ -173,7 +179,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-info" data-bs-dismiss="modal">Cancel</button>
 
-                <form action="{{ route('contacts.destroy', $item->id) }}" id="modal_submit_delete" method="post">
+                <form action="" id="modal_submit_delete" method="post">
                     @csrf
                     @method('DELETE')
                     <button type="submit" id="btn_submit_delete_contact" class="btn btn-danger">Yes,
@@ -274,6 +280,7 @@
 <script src="{{ asset ('/js/toast.js') }}"></script>
 <script>
     $(document).ready(function() {
+        console.log("{{ $length }}");
         // Change menu item active
         document.querySelector('#menuItem_contact').classList.add('active');
 
@@ -440,32 +447,37 @@
         // Search
         $('#formSearch').submit(function(e) {
             e.preventDefault();
-            if ($('#keywords').val() == '') {
-                window.location = 'contacts';
+            if ("{{ $length }}" == 0) {
+                showWarningToast('You do not have any data to search')
             }
             else {
-                displayLoader($('tbody'));
-                $.ajax({
-                    url: 'searchContacts',
-                    data: {keywords: $('#keywords').val()},
-                    dataType: "json",
-                    success: function (response) {
-                        removeLoader();
-                        if (response.result.data.length == 0) {
-                            showWarningToast('Not found any contact!');
-                        }
-                        else {
-                            loadDataTable(response.result.data);
-                            $('#pagination').html(response.pagination);
+                if ($('#keywords').val() == '') {
+                    window.location = 'contacts';
+                }
+                else {
+                    displayLoader($('tbody'));
+                    $.ajax({
+                        url: 'searchContacts',
+                        data: {keywords: $('#keywords').val()},
+                        dataType: "json",
+                        success: function (response) {
+                            removeLoader();
+                            if (response.result.data.length == 0) {
+                                showWarningToast('Not found any contact!');
+                            }
+                            else {
+                                loadDataTable(response.result.data);
+                                $('#pagination').html(response.pagination);
 
-                            $('#num_of_record').html('Number of results found: ' + response.result.data.length);
-                        }
-                    },
-                    error: function () {
-                        showErrorToast('Can not search !');
+                                $('#num_of_record').html('Number of results found: ' + response.result.data.length);
+                            }
+                        },
+                        error: function () {
+                            showErrorToast('Can not search !');
 
-                    }
-                });
+                        }
+                    });
+                }
             }
             
         });

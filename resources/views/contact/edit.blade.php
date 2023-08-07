@@ -86,7 +86,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
 <script src="{{ asset('js/toast.js') }}"></script>
 <script>
-    //console.log(document.querySelector('#id').innerHTML);
     // Change menu item active
     document.querySelector('#menuItem_contact').classList.add('active');
 
@@ -94,42 +93,20 @@
 
     checkInputFields();
 
-    // $('form').submit(function(){
-    //     if (isFieldsChanged) {
-    //         document.querySelector('#btn_submit').setAttributes("disabled", false);
-    //         displayLoader();
-    //     }
-    //     else {
-    //         document.querySelector('#btn_submit').setAttributes("disabled", true);
-    //         showErrorToast("You haven't changed any of the fields");
-    //     }
-    // });
-
-    
-
     const btn_submit = document.querySelector('#btn_submit');
-        btn_submit.addEventListener('click', function () {
-            console.log(isFieldsChanged);
-            const form = document.querySelector('form');
-            if (isFieldsChanged) {
-                btn_submit.setAttribute('type', 'submit');
-                form.setAttribute('action', 'http://127.0.0.1:8000/contacts/' + document.querySelector('#id').innerHTML);
-                displayLoader();
-            }
-            else {
-                form.setAttribute('action', "");
-                showErrorToast("You haven't changed any of the fields");
-            }
-        });
-
-    function displayLoader() {
-        $('#btn_submit').addClass('d-none');
-        $('#btn_cancel').addClass('d-none');
-        $('form').append('<div class="load d-block text-center mx-auto"></div>');
-        for (let i = 0; i < 3; i++) {
-            $('.load').append('<div class="spinner-grow text-info ms-1"></div>');
+    btn_submit.addEventListener('click', function () {
+        console.log(isFieldsChanged);
+        const form = document.querySelector('form');
+        if (isFieldsChanged) {
+            btn_submit.setAttribute('type', 'submit');
+            form.setAttribute('action', 'http://127.0.0.1:8000/contacts/' + document.querySelector('#id').innerHTML);
+            displayLoader();
         }
-    }
+        else {
+            form.setAttribute('action', "");
+            showErrorToast("You haven't changed any of the fields");
+        }
+    });
 
     function checkInputFields() {
         const name = document.querySelector('#name');
@@ -184,7 +161,14 @@
 
     }
 
-
+    function displayLoader() {
+        $('#btn_submit').addClass('d-none');
+        $('#btn_cancel').addClass('d-none');
+        $('form').append('<div class="load d-block text-center mx-auto"></div>');
+        for (let i = 0; i < 3; i++) {
+            $('.load').append('<div class="spinner-grow text-info ms-1"></div>');
+        }
+    }
 
 </script>
 
