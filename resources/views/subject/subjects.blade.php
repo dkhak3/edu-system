@@ -24,27 +24,26 @@
             Create subject</button>
         </div>
     </div>
-
-    <div class="mb-5 d-flex justify-content-end" autocomplete="off">
-        <input type="text" placeholder="Search..." id="keywords" name="keywords" class="input-search">
-        <button class="btn btn-primary menu-item" id="goSearch" style="margin-left: 10px;">Search</button>
-    </div>
-    {{-- <form class="mb-5 d-flex justify-content-end" autocomplete="off"> --}}
-    {{-- </form> --}}
-    
+    <div class="d-flex mb-5">
     {{-- Delete all selected --}}
-    <a id="deleteAllSelectedRecord" href="#">
-        {{--  data-bs-toggle="modal" --}}
-        <button type="button" id="deleteAll" data-bs-target="#exampleModal2"
-            class="btn-style icon-delete menu-item">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                </path>
-            </svg>
-            Delete all selected</button>
-    </a>
+        <a id="deleteAllSelectedRecord" href="#">
+            {{--  data-bs-toggle="modal" --}}
+            <button type="button" id="deleteAll" data-bs-target="#exampleModal2"
+                class="btn-style icon-delete menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                    </path>
+                </svg>
+                Delete all selected</button>
+        </a>
+        <div class="d-flex justify-content-end flex-fill" autocomplete="off">
+            <input type="text" placeholder="Search..." id="keywords" name="keywords" class="input-search">
+            <button class="btn btn-primary menu-item" id="goSearch" style="margin-left: 10px;">Search</button>
+        </div>
+    </div>
+    
     <div class="table-main">
         <div class="alert alert-info" style="display: none ">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
