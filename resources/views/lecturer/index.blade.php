@@ -21,7 +21,7 @@
         </a>
     </div>
 
-    <div class="d-flex mb-5">
+    <div class="menu-action-nav">
         @if ($lecturers->isNotEmpty())
             {{-- Delete all selected --}}
             <a id="deleteAllSelectedRecord" href="" class="flex-fill">

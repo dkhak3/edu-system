@@ -50,12 +50,17 @@
                 </div>
             </div>
         </div>
+
+        <header class="header">
+            <i class="fa fa-bars menu-toggle"></i>
+            <!-- fa-times -->
+        </header>
     </div>
 
     <div class="container-fluid">
         <div class="row dashboard-main">
             <div class="col-lg-2 col-md-12 col-12">
-                <div class="dashboard-left">
+                <div class="dashboard-left menu">
                     {{-- dashboard --}}
                     <a href="/" class="menu-item" id="dashboard" aria-current="page">
                         <span class="menu-icon">
@@ -69,7 +74,6 @@
                     </a>
 
                     {{-- Lecturer --}}
-                    {{-- <a href="{{ route('index') }}" class="menu-item" id="lecturer" aria-current="page"> --}}
                     <a href="{{ url('lecturers') }}" class="menu-item" id="lecturer" aria-current="page">
                         <span class="menu-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24"
@@ -149,9 +153,6 @@
         integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
-
-    
-
 </body>
 
 </html>

@@ -352,9 +352,6 @@ table {
 }
 
 .loader-subject {
-  
-    
-   
     height: 400px;
     position: absolute;
     left: 50%;
@@ -676,4 +673,82 @@ table {
 }
 .blue-background {
     color: blue;
+}
+
+.menu-action-nav {
+    display: flex;
+    margin-bottom: 3rem;
+}
+
+@media (max-width: 767px) {
+    .menu-action-nav {
+        display: block;
+    }
+    .menu-action-nav a {
+        flex: 1;
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    .nav-main span,
+    .dashboard-heading,
+    .dashboard-short-desc,
+    .btn-style.menu-item,
+    .input-search,
+    th,
+    td,
+    .deleteAllSelectedRecord,
+    .actions-style,
+    .btn-submit,
+    .btn-cancel {
+        font-size: 15px;
+    }
+    .input-search {
+        width: 100%;
+    }
+}
+
+@media (max-width: 979px) {
+    .dashboard-left {
+        width: 300px;
+        position: fixed;
+        top: 100px;
+        right: 0;
+        bottom: 0;
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+        list-style: none;
+        transform: translateX(100%);
+        transition: transform 0.25s linear;
+        z-index: 3;
+    }
+    .dashboard-left.is-show {
+        transform: translateX(0);
+    }
+    a.menu-item {
+        display: block;
+        padding: 20px 15px;
+        color: #333;
+        border-bottom: 1px solid #eee;
+    }
+    .header {
+        padding: 20px;
+        display: flex !important;
+        align-items: center;
+        justify-content: flex-end;
+    }
+    .menu-toggle {
+        cursor: pointer;
+        font-size: 30px;
+        position: relative;
+        z-index: 9999;
+    }
+}
+
+.header {
+    display: none;
+}
+
+@media (max-width: 320px) {
+    .nav-main span {
+        font-size: 10px;
+    }
 }
