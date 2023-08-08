@@ -23,12 +23,27 @@
         </a>
     </div>
 
-    {{-- Search --}}
-    <form id="formSearch" class="mb-5 d-flex justify-content-end" autocomplete="off">
-        <input type="text" placeholder="Search..." id="keywords" name="keywords" class="input-search">
-        <button type="submit" id="btnSearch" class="btn btn-primary menu-item"
-            style="margin-left: 10px;">Search</button>
-    </form>
+    <div class="d-flex mb-5">
+        {{-- Button delete all selected record --}}
+        <a id="btn_delete_all_selected" class="flex-fill" style="display: none">
+            <button type="button" data-bs-toggle="modal" data-bs-target="#modalDeleteAllSelectedRecord"
+                class="btn-style icon-delete menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                    </path>
+                </svg>
+                Delete all selected</button>
+        </a>
+
+        {{-- Search --}}
+        <form id="formSearch" class="d-flex justify-content-end flex-fill" autocomplete="off">
+            <input type="text" placeholder="Search..." id="keywords" name="keywords" class="input-search">
+            <button type="submit" id="btnSearch" class="btn btn-primary menu-item"
+                style="margin-left: 10px;">Search</button>
+        </form>
+    </div>
 
     {{-- Table --}}
     <div class="table-main">
@@ -57,18 +72,7 @@
         </div>
         @endif
 
-        {{-- Button delete all selected record --}}
-        <a id="btn_delete_all_selected" style="display: none">
-            <button type="button" data-bs-toggle="modal" data-bs-target="#modalDeleteAllSelectedRecord"
-                class="btn-style icon-delete menu-item">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                    </path>
-                </svg>
-                Delete all selected</button>
-        </a>
+
 
         <table>
             <thead>
@@ -83,8 +87,8 @@
                     <th>
                         Name
                         @if (!($allContacts->isEmpty()))
-                        <button class="btn_sort" value="asc" data-bs-toggle="tooltip" title="Sort from A to Z"><i id="name"
-                                class="fa-solid fa-arrow-down-a-z icon-sort"></i></button>
+                        <button class="btn_sort" value="asc" data-bs-toggle="tooltip" title="Sort from A to Z"><i
+                                id="name" class="fa-solid fa-arrow-down-a-z icon-sort"></i></button>
                         @endif
                     </th>
                     <th>Address</th>
@@ -93,8 +97,8 @@
                     <th>
                         Created at
                         @if (!($allContacts->isEmpty()))
-                        <button class="btn_sort" value="asc" data-bs-toggle="tooltip" title="Sort from old to new"><i id="created_at"
-                                class="fa-solid fa-arrow-down-short-wide icon-sort"></i></button>
+                        <button class="btn_sort" value="asc" data-bs-toggle="tooltip" title="Sort from old to new"><i
+                                id="created_at" class="fa-solid fa-arrow-down-short-wide icon-sort"></i></button>
                         @endif
                     </th>
                     <th>Actions</th>
@@ -375,7 +379,7 @@
                     $('#btn_delete_all_selected').css({display:'none'});
                 }  
                 
-                if (temp >= 2 || temp == arr_checkbox.length){
+                if (temp >= 1 || temp == arr_checkbox.length){
                     $('#btn_delete_all_selected').css({display:'unset'});
                 }
                 else{
