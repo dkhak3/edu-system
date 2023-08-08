@@ -139,6 +139,7 @@
         document.querySelector("#dashboard").classList.remove("active");
         sessionStorage.removeItem('arrNotCheckCourses');
                                 sessionStorage.removeItem('arrCheck');
+                                sessionStorage.removeItem('arrDeleteCourses');
         var course = {
             list: null,
         };
@@ -407,9 +408,8 @@
                 });
                 $('#deleteAllCourses').click(function(e) {
                     e.preventDefault()
-                    console.log();
                     if (sessionStorage.getItem('checkList') == 'false' && $('#select_all_ids').prop(
-                            'checked') == true) {
+                        'checked') == true) {
                         $.ajax({
                             url: "http://127.0.0.1:8000/api/courses/delete/selected",
                             type: "POST",
@@ -424,7 +424,7 @@
 
                             },
                         });
-                    } else {
+                    } else if(sessionStorage.getItem('checkList') == 'true') {
         var arrCoursesTemp = sessionStorage.getItem('arrCourses').slice(1, -1).trim().split(',').map(Number)
 
                         var arrCoursesNotCheck = sessionStorage.getItem('arrNotCheckCourses').slice(1, -1)
@@ -438,6 +438,24 @@
                             type: "POST",
                             data: {
                                 arrCourses: arrCoursesDelete
+                            },
+                            dataType: "html",
+                            success: function(response) {
+                                course.list.load(dataCourses.page, dataCourses.keySearch,
+                                    dataCourses.sort);
+                                $('#deleteAllSelectedRecord').css('display', 'none');
+                                sessionStorage.removeItem('arrNotCheckCourses');
+                                sessionStorage.removeItem('arrCheck');
+                            },
+                        });
+                    }else{
+                        var arrCoursesCheck = sessionStorage.getItem('arrCheck').slice(1, -1)
+                            .trim().split(',').map(Number)
+                        $.ajax({
+                            url: "http://127.0.0.1:8000/api/courses/delete/selected",
+                            type: "POST",
+                            data: {
+                                arrCourses: arrCoursesCheck
                             },
                             dataType: "html",
                             success: function(response) {
