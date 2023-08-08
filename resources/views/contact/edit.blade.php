@@ -73,32 +73,102 @@
         </div>
 
         <div class="d-flex justify-content-center align-items-center mx-auto gap-3">
-            <button type="submit" id="btn_submit" class="btn-primary-style-2 btn-submit form-submit">
+            <button type="button" id="btn_submit" class="btn-primary-style-2 btn-submit form-submit">
                 <span class="spinner-border-xl spinner" role="status" aria-hidden="true"></span>
                 Update contact
             </button>
-            <a href="{{ url('contacts') }}" class="btn-cancel">Cancel</a>
+            <a href="{{ url('contacts') }}" id="btn_cancel" class="btn-cancel">Cancel</a>
         </div>
 
     </form>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<script src="{{ asset('js/toast.js') }}"></script>
 <script>
     // Change menu item active
     document.querySelector('#menuItem_contact').classList.add('active');
 
-    $('form').submit(function(){
-        displayLoader();
+    var isFieldsChanged = false;
+    
+    checkInputFields();
+
+    const btn_submit = document.querySelector('#btn_submit');
+    btn_submit.addEventListener('click', function () {
+        const form = document.querySelector('form');
+        if (isFieldsChanged) {
+            btn_submit.setAttribute('type', 'submit');
+            form.setAttribute('action', 'http://127.0.0.1:8000/contacts/' + "{{ $item->id }}");
+            displayLoader();
+        }
+        else {
+            form.setAttribute('action', "");
+            showErrorToast('You must change the data of any field to update this contact');
+        }
     });
+
+    function checkInputFields() {
+        const name = document.querySelector('#name');
+        const address = document.querySelector('#address');
+        const phone = document.querySelector('#phone');
+        const birthday = document.querySelector('#birthday');
+
+        const name_orginalData = name.value;
+        const address_orginalData = address.value;
+        const phone_orginalData = phone.value;
+        const birthday_orginalData = birthday.value;
+
+        name.oninput = function () {
+            
+            if (name_orginalData != this.value) {
+                isFieldsChanged = true;
+            }
+            else {
+                isFieldsChanged = false;
+            }
+        }
+
+        address.oninput = function () {
+            
+            if (address_orginalData != this.value) {
+                isFieldsChanged = true;
+            }
+            else {
+                isFieldsChanged = false;
+            }
+        }
+
+        phone.oninput = function () {
+            
+            if (phone_orginalData != this.value) {
+                isFieldsChanged = true;
+            }
+            else {
+                isFieldsChanged = false;
+            }
+        }
+
+        birthday.oninput = function () {
+            
+            if (birthday_orginalData != this.value) {
+                isFieldsChanged = true;
+            }
+            else {
+                isFieldsChanged = false;
+            }
+        }
+
+    }
 
     function displayLoader() {
         $('#btn_submit').addClass('d-none');
+        $('#btn_cancel').addClass('d-none');
         $('form').append('<div class="load d-block text-center mx-auto"></div>');
         for (let i = 0; i < 3; i++) {
             $('.load').append('<div class="spinner-grow text-info ms-1"></div>');
         }
     }
+
 </script>
 
 @endsection

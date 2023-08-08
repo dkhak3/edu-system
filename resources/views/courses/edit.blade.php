@@ -94,6 +94,10 @@
         integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
+        document.querySelector('#menuItem_contact').classList.remove('active');
+        document.querySelector('#courses-page').classList.add('active');
+        document.querySelector('#lecturer').classList.remove('active');
+        document.querySelector("#dashboard").classList.remove("active");
         $(document).ready(function() {
            
             $('#course-name').keydown(function(e) {

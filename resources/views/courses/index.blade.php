@@ -1,15 +1,12 @@
 @extends('layout')
 @section('content')
     @isset($success)
-    {!! $success !!}
+        {!! $success !!}
         <script>
-            
-           
-                    setTimeout(function() {
-                        $(".n-sc").remove();
-                        $(".n-er").remove();
-                    }, 3000);
-             
+            setTimeout(function() {
+                $(".n-sc").remove();
+                $(".n-er").remove();
+            }, 3000);
         </script>
     @endisset
     <div class="dashboard-children active">
@@ -33,7 +30,8 @@
 
         {{-- Search --}}
         <form action="{{ url('contacts') }}" method="GET" class="mb-5 d-flex justify-content-end" autocomplete="off">
-            <input type="text" id="search" placeholder="Search..." id="search" name="search" value="{{request()->query('search')}}" class="input-search">
+            <input type="text" id="search" placeholder="Search..." id="search" name="search"
+                value="{{ request()->query('search') }}" class="input-search">
             <button id="searchCourses" class="btn btn-primary menu-item" style="margin-left: 10px;">Search</button>
         </form>
 
@@ -90,14 +88,14 @@
                         <th class="mbl-none">Description</th>
                         <th style="white-space: nowrap;">Create At <i
                                 style="margin-left: 3px; padding: 5px; cursor: pointer;" id="sortTime"
-                                class="fa-solid fa-arrow-down-a-z"></i></th>
+                                class="fa-solid fa-arrow-down-1-9"></i></th>
                         <th>Start Date</th>
                         <th>End Date</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="renderTB">
-                    
+
 
                 </tbody>
             </table>
@@ -135,35 +133,39 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
 
     <script>
-         document.querySelector('#menuItem_contact').classList.remove('active');
-         document.querySelector('#courses-page').classList.add('active');
-    document.querySelector('#lecturer').classList.remove('active');
-    document.querySelector("#dashboard").classList.remove("active");
-    
+        document.querySelector('#menuItem_contact').classList.remove('active');
+        document.querySelector('#courses-page').classList.add('active');
+        document.querySelector('#lecturer').classList.remove('active');
+        document.querySelector("#dashboard").classList.remove("active");
+        sessionStorage.removeItem('arrNotCheckCourses');
+                                sessionStorage.removeItem('arrCheck');
+                                sessionStorage.removeItem('arrDeleteCourses');
         var course = {
             list: null,
         };
         var dataCourses = {
-            keySearch: `{{request()->query('search')}}`,
-            page: `{{request()->query('page')}}` || 1,
+            keySearch: `{{ request()->query('search') }}`,
+            page: `{{ request()->query('page') }}` || 1,
             sort: '',
             tempSortTime: 0,
             tempSort: 0,
-            checked: false
+            checked: false,
+            checkItem: false
+
 
         };
         var arrCourses = [];
         $(function() {
+            sessionStorage.setItem('checkList', dataCourses.checked);
+
             course.list = new DataList();
             course.list.load(dataCourses.page, dataCourses.keySearch, dataCourses.sort);
-            
-
-           
         });
-       
-        $("#select_all_ids").click(function(e) {
-            if (e.target.checked) {
 
+        $("#select_all_ids").click(function(e) {
+            sessionStorage.setItem('arrNotCheckCourses', '');
+            dataCourses.checkItem = true
+            if (e.target.checked) {
                 $('#deleteAllSelectedRecord').css('display', 'block');
                 dataCourses.checked = true;
                 $.ajax({
@@ -182,6 +184,8 @@
                 dataCourses.checked = false;
                 course.list.checklist(arrCourses, dataCourses.checked);
             }
+            sessionStorage.setItem('checkList', dataCourses.checked);
+            console.log(arrCourses);
         });
         $('#deleteAllSelectedRecord').click(function(e) {
             e.preventDefault();
@@ -195,7 +199,7 @@
                 course.list.checklist(arrCourses);
                 var history = window.history || window.location.history;
 
-                            history.pushState(null, null, `/courses?search=${dataCourses.keySearch}&page=${dataCourses.page}`);
+                history.pushState(null, null, `/courses?search=${dataCourses.keySearch}&page=${dataCourses.page}`);
             }
         });
         $("#searchCourses").click(function(e) {
@@ -214,33 +218,46 @@
             if (dataCourses.tempSort == 0) {
                 dataCourses.sort = 'increaseName'
                 course.list.load(dataCourses.page, dataCourses.keySearch, dataCourses.sort)
+                $('#sort').attr('class', 'fa-solid fa-arrow-down-a-z');
 
-                $('#sort').attr('class', 'fa-solid fa-arrow-up-a-z');
                 dataCourses.tempSort++
             } else {
                 dataCourses.sort = 'reduceName'
-                $('#sort').attr('class', 'fa-solid fa-arrow-down-a-z');
+                $('#sort').attr('class', 'fa-solid fa-arrow-down-z-a');
                 course.list.load(dataCourses.page, dataCourses.keySearch, dataCourses.sort)
                 dataCourses.tempSort = 0
             }
+            var history = window.history || window.location.history;
+            var urlPage = `/courses?page=${1}`
+            if (dataCourses.keySearch != '') {
+                urlPage = `/courses?search=${dataCourses.keySearch}&page=${1}`
+            }
+            history.pushState(null, null, urlPage);
         })
 
         $('#sortTime').click(function(e) {
             $('#sortTime').css('color', 'blue')
             $('#sort').css('color', 'black')
+            var history = window.history || window.location.history;
+            var urlPage = `/courses?page=${1}`
+            if (dataCourses.keySearch != '') {
+                urlPage = `/courses?search=${dataCourses.keySearch}&page=${1}`
+            }
+            history.pushState(null, null, urlPage);
             if (dataCourses.tempSortTime == 0) {
 
                 dataCourses.sort = 'increaseTime'
                 course.list.load(dataCourses.page, dataCourses.keySearch, dataCourses.sort)
 
-                $('#sortTime').attr('class', 'fa-solid fa-arrow-up-a-z');
+                $('#sortTime').attr('class', 'fa-solid fa-arrow-down-1-9');
                 dataCourses.tempSortTime++
             } else {
                 dataCourses.sort = 'reduceTime'
-                $('#sortTime').attr('class', 'fa-solid fa-arrow-down-a-z');
+                $('#sortTime').attr('class', 'fa-solid fa-arrow-down-9-1');
                 course.list.load(dataCourses.page, dataCourses.keySearch, dataCourses.sort)
                 dataCourses.tempSortTime = 0
             }
+
         })
 
 
@@ -252,7 +269,7 @@
             }
             //Load
             load(page, keySearch, sort) {
-                var self = this; 
+                var self = this;
                 $(self.container).html('<tr><td class="loader-subject" colspan="6"></td></tr>');
                 $('.page-courses').css('margin-top', '400px')
                 $.ajax({
@@ -269,6 +286,8 @@
                         $("#renderTB").html("");
                         $("#renderTB").html(JSON.parse(response).blade);
                         self.arrTemp = JSON.parse(response).courses
+                        sessionStorage.setItem('arrCourses', JSON.stringify(self.arrTemp));
+
                         if (JSON.parse(response).blade.split('\n')[0][1] != 't') {
                             $('.alert-info').css('display', 'flex')
                         } else {
@@ -299,6 +318,7 @@
                 $('.page-link').each(function(i, element) {
 
                     $(element).click(function(e) {
+
                         e.preventDefault();
                         if ($(element).attr('rel') == 'next') {
                             pageElement += 1
@@ -307,7 +327,7 @@
                             pageElement -= 1
                             self.load(pageElement, dataCourses.keySearch, dataCourses.sort)
                         } else {
-
+                            pageElement = parseInt($(element).text())
                             self.load($(element).text(), dataCourses.keySearch, dataCourses.sort)
                         }
                         var history = window.history || window.location.history;
@@ -315,28 +335,32 @@
                         if (dataCourses.keySearch != '') {
                             urlPage = `/courses?search=${dataCourses.keySearch}&page=${pageElement}`
                         }
-                            history.pushState(null, null, urlPage);
+                        history.pushState(null, null, urlPage);
                     });
                 });
             }
             //Check list
             checklist(arrCourses, checked) {
                 var self = this
-                if (checked == true) {
+                if (checked == true && dataCourses.checkItem == true) {
                     $(".checklist").each(function(index, e) {
                         $(e).prop("checked", true);
                     });
-                } else {
+                } else if (dataCourses.checkItem == true) {
                     $(".checklist").each(function(index, e) {
                         $(e).prop("checked", false);
                         $(e).attr("checked", false);
                     });
                 }
+
                 $(".checklist").each(function(index, e) {
                     $(e).click(function() {
+                        dataCourses.checkItem = false
                         const check = arrCourses.includes(
                             parseInt($(e).attr("data-item"))
                         );
+            
+                        
                         if (check) {
                             arrCourses = arrCourses.filter(
                                 (item) => item !== parseInt($(e).attr("data-item"))
@@ -364,27 +388,85 @@
                             $('#deleteAllSelectedRecord').css('display', 'none');
 
                         }
-                        localStorage.setItem('arr', arrCourses)
-                        console.log(localStorage.getItem('arr'));
+                        if (sessionStorage.getItem('arrCheck').slice(1, -1).trim().split(',').map(
+                                Number).length == 1) {
+                            $('#deleteAllSelectedRecord').css('display', 'none');
+
+                        } else {
+                            $('#deleteAllSelectedRecord').css('display', 'block');
+
+                        }
+                        if (sessionStorage.getItem('checkList') == 'true' && sessionStorage.getItem('arrNotCheckCourses').slice(1, -1).trim().split(',').map(Number).length >0 ) {
+                           if (sessionStorage.getItem('arrNotCheckCourses').slice(1, -1).trim().split(',').map(Number).length  != sessionStorage.getItem('arrCourses').slice(1, -1).trim().split(',').map(Number).length) {
+                            
+                               $('#deleteAllSelectedRecord').css('display', 'block');
+                           }
+                          
+                        
+                    }
                     });
                 });
                 $('#deleteAllCourses').click(function(e) {
                     e.preventDefault()
-                    
-                    $.ajax({
-                        url: "http://127.0.0.1:8000/api/courses/delete/selected",
-                        type: "POST",
-                        data: {
-                            arrCourses: arrCourses
-                        },
-                        dataType: "html",
-                        success: function(response) {
-                            course.list.load(dataCourses.page, dataCourses.keySearch,
-                                dataCourses.sort);
-                            $('#deleteAllSelectedRecord').css('display', 'none');
+                    if (sessionStorage.getItem('checkList') == 'false' && $('#select_all_ids').prop(
+                        'checked') == true) {
+                        $.ajax({
+                            url: "http://127.0.0.1:8000/api/courses/delete/selected",
+                            type: "POST",
+                            data: {
+                                arrCourses: arrCourses
+                            },
+                            dataType: "html",
+                            success: function(response) {
+                                course.list.load(dataCourses.page, dataCourses.keySearch,
+                                    dataCourses.sort);
+                                $('#deleteAllSelectedRecord').css('display', 'none');
 
-                        },
-                    });
+                            },
+                        });
+                    } else if(sessionStorage.getItem('checkList') == 'true') {
+        var arrCoursesTemp = sessionStorage.getItem('arrCourses').slice(1, -1).trim().split(',').map(Number)
+
+                        var arrCoursesNotCheck = sessionStorage.getItem('arrNotCheckCourses').slice(1, -1)
+                            .trim().split(',').map(Number)
+                        var arrCoursesDelete = arrCoursesTemp.filter(function(
+                            item) {
+                            return ! arrCoursesNotCheck.includes(item);
+                        });
+                        $.ajax({
+                            url: "http://127.0.0.1:8000/api/courses/delete/selected",
+                            type: "POST",
+                            data: {
+                                arrCourses: arrCoursesDelete
+                            },
+                            dataType: "html",
+                            success: function(response) {
+                                course.list.load(dataCourses.page, dataCourses.keySearch,
+                                    dataCourses.sort);
+                                $('#deleteAllSelectedRecord').css('display', 'none');
+                                sessionStorage.removeItem('arrNotCheckCourses');
+                                sessionStorage.removeItem('arrCheck');
+                            },
+                        });
+                    }else{
+                        var arrCoursesCheck = sessionStorage.getItem('arrCheck').slice(1, -1)
+                            .trim().split(',').map(Number)
+                        $.ajax({
+                            url: "http://127.0.0.1:8000/api/courses/delete/selected",
+                            type: "POST",
+                            data: {
+                                arrCourses: arrCoursesCheck
+                            },
+                            dataType: "html",
+                            success: function(response) {
+                                course.list.load(dataCourses.page, dataCourses.keySearch,
+                                    dataCourses.sort);
+                                $('#deleteAllSelectedRecord').css('display', 'none');
+                                sessionStorage.removeItem('arrNotCheckCourses');
+                                sessionStorage.removeItem('arrCheck');
+                            },
+                        });
+                    }
                 })
                 $('#btnAll').click(function(e) {
                     $(self.container).html('<tr><td id="loading" class="loading" colspan="6"></td></tr>');

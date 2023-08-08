@@ -43,9 +43,10 @@ Route::resource('courses',CoursesController::class);
 
 //Subjects
 Route::get('/subjects', [SubjectsController::class, 'index'])->name('subject');
+
 Route::get('/addSubject', [SubjectsController::class, 'create'])->name('addSubject');
 Route::post('/newSubject', [SubjectsController::class, 'store'])->name('newSubject');
-Route::delete('/subjects/{id}', [SubjectsController::class, 'destroy'])->name('deleteSubject');
+// Route::delete('/subjects/{id}', [SubjectsController::class, 'destroy'])->name('deleteSubject');
 Route::get('/updateSubject/{id}', [SubjectsController::class, 'edit'])->name('updateSubject');
 Route::put('/editSubject/{id}', [SubjectsController::class, 'update'])->name('editSubject');
 Route::get('/search', [SubjectsController::class, 'search'])->name('searchSubject');

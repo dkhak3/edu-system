@@ -2,9 +2,8 @@
 @extends('layout')
 @section('content')
 
-
 {{-- New Contact --}}
-<div class="dashboard-children active subjectRender">
+<div class="dashboard-children active">
     {{-- Heading --}}
     <div class="mb-5 d-flex justify-content-between align-items-center">
         <div class="">
@@ -78,7 +77,7 @@
                 <span class="spinner-border-xl spinner" role="status" aria-hidden="true"></span>
                 Add new contact
             </button>
-            <a href="{{ url('contacts') }}" class="btn-cancel">Cancel</a>
+            <a href="{{ url('contacts') }}" id="btn_cancel" class="btn-cancel">Cancel</a>
         </div>
 
     </form>
@@ -95,6 +94,7 @@
 
     function displayLoader() {
         $('#btn_submit').addClass('d-none');
+        $('#btn_cancel').addClass('d-none');
         $('form').append('<div class="load d-block text-center mx-auto"></div>');
         for (let i = 0; i < 3; i++) {
             $('.load').append('<div class="spinner-grow text-info ms-1"></div>');

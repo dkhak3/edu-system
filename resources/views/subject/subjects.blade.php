@@ -24,26 +24,26 @@
             Create subject</button>
         </div>
     </div>
-
-    <div class="mb-5 d-flex justify-content-end" autocomplete="off">
-        <input type="text" placeholder="Search..." id="keywords" name="keywords" class="input-search">
-        <button class="btn btn-primary menu-item" id="goSearch" style="margin-left: 10px;">Search</button>
-    </div>
-    {{-- <form class="mb-5 d-flex justify-content-end" autocomplete="off"> --}}
-    {{-- </form> --}}
-    
+    <div class="d-flex mb-5">
     {{-- Delete all selected --}}
-    <a id="deleteAllSelectedRecord" href="">
-        <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal2"
-            class="btn-style icon-delete menu-item">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                </path>
-            </svg>
-            Delete all selected</button>
-    </a>
+        <a id="deleteAllSelectedRecord" href="#">
+            {{--  data-bs-toggle="modal" --}}
+            <button type="button" id="deleteAll" data-bs-target="#exampleModal2"
+                class="btn-style icon-delete menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                    </path>
+                </svg>
+                Delete all selected</button>
+        </a>
+        <div class="d-flex justify-content-end flex-fill" autocomplete="off">
+            <input type="text" placeholder="Search..." id="keywords" name="keywords" class="input-search">
+            <button class="btn btn-primary menu-item" id="goSearch" style="margin-left: 10px;">Search</button>
+        </div>
+    </div>
+    
     <div class="table-main">
         <div class="alert alert-info" style="display: none ">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -107,61 +107,177 @@
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
         $('#subject-page').addClass('active');
-        $('#dashboard').removeClass('active');
-        $('#dashboard-content').addClass('d-none');
         $("#z-a").toggleClass('blue-background');
         $("#z-a").hide();
+
         //Khởi tạo sự kiện trước khi load
         $(document).ready(function() {
+            
             //Bắt sự kiện cho btn-add
+            $('#deleteAllSelectedRecord').on('click', function(e) {
+                // console.log(subject.list.arrSub); DeleteSubject
+
+                if ($('#checkAll').prop('checked')) {
+                    subject.list.arrAllSub.forEach(function(itemId) {
+                        if (subject.list.arrSub.includes(itemId)) {
+                            subject.list.DeleteSubject(itemId);
+                            subject.list.loadCheck();
+                            $('#deleteAllSelectedRecord').css('display', 'none');
+                        }
+                    });
+
+                } else {
+                    subject.list.arrSub.forEach(function(itemId) {
+                        if (subject.list.arrSub.includes(itemId)) {
+                            subject.list.DeleteSubject(itemId);
+                            subject.list.loadCheck();
+                            $('#deleteAllSelectedRecord').css('display', 'none');
+                        }
+                    });
+                    // Các hành động khác tùy ý
+                }
+                
+
+            });
             $('#btn-add').on('click', function(e) {
-                //Chuyển trang đến router add như href="{{ route('subject') }}"
                 e.preventDefault(); // Ngăn chặn hành vi mặc định của nút (chuyển hướng)
                 var addRoute = "{{ route('addSubject') }}"; // Lấy đường dẫn tới tuyến "subject"
                 window.location.href = addRoute;
             });
+            $('input[name="keywords"]').keypress(function(e) {
+                if (e.which == 13) { // Kiểm tra phím Enter
+                    e.preventDefault(); // Ngăn chặn hành vi mặc định của phím Enter (thường là gửi form)
+                    
+                    var keywords = $(this).val();
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const sortParam = urlParams.get('sort');
+                    const pageParam = urlParams.get('page');
+                    let newPath = "/subjects";
+                    
+                    if (pageParam || sortParam) {
+                        newPath += "?";
+                        if(pageParam && sortParam == null){
+                            newPath += `keyword=${keywords}`;
+                        }
+                        if (sortParam) {
+                            newPath += `keyword=${keywords}&sort=${sortParam}`;
+                        }
+                    }
+                    else{
+                        newPath += `?keyword=${keywords}`;
+                    }
+                    window.history.pushState(null, null, newPath);
+                    subject.list.load(keywords, sortParam);
+                }
+            });
             $('#goSearch').on('click', function() {
                     var keywords = $('input[name="keywords"]').val();
-                    // var keywords = 'b';
-                    subject.list.load(keywords)
-                    var history = window.history || window.location.history;
-                    history.pushState(null, null, `/search?keyword=${keywords}`);
-                    // e.preventDefault();
-                    // $(self.container).html('<div id="loader" class="loader"></div>');
+                    const urlParams = new URLSearchParams(window.location.search);
+                        const sortParam = urlParams.get('sort');
+                        const pageParam = urlParams.get('page');
+                        let newPath = "/subjects";
+
+                        if (pageParam || sortParam) {
+                            newPath += "?";
+                            if(pageParam && sortParam == null){
+                                newPath += `keyword=${keywords}`;
+                            }
+                            if (sortParam) {
+                                newPath += `keyword=${keywords}&sort=${sortParam}`;
+                            }
+                        }
+                        else{
+                            newPath += `?keyword=${keywords}`;
+                        }
+                        window.history.pushState(null, null, newPath);
+                        subject.list.load(keywords,sortParam)
             });
             $('.btn-a-z').on('click', function(e) {  
                     if ($('.btn-a-z').hasClass('blue-background')) {
                         $("#a-z").hide();
                         $('.btn-a-z').removeClass('blue-background');
-                        // $("#z-a").toggleClass('blue-background');
                         $("#z-a").show();
                         var sortType = 'Za';
-                        subject.list.load('',sortType);
+                        var currentSort = window.location.search;
+                        var newSort;
+                        if (currentSort.includes('sort=')) {
+                            newSort = currentSort.replace(/(sort=)[^&]*/, `$1${sortType}`);
+                        } 
+                        else{
+                            newSort = currentSort ? `${currentSort}&sort=${sortType}` : `?sort=${sortType}`;
+                        }
+                            window.history.pushState(null, null, newSort);
+                            const urlParams = new URLSearchParams(window.location.search);
+                            const keywordParam = urlParams.get('keyword');
+                            const pageParam = urlParams.get('page');
+                            subject.list.load(keywordParam, sortType, pageParam);                                 
                     }
                     else{
                         $(this).toggleClass('blue-background');
                         var sortType = 'Az';
-                        subject.list.load('',sortType);
+                        // subject.list.load('',sortType);
+                        var currentSort = window.location.search;
+                        var newSort;
+                        if (currentSort.includes('sort=')) {
+                            newSort = currentSort.replace(/(sort=)[^&]*/, `$1${sortType}`);
+                        } 
+                        else{
+                            newSort = currentSort ? `${currentSort}&sort=${sortType}` : `?sort=${sortType}`;
+                        }
+                        window.history.pushState(null, null, newSort);
+                            const urlParams = new URLSearchParams(window.location.search);
+                            const keywordParam = urlParams.get('keyword');
+                            const pageParam = urlParams.get('page');
+                            subject.list.load(keywordParam, sortType, pageParam);   
                     }
             });
             $('.btn-z-a').on('click', function(e) {
                 if ($('.btn-z-a').hasClass('blue-background')) {
                         $("#z-a").hide();
                         $("#a-z").show();
-                        // $('.btn-z-a').removeClass('blue-background');
-                        subject.list.load();
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const keywordParam = urlParams.get('keyword');
+                        const pageParam = urlParams.get('page');
+                        let newPath = "/subjects";
+                        if (keywordParam || pageParam) {
+                            newPath += "?";
+                            if (keywordParam) {
+                                newPath += `keyword=${keywordParam}`;
+                            }
+                            if (pageParam) {
+                                newPath += `${keywordParam ? '&' : ''}page=${pageParam}`;
+                            }
+                        }
+                        window.history.pushState(null, null, newPath);
+                        subject.list.load(keywordParam,'', pageParam);
                 }
             });
-        });
 
+            const urlParams = new URLSearchParams(window.location.search);
+            const sortParam = urlParams.get('sort');
+            if(sortParam == 'Az'){
+                    $("#a-z").show();
+                    $("#a-z").toggleClass('blue-background');
+            }
+            if(sortParam == 'Za'){
+                $("#z-a").show();
+                $("#a-z").hide();
+            }
+        });
+        
         var subject = {
             list: null,
         };
-        // var sortA = 'increaseName';
-        // var sortB = 'reduceName';
+       
         $(function() {
             subject.list = new DataListSub();
-            subject.list.load();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const keywordParam = urlParams.get('keyword');
+            const pageParam = urlParams.get('page');
+            const sortParam = urlParams.get('sort');
+            subject.list.load(keywordParam, sortParam, pageParam);
+            subject.list.loadCheck();
         });
        
       
@@ -170,14 +286,12 @@
             constructor() {
                 this.url = 'http://127.0.0.1:8000/api/getAllSubject';
                 this.container = "#tbSubject";
-                this.arrSub = []
+                this.arrSub = [];
+                this.arrAllSub = [];
             }
-            // var keyword = 'b';
             //Hàm hiển thị danh sách
 
-            load(keywords, sortType) {
-                // console.log("a-z");
-                
+            load(keywords, sortType, page) {                
                 var self = this; 
                 // $('.loader-sub').attr('class', 'loader-subject');
                 $.ajax({
@@ -186,6 +300,7 @@
                         data: {
                             sort : sortType,
                             keyword: keywords,
+                            page: page,
                         },
                         accepts: {
                             mycustomtype: 'application/x-some-custom-type'
@@ -193,106 +308,172 @@
                         complete: function() {
                             $('.loader-subject').css('display', 'none');
                         },
-                        
                     })
                     .done(function(result) {
-
-                        // console.log(result.link);
                         if (result && result.subjects && result.subjects.data && result.subjects.data.length > 0) {
-                            $('.alert-info').css('display','none')
-                        // console.log("xoa load");
-                        // $(".loader-sub").hide();    
-                        // $('.loader-sub').attr('class', 'loader');
-                        //Sau khi lấy danh sach -> render ra table
-                        $(self.container).html(
-                           
-                            result.subjects.data.map(e => {
-                                return `<tr>
-                                <td><input class="form-check-input toCheck" type="checkbox" data-item="${e.id}"></td>
-                                <td>${e.name}</td>
-                                <td>${e.description}</td>
-                                <td>
-                                    <div class="actions-style">
-                                    {{-- Edit --}}
-                                    <button class="btn-edit" data-item="${e.id}" class="menu-item" data-bs-toggle="tooltip"
-                                        title="Edit">
-                                        <span
-                                            class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon-action" fill="none" viewBox="0 0 24 24"
-                                                stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
-                                                </path>
-                                            </svg>
-                                        </span>
-                                    </button>
-                                    {{-- Delete --}}
+                                $('.alert-info').css('display','none')
+                            // console.log("xoa load");
+                            // $(".loader-sub").hide();    
+                            // $('.loader-sub').attr('class', 'loader');
+                            //Sau khi lấy danh sach -> render ra table
+                            $(self.container).html(
+                            
+                                result.subjects.data.map(e => {
+                                    return `<tr>
+                                    <td><input class="form-check-input toCheck" type="checkbox" data-item="${e.id}"></td>
+                                    <td>${e.name}</td>
+                                    <td>${e.description}</td>
+                                    <td>
+                                        <div class="actions-style">
+                                        {{-- Edit --}}
+                                        <button class="btn-edit" data-item="${e.id}" class="menu-item" data-bs-toggle="tooltip"
+                                            title="Edit">
+                                            <span
+                                                class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon-action" fill="none" viewBox="0 0 24 24"
+                                                    stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                                                    </path>
+                                                </svg>
+                                            </span>
+                                        </button>
+                                        {{-- Delete --}}
 
-                                    <button class="btn-delete" data-item="${e.id}" data-bs-toggle="tooltip" title="Delete">
-                                        <span
-                                            class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon-action" fill="none" viewBox="0 0 24 24"
-                                                stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                                                </path>
-                                            </svg>
-                                        </span>
-                                    </button>
-                                </div>
-                                </td>
-                            </tr>`;
-                            }).join('')
-                        
-                        );
-                        // Gọi phương thức AfterLoadEvent để gắn sự kiện sau khi load
-                        $('.page-subjects').html(result.link)
-                        self.loadPage();
-                        self.AfterLoadEvent();    
+                                        <button class="btn-delete" data-item="${e.id}" data-bs-toggle="tooltip" title="Delete">
+                                            <span
+                                                class="flex align-items-center justify-content-center w-10 h-10 border border-gray-200 rounded cursor-pointer">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon-action" fill="none" viewBox="0 0 24 24"
+                                                    stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                                    </path>
+                                                </svg>
+                                            </span>
+                                        </button>
+                                    </div>
+                                    </td>
+                                </tr>`;
+                                }).join('')
+                            
+                            );
+                            // Gọi phương thức AfterLoadEvent để gắn sự kiện sau khi load
+                            $('.page-subjects').html(result.link)
+                            self.loadPage();
+                            self.loadChecked();
+                            self.AfterLoadEvent();
                         }else{
-                            console.log("ko tim thay gi");
-                            $('.alert-info').css('display','block')
+                            $('.alert-info').css('display','block');
+                            $(self.container).html(
+                                result.subjects.data.map(e => {
+                                    return null;
+                                }).join('')
+                            );
+                            $('.page-subjects').html(result.link)
+                            self.loadPage();
                         }
                 });
             }
             loadPage() {
                     var self = this
                     var pageElement = 1
-                    
                     $('.page-item').each(function(i, e) {
                         if ($(e).attr('class') == 'page-item active') {
-                            // pageElement = parseInt($(e).text())
-                            console.log("page -1");
+                            //Nếu trang đó đang được bấm thì gán lại pageElement
+                            pageElement = parseInt($(e).text())
+                            // console.log("Gán lại pageElement: "+pageElement);
                         }
                     })
                     $('.page-link').each(function(i, element) {
-
                         $(element).click(function(e) {
-
                             e.preventDefault();
                             if ($(element).attr('rel') == 'next') {
+                                //Load theo trang sau
                                 pageElement += 1
-                                // self.load(pageElement, dataCourses.keySearch, dataCourses.sort)
-                                console.log("page + 1");
+                                var currentPage = window.location.search;
+                                var newPage;
+                                if (currentPage.includes('page=')) {
+                                    newPage = currentPage.replace(/(page=)[^&]*/, `$1${pageElement}`);
+                                } else {
+                                    newPage = currentPage ? `${currentPage}&page=${pageElement}` : `?page=${pageElement}`;
+                                }
+                                window.history.pushState(null, null, newPage);
+                                const urlParams = new URLSearchParams(window.location.search);
+                                const keywordParam = urlParams.get('keyword');
+                                const pageParam = urlParams.get('page');
+                                const sortParam = urlParams.get('sort');
+                                self.load(keywordParam, sortParam, pageParam);
                             } else if ($(element).attr('rel') == 'prev') {
+                                 //Load theo trang trước
                                 pageElement -= 1
-
-                                // self.load(pageElement, dataCourses.keySearch, dataCourses.sort)
-                                console.log("page -1");
-
+                                // self.load('', '', pageElement);
+                                var currentPage = window.location.search;
+                                var newPage;
+                                if (currentPage.includes('page=')) {
+                                    newPage = currentPage.replace(/(page=)[^&]*/, `$1${pageElement}`);
+                                } else {
+                                    newPage = currentPage ? `${currentPage}&page=${pageElement}` : `?page=${pageElement}`;
+                                }
+                                window.history.pushState(null, null, newPage);
+                                const urlParams = new URLSearchParams(window.location.search);
+                                const keywordParam = urlParams.get('keyword');
+                                const pageParam = urlParams.get('page');
+                                const sortParam = urlParams.get('sort');
+                                self.load(keywordParam, sortParam, pageParam);
                             } else {
-
-                                // self.load($(element).text(), dataCourses.keySearch, dataCourses.sort)
-                                console.log(" no page");
+                                //Load theo số page
+                                var currentPage = window.location.search;
+                                var newPage;
+                                if (currentPage.includes('page=')) {
+                                    newPage = currentPage.replace(/(page=)[^&]*/, `$1${$(element).text()}`);
+                                } else {
+                                    newPage = currentPage ? `${currentPage}&page=${$(element).text()}` : `?page=${$(element).text()}`;
+                                }
+                                window.history.pushState(null, null, newPage);
+                                const urlParams = new URLSearchParams(window.location.search);
+                                const keywordParam = urlParams.get('keyword');
+                                const pageParam = urlParams.get('page');
+                                const sortParam = urlParams.get('sort');
+                                self.load(keywordParam, sortParam, pageParam);
                             }
                         });
                     });
             }
+            loadChecked(){
+                var self = this;
+                self.arrSub.forEach(function(itemId) {
+                    $('.toCheck[data-item="' + itemId + '"]').prop('checked', true);
+                });
+            }
+            //Lay tat ca sub vao mang subAllCheck
+            loadCheck(){
+                var self = this;
+                $.ajax({
+                        url: 'http://127.0.0.1:8000/api/getAll',
+                        type: 'GET',
+                        accepts: {
+                            mycustomtype: 'application/x-some-custom-type'
+                        },
+                        complete: function() {
+                        },
+                    })
+                    .done(function(result) {
+                        if (result && result.subjects && Array.isArray(result.subjects)) {
+                            self.arrAllSub = [];
+                            result.subjects.forEach(function(subject) {
+                                var subjectId = subject.id;
+                                self.arrAllSub.push(subjectId);
+                            });
+                        } else {
+                            console.log("Không có dữ liệu hoặc dữ liệu không hợp lệ");
+                        }
+                    });
+               
+            }
             //Hàm xóa Subject $(element).attr("data-item")
             DeleteSubject(element) {
                 var self = this;
-                var history = window.history || window.location.history;
-                history.pushState(null, null, `/subjects`);
+                var previousURL = window.location.href;
                 $('#confirmDeleteModal').modal('hide');
                 $('.loader-sub').attr('class', 'loader-subject');
                 // $('.loader-subject').css('display', 'flex');
@@ -307,37 +488,26 @@
                     success: function(response) {
                         $('.loader-subject').css('display', 'none'); 
                        
-                        // self.load() 
-                        if ($('.btn-a-z').hasClass('blue-background')) {
-                            console.log("Load a->z");
-                            var sortType = 'Az';
-                            self.load('',sortType);
-                            return;
-                        }
-                        if ($('.btn-a-z').hasClass('blue-background')==false) {
-                            console.log("load thường");
-                            self.load() 
-                            return;
-                        }
-                        // if ($('.btn-z-a').hasClass('blue-background')) {
-                        //     console.log("load z-a");
-                        //     // self.load() 
-                        //     return;
-                        // }
-                        //Load lại sau khi xóa
+                        const urlParams = new URLSearchParams(window.location.search);
+                            const keywordParam = urlParams.get('keyword');
+                            const pageParam = urlParams.get('page');
+                            const sortParam = urlParams.get('sort');
+                            self.load(keywordParam,sortParam,pageParam);
+
+                            history.pushState(null, null, previousURL);
                     }
                 })
 
             }
           
             //Hàm Sự kiện sau khi load
-            AfterLoadEvent() {
+            AfterLoadEvent() { 
                 var self = this; 
                 var subjectId = ''// Lưu trữ tham chiếu đến đối tượng DataList
                 $('.btn-delete').each(function(index, element) {
                     //Gọi hàm DeleteSubject và xóa theo id
                     $(element).click(function() {
-                        subjectId = $(element).data('item');;
+                        subjectId = $(element).data('item');
                         $('#confirmDeleteModal').modal('show');
                     });
                 });
@@ -358,40 +528,63 @@
                 $('#checkAll').on('click', function(e) {
                     $('#deleteAllSelectedRecord').css('display', 'block');
                     if ($(this).prop('checked')) {
-                        $('.toCheck').prop('checked', true);
+                        self.arrSub = [];
+                        self.arrSub = self.arrSub.concat(self.arrAllSub);
+                        self.arrSub.forEach(function(itemId) {
+                        $('.toCheck[data-item="' + itemId + '"]').prop('checked', true);
+                    });
                     } else {
+                        self.arrSub = [];
                         $('.toCheck').prop('checked', false);
                         $('#deleteAllSelectedRecord').css('display', 'none');
                     }
+                    
                 });
                 $('.toCheck').each(function(index, element) {
                     //Gọi hàm DeleteSubject và xóa theo id
                     $(element).click(function() {
+                        
+                        if ($(this).prop('checked')) {
+                            // console.log("Element này đã được chọn.");
+                            self.arrSub.push($(this).data('item'));
+                        } else {
+                            // console.log("Element này chưa được chọn.");
+                            const itemToRemove = $(this).data('item');
+                            const indexToRemove = self.arrSub.indexOf(itemToRemove);
+                            if (indexToRemove !== -1) {
+                                self.arrSub.splice(indexToRemove, 1);
+                            }
+                        }
+                        // console.log(self.arrSub);
+                        // console.log('Mang tat cả :'+self.arrAllSub);
+
+
                         var allChecked = true;
                         var allNoCheck = true;
                         $('#deleteAllSelectedRecord').css('display', 'block');
 
-                        $('.toCheck').each(function() {
-                            if (!$(this).prop('checked')) {
+
+                        self.arrAllSub.forEach(function(itemId) {
+                            if (self.arrSub.indexOf(itemId) === -1) {
+                                // console.log("Phần tử " + itemId + " không tồn tại trong mảng arrSub");
                                 allChecked = false;
-                                // return false; // Dừng vòng lặp nếu tìm thấy checkbox chưa được chọn
                             }
                             else{
                                 allNoCheck = false;
                             }
-                           
                         });
                         if (allChecked) {
                             $('#checkAll').prop('checked', true);
+                            // console.log("tat ca da dc check");
                         } else {
                             $('#checkAll').prop('checked', false);
+                            // console.log("tat ca chua dc check");
                         }
                         if (allNoCheck) {
                             $('#deleteAllSelectedRecord').css('display', 'none');
                         }
                     });
                 });
-
 
                 // $('#deleteAllSelectedRecord').css('display', 'block');
                 $('.btn-edit').on('click', function(e) {

@@ -23,12 +23,27 @@
         </a>
     </div>
 
-    {{-- Search --}}
-    <form id="formSearch" class="mb-5 d-flex justify-content-end" autocomplete="off">
-        <input type="text" placeholder="Search..." id="keywords" name="keywords" class="input-search">
-        <button type="submit" id="btnSearch" class="btn btn-primary menu-item"
-            style="margin-left: 10px;">Search</button>
-    </form>
+    <div class="d-flex mb-5">
+        {{-- Button delete all selected record --}}
+        <a id="btn_delete_all_selected" class="flex-fill" style="display: none">
+            <button type="button" data-bs-toggle="modal" data-bs-target="#modalDeleteAllSelectedRecord"
+                class="btn-style icon-delete menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                    </path>
+                </svg>
+                Delete all selected</button>
+        </a>
+
+        {{-- Search --}}
+        <form id="formSearch" class="d-flex justify-content-end flex-fill" autocomplete="off">
+            <input type="text" placeholder="Search..." id="keywords" name="keywords" class="input-search">
+            <button type="submit" id="btnSearch" class="btn btn-primary menu-item"
+                style="margin-left: 10px;">Search</button>
+        </form>
+    </div>
 
     {{-- Table --}}
     <div class="table-main">
@@ -57,18 +72,7 @@
         </div>
         @endif
 
-        {{-- Button delete all selected record --}}
-        <a id="btn_delete_all_selected" style="display: none">
-            <button type="button" data-bs-toggle="modal" data-bs-target="#modalDeleteAllSelectedRecord"
-                class="btn-style icon-delete menu-item">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                    </path>
-                </svg>
-                Delete all selected</button>
-        </a>
+
 
         <table>
             <thead>
@@ -82,16 +86,20 @@
                     <th>ID</th>
                     <th>
                         Name
-                        <button class="btn_sort" value="asc"><i id="name"
-                                class="fa-solid fa-arrow-down-a-z icon-sort"></i></button>
+                        @if (!($allContacts->isEmpty()))
+                        <button class="btn_sort" value="asc" data-bs-toggle="tooltip" title="Sort from A to Z"><i
+                                id="name" class="fa-solid fa-arrow-down-a-z icon-sort"></i></button>
+                        @endif
                     </th>
                     <th>Address</th>
                     <th>Phone</th>
                     <th>Birthday</th>
                     <th>
                         Created at
-                        <button class="btn_sort" value="asc"><i id="created_at"
-                                class="fa-solid fa-arrow-down-short-wide icon-sort"></i></button>
+                        @if (!($allContacts->isEmpty()))
+                        <button class="btn_sort" value="asc" data-bs-toggle="tooltip" title="Sort from old to new"><i
+                                id="created_at" class="fa-solid fa-arrow-down-short-wide icon-sort"></i></button>
+                        @endif
                     </th>
                     <th>Actions</th>
                 </tr>
@@ -142,8 +150,10 @@
                 @endforeach
             </tbody>
         </table>
+        @if (!($allContacts->isEmpty()))
         <p id="num_of_record" class="dashboard-short-desc">Showing {{ count($allContacts) }} of {{ $length }} results
         </p>
+        @endif
         <div id="pagination" class="float-end mt-3">
             {{ $allContacts->links() }}
         </div>
@@ -173,7 +183,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-info" data-bs-dismiss="modal">Cancel</button>
 
-                <form action="{{ route('contacts.destroy', $item->id) }}" id="modal_submit_delete" method="post">
+                <form action="" id="modal_submit_delete" method="post">
                     @csrf
                     @method('DELETE')
                     <button type="submit" id="btn_submit_delete_contact" class="btn btn-danger">Yes,
@@ -369,7 +379,7 @@
                     $('#btn_delete_all_selected').css({display:'none'});
                 }  
                 
-                if (temp >= 2 || temp == arr_checkbox.length){
+                if (temp >= 1 || temp == arr_checkbox.length){
                     $('#btn_delete_all_selected').css({display:'unset'});
                 }
                 else{
@@ -437,38 +447,53 @@
             
         // });
 
+        var keywords;
+        var list;
+
         // Search
         $('#formSearch').submit(function(e) {
             e.preventDefault();
-            if ($('#keywords').val() == '') {
-                window.location = 'contacts';
+            if ("{{ $length }}" == 0) {
+                showWarningToast('You do not have any data to search')
             }
             else {
-                displayLoader($('tbody'));
-                $.ajax({
-                    url: 'searchContacts',
-                    data: {keywords: $('#keywords').val()},
-                    dataType: "json",
-                    success: function (response) {
-                        removeLoader();
-                        if (response.result.data.length == 0) {
-                            showWarningToast('Not found any contact!');
-                        }
-                        else {
-                            loadDataTable(response.result.data);
+                if ($('#keywords').val() == '') {
+                    window.location = 'contacts';
+                }
+                else {
+                    keywords = $('#keywords').val();
+                    displayLoader($('tbody'));
+                    $.ajax({
+                        url: 'searchContacts',
+                        data: {keywords: $('#keywords').val()},
+                        dataType: "json",
+                        success: function (response) {
+                            list = response.list;
+                            removeLoader();
+                            if (response.result.data.length == 0) {
+                                showWarningToast('Not found any contact!');
+                                $('#num_of_record').html('');
+                                displayCheckboxSelectAll('none');
+                            }
+                            else {
+                                loadDataTable(response.result.data);
+                                displayCheckboxSelectAll('unset');
+                                $('#num_of_record').html('Showing ' + response.result.data.length + ' of ' + response.result.total + ' results found');
+                            }
+                            // Update pagination
                             $('#pagination').html(response.pagination);
-
-                            $('#num_of_record').html('Number of results found: ' + response.result.data.length);
+                        },
+                        error: function () {
+                            showErrorToast('Error! Can not search');
                         }
-                    },
-                    error: function () {
-                        showErrorToast('Can not search !');
-
-                    }
-                });
+                    });
+                }
             }
             
         });
+
+        var current_sortField;
+        var current_sortType;
 
         //Update Pagination using Ajax
         $(document).on('click', '.page-link',function (e) {
@@ -478,15 +503,16 @@
             $.ajax({
                 url: $(this).attr('href'),
                 data: {
-                    sortField: 'name',
-                    sortType: 'asc',
+                    sortField: current_sortField,
+                    sortType: current_sortType,
+                    keywords: keywords,
                 },
                 type: 'GET',
                 success: function (response) {
                     removeLoader();
-                    // console.log(response);
+                    
                     if (typeof(response) != 'string') {
-                        loadDataTable(response.allContacts.data);
+                        loadDataTable(response.result.data);
                     }
                     else {
                         $('body').html(response);
@@ -494,25 +520,32 @@
                     }
                     
                     $('#pagination').html(response.pagination);
+                },
+                error: function () {
+                    showErrorToast('Error');
                 }
             });
         });
 
         // Sort
-        $('.btn_sort').on('click', function () {
+        $('.btn_sort').on('click', function (e) {
+            e.preventDefault();
             // Display loader
             displayLoader($('tbody'));
             var btn = $(this);
+            current_sortField = btn.children().attr('id');
+            current_sortType = btn.val();
             $.ajax({
                 url: 'sortContacts',
                 data: {
                     sortField: btn.children().attr('id'),
                     sortType: btn.val(),
+                    list: list,
                 },
                 dataType: "json",
                 success: function (response) {
                     // Load data 
-                    loadDataTable(response.allContacts.data);
+                    loadDataTable(response.result.data);
                     // Remove loader
                     removeLoader();
                     // Change icon
@@ -526,6 +559,7 @@
                     }
                     
                     $('#pagination').html(response.pagination);
+                    
                 },
                 error: function () {
                     showErrorToast('Can not sort Name field !');
@@ -537,15 +571,20 @@
             var icon = btn.children();
             // Nếu là asc
             if (btn.val() == 'asc') {
+                
                 // Nếu là trường name
                 if (icon.attr('id') == 'name') {
                     icon.removeClass('fa-arrow-down-a-z');
                     icon.addClass('fa-arrow-down-z-a');
+                    // Change title
+                    btn.attr('title', 'Sort from Z to A');
                 }
                 // Nếu là trường created_at
                 else if (icon.attr('id') == 'created_at') {
                     icon.removeClass('fa-arrow-down-short-wide');
                     icon.addClass('fa-arrow-down-wide-short');
+                    // Change title
+                    btn.attr('title', 'Sort from new to old');
                 }
             }
             // Nếu là desc
@@ -554,11 +593,15 @@
                 if (icon.attr('id') == 'name') {
                     icon.addClass('fa-arrow-down-a-z');
                     icon.removeClass('fa-arrow-down-z-a');
+                    // Change title
+                    btn.attr('title', 'Sort from A to Z');
                 }
                 // Nếu là trường created_at
                 else if (icon.attr('id') == 'created_at') {
                     icon.addClass('fa-arrow-down-short-wide');
                     icon.removeClass('fa-arrow-down-wide-short');
+                    // Change title
+                    btn.attr('title', 'Sort from old to new');
                 }
             }
         }
@@ -566,6 +609,8 @@
     });   
 
     function displayLoader(element) {
+        $('#num_of_record').html('');
+        $('#pagination').html('');
         element.html('');
         element.html('<div class="load d-block text-center m-auto mt-5"></div>');
         for (let i = 0; i < 3; i++) {
@@ -579,10 +624,12 @@
 
     function loadDataTable(data) {
         if (data.length == 0) {
-            $('#select_all').css('display', 'none');
+            //$('#select_all').css('display', 'none');
+            displayCheckboxSelectAll('none');
         }
         else {
-            $('#select_all').css('display', 'unset');
+            //$('#select_all').css('display', 'unset');
+            displayCheckboxSelectAll('unset');
         }
         $('tbody').html('');
         $.each(data, function(key, item) {
@@ -628,6 +675,10 @@
         setTimeout(function () {
             $('#alert').alert('close');
         }, 8000);
+    }
+
+    function displayCheckboxSelectAll(type) {
+        $('#select_all').css('display', type);
     }
     
 </script>
