@@ -83,7 +83,7 @@
                     <th>
                         Name
                         @if (!($allContacts->isEmpty()))
-                        <button class="btn_sort" value="asc"><i id="name"
+                        <button class="btn_sort" value="asc" data-bs-toggle="tooltip" title="Sort from A to Z"><i id="name"
                                 class="fa-solid fa-arrow-down-a-z icon-sort"></i></button>
                         @endif
                     </th>
@@ -93,7 +93,7 @@
                     <th>
                         Created at
                         @if (!($allContacts->isEmpty()))
-                        <button class="btn_sort" value="asc"><i id="created_at"
+                        <button class="btn_sort" value="asc" data-bs-toggle="tooltip" title="Sort from old to new"><i id="created_at"
                                 class="fa-solid fa-arrow-down-short-wide icon-sort"></i></button>
                         @endif
                     </th>
@@ -280,7 +280,6 @@
 <script src="{{ asset ('/js/toast.js') }}"></script>
 <script>
     $(document).ready(function() {
-        console.log("{{ $length }}");
         // Change menu item active
         document.querySelector('#menuItem_contact').classList.add('active');
 
@@ -444,6 +443,9 @@
             
         // });
 
+        var keywords;
+        var list;
+
         // Search
         $('#formSearch').submit(function(e) {
             e.preventDefault();
@@ -455,32 +457,39 @@
                     window.location = 'contacts';
                 }
                 else {
+                    keywords = $('#keywords').val();
                     displayLoader($('tbody'));
                     $.ajax({
                         url: 'searchContacts',
                         data: {keywords: $('#keywords').val()},
                         dataType: "json",
                         success: function (response) {
+                            list = response.list;
                             removeLoader();
                             if (response.result.data.length == 0) {
                                 showWarningToast('Not found any contact!');
+                                $('#num_of_record').html('');
+                                displayCheckboxSelectAll('none');
                             }
                             else {
                                 loadDataTable(response.result.data);
-                                $('#pagination').html(response.pagination);
-
-                                $('#num_of_record').html('Number of results found: ' + response.result.data.length);
+                                displayCheckboxSelectAll('unset');
+                                $('#num_of_record').html('Showing ' + response.result.data.length + ' of ' + response.result.total + ' results found');
                             }
+                            // Update pagination
+                            $('#pagination').html(response.pagination);
                         },
                         error: function () {
-                            showErrorToast('Can not search !');
-
+                            showErrorToast('Error! Can not search');
                         }
                     });
                 }
             }
             
         });
+
+        var current_sortField;
+        var current_sortType;
 
         //Update Pagination using Ajax
         $(document).on('click', '.page-link',function (e) {
@@ -490,15 +499,16 @@
             $.ajax({
                 url: $(this).attr('href'),
                 data: {
-                    sortField: 'name',
-                    sortType: 'asc',
+                    sortField: current_sortField,
+                    sortType: current_sortType,
+                    keywords: keywords,
                 },
                 type: 'GET',
                 success: function (response) {
                     removeLoader();
-                    // console.log(response);
+                    
                     if (typeof(response) != 'string') {
-                        loadDataTable(response.allContacts.data);
+                        loadDataTable(response.result.data);
                     }
                     else {
                         $('body').html(response);
@@ -506,25 +516,32 @@
                     }
                     
                     $('#pagination').html(response.pagination);
+                },
+                error: function () {
+                    showErrorToast('Error');
                 }
             });
         });
 
         // Sort
-        $('.btn_sort').on('click', function () {
+        $('.btn_sort').on('click', function (e) {
+            e.preventDefault();
             // Display loader
             displayLoader($('tbody'));
             var btn = $(this);
+            current_sortField = btn.children().attr('id');
+            current_sortType = btn.val();
             $.ajax({
                 url: 'sortContacts',
                 data: {
                     sortField: btn.children().attr('id'),
                     sortType: btn.val(),
+                    list: list,
                 },
                 dataType: "json",
                 success: function (response) {
                     // Load data 
-                    loadDataTable(response.allContacts.data);
+                    loadDataTable(response.result.data);
                     // Remove loader
                     removeLoader();
                     // Change icon
@@ -538,6 +555,7 @@
                     }
                     
                     $('#pagination').html(response.pagination);
+                    
                 },
                 error: function () {
                     showErrorToast('Can not sort Name field !');
@@ -549,15 +567,20 @@
             var icon = btn.children();
             // Nếu là asc
             if (btn.val() == 'asc') {
+                
                 // Nếu là trường name
                 if (icon.attr('id') == 'name') {
                     icon.removeClass('fa-arrow-down-a-z');
                     icon.addClass('fa-arrow-down-z-a');
+                    // Change title
+                    btn.attr('title', 'Sort from Z to A');
                 }
                 // Nếu là trường created_at
                 else if (icon.attr('id') == 'created_at') {
                     icon.removeClass('fa-arrow-down-short-wide');
                     icon.addClass('fa-arrow-down-wide-short');
+                    // Change title
+                    btn.attr('title', 'Sort from new to old');
                 }
             }
             // Nếu là desc
@@ -566,11 +589,15 @@
                 if (icon.attr('id') == 'name') {
                     icon.addClass('fa-arrow-down-a-z');
                     icon.removeClass('fa-arrow-down-z-a');
+                    // Change title
+                    btn.attr('title', 'Sort from A to Z');
                 }
                 // Nếu là trường created_at
                 else if (icon.attr('id') == 'created_at') {
                     icon.addClass('fa-arrow-down-short-wide');
                     icon.removeClass('fa-arrow-down-wide-short');
+                    // Change title
+                    btn.attr('title', 'Sort from old to new');
                 }
             }
         }
@@ -578,6 +605,8 @@
     });   
 
     function displayLoader(element) {
+        $('#num_of_record').html('');
+        $('#pagination').html('');
         element.html('');
         element.html('<div class="load d-block text-center m-auto mt-5"></div>');
         for (let i = 0; i < 3; i++) {
@@ -591,10 +620,12 @@
 
     function loadDataTable(data) {
         if (data.length == 0) {
-            $('#select_all').css('display', 'none');
+            //$('#select_all').css('display', 'none');
+            displayCheckboxSelectAll('none');
         }
         else {
-            $('#select_all').css('display', 'unset');
+            //$('#select_all').css('display', 'unset');
+            displayCheckboxSelectAll('unset');
         }
         $('tbody').html('');
         $.each(data, function(key, item) {
@@ -640,6 +671,10 @@
         setTimeout(function () {
             $('#alert').alert('close');
         }, 8000);
+    }
+
+    function displayCheckboxSelectAll(type) {
+        $('#select_all').css('display', type);
     }
     
 </script>

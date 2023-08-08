@@ -2,9 +2,8 @@
 @extends('layout')
 @section('content')
 
-
 {{-- New Contact --}}
-<div class="dashboard-children active subjectRender">
+<div class="dashboard-children active">
     {{-- Heading --}}
     <div class="mb-5 d-flex justify-content-between align-items-center">
         <div class="">

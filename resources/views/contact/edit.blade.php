@@ -9,7 +9,7 @@
             <h1 class="dashboard-heading">
                 Update contact
             </h1>
-            <p class="dashboard-short-desc">Update your contact id: <strong id="id">{{ $item->id }}</strong></p>
+            <p class="dashboard-short-desc">Update your contact id: <strong>{{ $item->id }}</strong></p>
         </div>
     </div>
 
@@ -90,21 +90,20 @@
     document.querySelector('#menuItem_contact').classList.add('active');
 
     var isFieldsChanged = false;
-
+    
     checkInputFields();
 
     const btn_submit = document.querySelector('#btn_submit');
     btn_submit.addEventListener('click', function () {
-        console.log(isFieldsChanged);
         const form = document.querySelector('form');
         if (isFieldsChanged) {
             btn_submit.setAttribute('type', 'submit');
-            form.setAttribute('action', 'http://127.0.0.1:8000/contacts/' + document.querySelector('#id').innerHTML);
+            form.setAttribute('action', 'http://127.0.0.1:8000/contacts/' + "{{ $item->id }}");
             displayLoader();
         }
         else {
             form.setAttribute('action', "");
-            showErrorToast("You haven't changed any of the fields");
+            showErrorToast('You must change the data of any field to update this contact');
         }
     });
 

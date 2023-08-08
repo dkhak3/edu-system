@@ -118,28 +118,27 @@ class ContactController extends Controller
     {
         $result = [];
         $length = $this->getLength();
-        if ($request->keywords != null) {
-            $result = Contact::where('name', 'LIKE', '%' . $request->keywords . '%')->orderBy('created_at', 'desc')->paginate(3);
-        }
-        else {
-            $result = Contact::orderBy('created_at', 'desc')->paginate(3);
-        }
+
+        $list = Contact::where('name', 'LIKE', '%' . $request->keywords . '%')->orderBy('created_at', 'desc')->get();
+        $result = Contact::where('name', 'LIKE', '%' . $request->keywords . '%')->orderBy('created_at', 'desc')->paginate(3);
+        
         return response()->json([
             'result' => $result,
             'length' => $length,
-            'pagination' => $result->links()->toHtml()
+            'pagination' => $result->links()->toHtml(),
+            'list' => $list,
         ]);
     }
 
     // Sort
     public function sort(Request $request)
     {
-        $allContacts = Contact::orderBy($request->sortField, $request->sortType)->paginate(3);
+        $result = Contact::orderBy($request->sortField, $request->sortType)->paginate(3);
         return response()->json([
-            'allContacts' => $allContacts,
-            'pagination' => $allContacts->links()->toHtml()
+            'result' => $result,
+            'pagination' => $result->links()->toHtml(),
+            
         ]);
-        
     }
 
     public function getLength()
