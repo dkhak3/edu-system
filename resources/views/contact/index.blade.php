@@ -55,7 +55,9 @@
                 <path stroke-linecap="round" stroke-linejoin="round"
                     d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            {{Session::get('message')}}
+            <div class="message-alert">
+                {{Session::get('message')}}
+            </div>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         @endif
@@ -71,8 +73,6 @@
             Data is empty
         </div>
         @endif
-
-
 
         <table>
             <thead>
@@ -150,13 +150,17 @@
                 @endforeach
             </tbody>
         </table>
-        @if (!($allContacts->isEmpty()))
-        <p id="num_of_record" class="dashboard-short-desc">Showing {{ count($allContacts) }} of {{ $length }} results
-        </p>
-        @endif
-        <div id="pagination" class="float-end mt-3">
-            {{ $allContacts->links() }}
+        <div class="d-flex mt-3">
+            @if (!($allContacts->isEmpty()))
+            <p id="num_of_record" class="dashboard-short-desc flex-fill pt-2">Showing {{ count($allContacts) }} of {{ $length }}
+                results
+            </p>
+            @endif
+            <div id="pagination" class="d-flex justify-content-end flex-fill">
+                {{ $allContacts->links() }}
+            </div>
         </div>
+
     </div>
 </div>
 
@@ -284,6 +288,7 @@
 <script src="{{ asset ('/js/toast.js') }}"></script>
 <script>
     $(document).ready(function() {
+        
         // Change menu item active
         document.querySelector('#menuItem_contact').classList.add('active');
 
@@ -410,14 +415,21 @@
                     ids: all_ids
                 },
                 success: function (response) {
-                    // Load data
-                    loadDataTable(response.allContacts.data);
-                    // Remove loader
+                    all_ids = [];
                     removeLoader();
-                    // Update pagination
-                    $('#pagination').html(response.pagination);
-                    // Show success toast
-                    showSuccessToast('Delete all selected successfully!');
+                    window.location.href = '/contacts';
+                    // // Load data
+                    // loadDataTable(response.allContacts.data);
+                    // // Remove loader
+                    // removeLoader();
+                    // // Update pagination
+                    // $('#pagination').html(response.pagination);
+                    // // Show success toast
+                    // showSuccessToast(response.message);
+
+                    // $('.page-link').attr('href', 'contacts?page=' + $('.page-link').html());
+                    // $('.alert-success').css('display', 'block');
+                    // $('.message-alert').html();
                 }
             });
         });
@@ -468,6 +480,7 @@
                         data: {keywords: $('#keywords').val()},
                         dataType: "json",
                         success: function (response) {
+                            console.log(typeof(response.list));
                             list = response.list;
                             removeLoader();
                             if (response.result.data.length == 0) {

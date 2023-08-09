@@ -106,11 +106,11 @@ class ContactController extends Controller
     {
         $ids = $request->ids;
         Contact::whereIn('id', $ids)->delete();
-        $allContacts = Contact::orderBy('created_at', 'desc')->paginate(3);
+        $allContacts = Contact::orderBy('created_at', 'desc')->get();
         return response()->json([
-            'message' => 'Delete all selected successfully!',
+            'message' => 'Delete all selected item successfully!',
             'allContacts' => $allContacts,
-            'pagination' => $allContacts->links()->toHtml()
+            // 'pagination' => $allContacts->links()->toHtml()
         ]);
     }
 
